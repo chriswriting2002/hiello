@@ -1,0 +1,20 @@
+{
+  "name": "hiello",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hiello: family photo and video 'commercials' for grandparents, shown between rounds of a simple mahjong game.",
+  "scripts": {
+    "ios:prepare": "cap add ios || true",
+    "ios:assets": "capacitor-assets generate --ios --iconBackgroundColor '#B9541A' --splashBackgroundColor '#FBF6EC'",
+    "ios:sync": "cap sync ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/ios": "^7.0.0",
+    "@capacitor/haptics": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/assets": "^3.0.5"
+  }
+}

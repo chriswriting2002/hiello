@@ -1,0 +1,67 @@
+# Builds Hiello for iPhone on Codemagic's Macs and uploads it to TestFlight.
+# Uses the same App Store Connect API key as the Paper Meadow games.
+# In Codemagic: add this repo as a new app, then make sure the key under
+# Team settings > Integrations > Developer Portal is named "PaperMeadow" (or change the name below).
+workflows:
+  ios-hiello:
+    name: Hiello for iPhone
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: PaperMeadow
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.hiello.app
+      vars:
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+      node: 22
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Install
+        script: npm install
+      - name: Create the iPhone project
+        script: |
+          if [ ! -d ios ]; then npx cap add ios; fi
+      - name: App icon and launch screen
+        script: npx capacitor-assets generate --ios --iconBackgroundColor '#B9541A' --splashBackgroundColor '#FBF6EC'
+      - name: iPhone only, portrait only, app settings
+        script: |
+          PLIST=ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Delete :ITSAppUsesNonExemptEncryption" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :NSPhotoLibraryUsageDescription" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string 'Lets you pick photos and videos to send to your family.'" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :NSCameraUsageDescription" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string 'Lets you take a photo or video to send to your family.'" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :NSMicrophoneUsageDescription" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :NSMicrophoneUsageDescription string 'Records sound for the videos you send to your family.'" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations array" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations:0 string UIInterfaceOrientationPortrait" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations~ipad" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Delete :UIRequiresFullScreen" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :UIRequiresFullScreen bool true" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName 'Hiello'" "$PLIST" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string 'Hiello'" "$PLIST"
+          sed -i '' 's/TARGETED_DEVICE_FAMILY = "1,2";/TARGETED_DEVICE_FAMILY = 1;/g' ios/App/App.xcodeproj/project.pbxproj
+          sed -i '' -E 's/PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/PRODUCT_BUNDLE_IDENTIFIER = com.hiello.app;/g' ios/App/App.xcodeproj/project.pbxproj
+          sed -i '' -E 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]+;/IPHONEOS_DEPLOYMENT_TARGET = 15.0;/g' ios/App/App.xcodeproj/project.pbxproj
+          sed -i '' -E "s/platform :ios, '[0-9.]+'/platform :ios, '15.0'/" ios/App/Podfile
+      - name: Copy the app in
+        script: npx cap sync ios
+      - name: Signing
+        script: xcode-project use-profiles
+      - name: Build number
+        script: |
+          cd ios/App
+          agvtool new-version -all $((BUILD_NUMBER + 1))
+      - name: Build
+        script: xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

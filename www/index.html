@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#1F2A44">
+<title>Hiello</title>
+<style>
+@font-face{font-family:'Fraunces';src:url(fonts/Fraunces.woff) format('woff');font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:'Nunito';src:url(fonts/Nunito.woff) format('woff');font-weight:200 1000;font-style:normal;font-display:swap}
+:root{
+  --navy:#1F2A44;--navy2:#2B3858;--cream:#FBF6EC;--paper:#FFFFFF;--line:#E6DCC8;
+  --clay:#B9541A;--gold:#F2C14E;--green:#1E4D3A;--ok:#2E6B3F;--muted:#4A5068;--ph:#D9C9A8;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--cream);color:var(--navy);font-family:Nunito,system-ui,sans-serif;font-size:18px;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+input,textarea{-webkit-user-select:text;user-select:text}
+button{font-family:inherit;cursor:pointer}
+h1,h2,h3,.serif{font-family:Fraunces,Georgia,serif;font-weight:800;margin:0}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--st) + 14px) 18px calc(var(--sb) + 20px)}
+.screen.on{display:flex}
+.dark{background:var(--navy);color:#fff}
+.felt{background:var(--green);color:#fff}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.col{display:flex;flex-direction:column;gap:12px}
+.muted{color:var(--muted)}
+.dark .muted,.felt .muted{color:#CFD6E6}
+.kicker{font-size:13px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase;color:var(--clay)}
+.dark .kicker{color:var(--gold)}
+.btn{min-height:56px;border:0;border-radius:18px;padding:0 20px;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
+.btn.primary{background:var(--clay);color:#fff}
+.btn.navy{background:var(--navy);color:#fff}
+.btn.ghost{background:transparent;color:inherit;border:2px solid #8C96B3}
+.btn.light{background:#fff;color:var(--navy);border:2px solid var(--line)}
+.btn:active{transform:scale(.98)}
+.icon-btn{width:52px;height:52px;flex:none;border-radius:16px;border:0;background:rgba(255,255,255,.14);color:inherit;display:flex;align-items:center;justify-content:center}
+.light-screen .icon-btn{background:#fff;border:2px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:46px;padding:0 16px;border-radius:999px;border:2px solid var(--line);background:#fff;color:var(--navy);font-size:16px;font-weight:800}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.lbl{font-size:15px;font-weight:900}
+.field{min-height:52px;border-radius:14px;border:2px solid var(--line);background:#fff;padding:12px 14px;font-family:inherit;font-size:18px;font-weight:700;color:var(--navy);width:100%}
+textarea.field{resize:none;line-height:1.35}
+.panel{background:#fff;border:2px solid var(--line);border-radius:20px;padding:14px}
+/* demo switch */
+#demobar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--sb) + 10px);z-index:50;background:rgba(20,26,44,.92);border-radius:999px;padding:5px;display:none;gap:4px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+#demobar.on{display:flex}
+#demobar button{border:0;border-radius:999px;min-height:40px;padding:0 14px;font-size:14px;font-weight:900;background:transparent;color:#C9CFE0}
+#demobar button.on{background:#fff;color:var(--navy)}
+.pad-bottom{padding-bottom:calc(var(--sb) + 80px)}
+/* toast */
+#toast{position:fixed;left:14px;right:14px;top:calc(var(--st) + 10px);z-index:60;transform:translateY(-160%);transition:transform .35s ease;display:flex;align-items:center;gap:12px;background:#fff;color:var(--navy);border:3px solid var(--gold);border-radius:20px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#toast.on{transform:none}
+#toast .thumb{width:54px;height:54px;border-radius:12px;flex:none;overflow:hidden;background:var(--ph)}
+#toast .thumb img,#toast .thumb video{width:100%;height:100%;object-fit:cover}
+#toast .t1{font-size:12px;font-weight:900;letter-spacing:1px;color:var(--clay)}
+#toast .t2{font-size:17px;font-weight:900;line-height:1.2}
+#toast button{border:0;border-radius:999px;background:var(--clay);color:#fff;font-weight:900;font-size:15px;min-height:44px;padding:0 14px;flex:none}
+#msg{position:fixed;left:50%;bottom:calc(var(--sb) + 76px);transform:translateX(-50%) translateY(30px);opacity:0;transition:all .3s;z-index:70;background:var(--navy);color:#fff;border-radius:16px;padding:12px 18px;font-weight:800;font-size:16px;width:max-content;max-width:88vw;text-align:center;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+#msg.on{opacity:1;transform:translateX(-50%)}
+
+/* ===== Hiello card templates ===== */
+.card{position:relative;width:100%}
+.card .media{position:relative;overflow:hidden;background:var(--ph);width:100%;aspect-ratio:1/1}
+.card .media img,.card .media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.card .stk{position:absolute;transform:translate(-50%,-50%) rotate(-4deg);font-family:Fraunces,serif;font-weight:800;line-height:1.12;text-align:center;padding:8px 12px;border-radius:14px;max-width:78%;white-space:pre-wrap;word-break:break-word;box-shadow:0 5px 12px rgba(0,0,0,.22);pointer-events:none}
+.card .play-badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:999px;background:rgba(20,26,44,.6);display:flex;align-items:center;justify-content:center}
+/* polaroid */
+.tpl-polaroid{background:#fff;padding:4% 4% 0;border-radius:6px;box-shadow:0 6px 18px rgba(31,42,68,.18)}
+.tpl-polaroid .foot{padding:3% 2% 4%;font-family:Fraunces,serif;font-weight:800;color:var(--clay);text-align:center;font-size:1.05em}
+.tpl-polaroid .stk{background:#fff;border:3px solid var(--clay);color:var(--clay)}
+/* comic */
+.tpl-comic{background:#fff;border:4px solid #141414;border-radius:6px;padding:3%}
+.tpl-comic .media{border:3px solid #141414}
+.tpl-comic .stk{background:#FFF7CC;border:3px solid #141414;color:#141414;border-radius:22px;transform:translate(-50%,-50%) rotate(-2deg)}
+.tpl-comic .foot{margin-top:3%;border:3px solid #141414;background:var(--gold);color:#141414;font-family:Fraunces,serif;font-weight:800;padding:6px 10px;text-align:center;font-size:.95em}
+.tpl-comic .pow{position:absolute;right:6%;top:6%;background:#E8402F;color:#fff;font-family:Fraunces,serif;font-weight:800;padding:4px 10px;border:3px solid #141414;transform:rotate(8deg);font-size:.9em}
+/* retro tv */
+.tpl-retro{background:#6B4A2E;border-radius:26px;padding:6% 6% 4%;box-shadow:inset 0 0 0 4px #4E3420,0 6px 18px rgba(0,0,0,.25)}
+.tpl-retro .media{border-radius:34px/26px;border:6px solid #2A1C10}
+.tpl-retro .foot{display:flex;align-items:center;justify-content:space-between;margin-top:4%;color:var(--gold);font-family:Fraunces,serif;font-weight:800;font-size:.85em;letter-spacing:.5px}
+.tpl-retro .knobs{display:flex;gap:8px}.tpl-retro .knobs i{width:18px;height:18px;border-radius:999px;background:var(--gold);display:block}
+.tpl-retro .stk{background:#2A1C10;color:var(--gold);border:3px solid var(--gold)}
+/* postcard */
+.tpl-postcard{background:#fff;border:2px dashed var(--clay);border-radius:12px;padding:4%}
+.tpl-postcard .media{border-radius:8px;aspect-ratio:4/3}
+.tpl-postcard .foot{display:flex;justify-content:space-between;gap:10px;margin-top:3%;align-items:flex-start}
+.tpl-postcard .foot .msgtxt{font-family:Fraunces,serif;font-weight:800;color:var(--navy);font-size:.95em;line-height:1.2}
+.tpl-postcard .stamp{width:44px;height:52px;flex:none;border:2px dotted var(--clay);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--clay)}
+.tpl-postcard .stk{background:var(--cream);color:var(--navy);border:3px solid var(--navy)}
+
+/* ===== grandparent home ===== */
+.widget{display:block;width:100%;border:0;text-align:left;background:#fff;border-radius:26px;padding:12px;color:var(--navy);box-shadow:0 6px 18px rgba(31,42,68,.12)}
+.widget .wimg{position:relative;height:210px;border-radius:16px;overflow:hidden;background:var(--ph)}
+.widget .wimg img,.widget .wimg video{width:100%;height:100%;object-fit:cover}
+.widget .wtag{position:absolute;left:10px;top:10px;background:var(--navy);color:#fff;font-size:12px;font-weight:900;letter-spacing:1px;padding:5px 10px;border-radius:999px}
+.widget .wstk{position:absolute;right:10px;bottom:12px;transform:rotate(-5deg);background:#fff;border:3px solid var(--clay);color:var(--clay);border-radius:14px;padding:7px 11px;font-family:Fraunces,serif;font-weight:800;font-size:18px;line-height:1.1;max-width:70%;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+.bigtile{display:flex;align-items:center;gap:14px;width:100%;min-height:84px;border:0;border-radius:22px;padding:14px 16px;text-align:left;font-size:20px;font-weight:900}
+.bigtile .sub{display:block;font-size:15px;font-weight:700;opacity:.85;margin-top:2px}
+.bigtile svg{flex:none}
+
+/* ===== game ===== */
+#board{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin:auto 0;width:100%;max-width:420px;align-self:center}
+.tile{aspect-ratio:5/6.4;border:0;border-radius:10px;background:var(--cream);border-bottom:6px solid #CDBF9F;font-family:Nunito,sans-serif;font-weight:1000;font-size:clamp(22px,7vw,30px);color:var(--navy);display:flex;align-items:center;justify-content:center;transition:transform .15s,opacity .25s;padding:0;line-height:1}
+.tile.s-r{color:var(--clay)}.tile.s-g{color:#2E6B3F}.tile.s-b{color:#1F5A75}
+.tile.blocked{filter:brightness(.78)}
+.tile.sel{transform:translateY(-6px);box-shadow:0 0 0 4px var(--gold)}
+.tile.hint{box-shadow:0 0 0 4px #7FD1F0}
+.tile.gone{opacity:0;transform:scale(.6);pointer-events:none}
+.tile.empty{visibility:hidden}
+.tile.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.banner{display:flex;align-items:center;gap:12px;width:100%;border:0;text-align:left;background:var(--cream);color:var(--navy);border-radius:18px;padding:10px;min-height:76px}
+.banner .bthumb{width:56px;height:56px;flex:none;border-radius:12px;overflow:hidden;background:var(--ph)}
+.banner .bthumb img,.banner .bthumb video{width:100%;height:100%;object-fit:cover}
+.banner .bk{font-size:12px;font-weight:900;letter-spacing:1px;color:var(--clay)}
+.banner .bt{font-size:16px;font-weight:900;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.banner .go{flex:none;background:var(--navy);color:#fff;font-size:14px;font-weight:900;padding:10px 12px;border-radius:999px}
+.dots{display:flex;gap:6px}.dots i{width:8px;height:8px;border-radius:9px;background:#C9BFA8;display:block}.dots i.on{background:var(--navy)}
+
+/* ===== week ===== */
+.wrow{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:10px 12px;width:100%;text-align:left;color:var(--navy)}
+.wrow .wthumb{width:52px;height:52px;border-radius:10px;overflow:hidden;flex:none;background:var(--ph)}
+.wrow .wthumb img,.wrow .wthumb video{width:100%;height:100%;object-fit:cover}
+.wrow .day{font-size:12px;font-weight:900;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.wrow .what{font-size:16px;font-weight:900;line-height:1.2}
+.check{margin-left:auto;flex:none;width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center}
+.check.yes{background:var(--ok)}.check.no{background:var(--clay)}
+.bigone{background:var(--navy);color:#fff;border-radius:20px;padding:16px;border:3px solid var(--gold);display:flex;flex-direction:column;gap:10px}
+
+/* ===== make ===== */
+#makePreview{position:relative;touch-action:none}
+#makePreview .stk{pointer-events:auto;cursor:grab;outline:3px dashed rgba(31,42,68,.55);outline-offset:3px}
+.pick{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;aspect-ratio:1/1;border:3px dashed #B8AB8F;border-radius:18px;background:#F3ECDD;color:var(--muted);font-weight:900;font-size:18px}
+.seg{display:flex;background:#EFE7D6;border-radius:16px;padding:4px;gap:4px}
+.seg button{flex:1;min-height:48px;border:0;border-radius:12px;background:transparent;font-weight:900;font-size:16px;color:var(--navy)}
+.seg button.on{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.sent{display:flex;gap:12px;align-items:center;background:#fff;border:2px solid var(--line);border-radius:18px;padding:10px;width:100%;text-align:left;color:var(--navy)}
+.sent .sthumb{width:64px;height:64px;border-radius:12px;overflow:hidden;flex:none;background:var(--ph)}
+.sent .sthumb img,.sent .sthumb video{width:100%;height:100%;object-fit:cover}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:13px;font-weight:900}
+.pill.ok{background:#E3EFE6;color:#1E4D2B}.pill.wait{background:#F6E7DA;color:#8A3D12}.pill.love{background:#FBE3E3;color:#9C2C2C}.pill.star{background:#FFF1C9;color:#6B4E00}
+/* player */
+#playCard{width:100%;max-width:440px;align-self:center}
+.fade-in{animation:fin .35s ease}
+@keyframes fin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hearts{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
+.hearts span{position:absolute;bottom:-40px;font-size:34px;animation:up 1.6s ease-out forwards;color:#E8402F}
+@keyframes up{to{transform:translateY(-110vh) rotate(20deg);opacity:0}}
+.progress{height:6px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--gold)}
+</style>
+</head>
+<body>
+
+<!-- ============ WELCOME ============ -->
+<section class="screen light-screen" id="s-welcome">
+  <div class="col" style="margin:auto 0;gap:18px">
+    <div class="row" style="gap:12px"><div style="width:64px;height:64px;border-radius:18px;background:var(--clay);color:#fff;display:flex;align-items:center;justify-content:center" class="serif"><span style="font-size:30px">Hi</span></div><h1 style="font-size:40px">Hiello</h1></div>
+    <h2 style="font-size:26px;line-height:1.2">Family breaks for the people you love.</h2>
+    <p class="muted" style="margin:0;font-size:17px;line-height:1.45">Send Grandpa quick photo and video "commercials." He sees them on his home screen and between rounds of his mahjong game, so he's always caught up.</p>
+    <div class="col" style="gap:8px">
+      <label class="lbl" for="w-gp">What do the kids call your parent?</label>
+      <input class="field" id="w-gp" value="Grandpa" maxlength="20">
+      <label class="lbl" for="w-me">Your first name</label>
+      <input class="field" id="w-me" value="" placeholder="e.g. Chris" maxlength="20">
+      <label class="lbl" for="w-kid">A grandkid's name (for the sample updates)</label>
+      <input class="field" id="w-kid" value="" placeholder="e.g. Emma" maxlength="20">
+    </div>
+    <button class="btn primary" id="w-go">Start the demo</button>
+    <p class="muted" style="margin:0;font-size:14px;text-align:center">Test version: everything stays on this phone. Use the switch at the bottom to flip between the family side and Grandpa's side.</p>
+  </div>
+</section>
+
+<!-- ============ GRANDPARENT HOME ============ -->
+<section class="screen pad-bottom" id="s-gp" style="background:#2F5961;color:#fff">
+  <div class="row between" style="margin-bottom:14px">
+    <div><div class="kicker" style="color:var(--gold)">Hiello</div><h1 style="font-size:30px" id="gp-hello">Hi, Grandpa</h1></div>
+    <button class="icon-btn" aria-label="Settings" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div>
+  <div style="font-size:13px;font-weight:800;opacity:.85;margin:0 4px 6px">Home screen widget (preview)</div>
+  <button class="widget" id="gp-widget"></button>
+  <div class="col" style="margin-top:18px;gap:12px">
+    <button class="bigtile" style="background:var(--green);color:#fff" data-go="game">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F2C14E" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>
+      <span>Play Mahjong<span class="sub">Family breaks between rounds</span></span></button>
+    <button class="bigtile" style="background:var(--cream);color:var(--navy)" data-go="week">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#B9541A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span>This week in the family<span class="sub" id="gp-weeksub">See what everyone's up to</span></span></button>
+  </div>
+</section>
+
+<!-- ============ GAME ============ -->
+<section class="screen felt pad-bottom" id="s-game">
+  <div class="row between">
+    <button class="icon-btn" aria-label="Home" data-back="gp"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg></button>
+    <div style="text-align:center"><div class="serif" style="font-size:23px">Hiello Mahjong</div><div style="font-size:15px;font-weight:800;color:#CFE3D6" id="g-status">Round 1</div></div>
+    <button class="icon-btn" aria-label="Hint" id="g-hint"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></button>
+  </div>
+  <div style="text-align:center;font-size:14px;color:#CFE3D6;margin-top:8px">Match two of the same tile. A tile can move if its left or right side is open.</div>
+  <div id="board"></div>
+  <div class="row" style="justify-content:center;margin:6px 0 12px"><button class="chip" id="g-shuffle" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)">Shuffle tiles</button></div>
+  <button class="banner" id="g-banner"></button>
+</section>
+
+<!-- ============ FAMILY BREAK / PLAYER ============ -->
+<section class="screen dark" id="s-play">
+  <div class="row between" style="margin-bottom:12px">
+    <span class="serif" style="font-size:22px;color:var(--gold)" id="p-title">We'll be right back…</span>
+    <span style="font-size:14px;font-weight:800;color:#C9CFE0" id="p-count"></span>
+  </div>
+  <div class="progress" id="p-prog" style="margin-bottom:12px;display:none"><i></i></div>
+  <div id="playCard"></div>
+  <div style="font-size:18px;font-weight:700;line-height:1.4;margin:14px 2px 0" id="p-caption"></div>
+  <div class="muted" style="font-size:14px;margin:6px 2px 0" id="p-meta"></div>
+  <div class="row" style="margin-top:auto;padding-top:16px;gap:12px">
+    <button class="btn primary" id="p-love"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.4 4.5 6.2 4.5c2.2 0 3.6 1.2 4.3 2.4h3c.7-1.2 2.1-2.4 4.3-2.4 3.8 0 5.8 3.9 4.2 7.2C19.5 16.4 12 21 12 21z"/></svg>Send love back</button>
+    <button class="btn ghost" id="p-done">Back to game</button>
+  </div>
+</section>
+
+<!-- ============ WEEK ============ -->
+<section class="screen light-screen pad-bottom" id="s-week">
+  <div class="row between" style="margin-bottom:10px">
+    <button class="icon-btn" aria-label="Back" data-back="gp"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <span class="kicker">This week in the family</span><span style="width:52px"></span>
+  </div>
+  <h1 style="font-size:27px;line-height:1.15" id="wk-title">You're all caught up.</h1>
+  <div id="wk-status" style="margin-top:10px"></div>
+  <button class="btn navy" id="wk-recap" style="margin-top:12px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>Play the week recap</button>
+  <div class="col" id="wk-list" style="margin-top:12px;gap:10px"></div>
+  <div class="col" id="wk-big" style="margin-top:14px"></div>
+</section>
+
+<!-- ============ FAMILY HOME ============ -->
+<section class="screen light-screen pad-bottom" id="s-fam">
+  <div class="row between" style="margin-bottom:12px">
+    <div><div class="kicker">Hiello · Family side</div><h1 style="font-size:28px" id="fam-hello">Keep Grandpa in the loop</h1></div>
+    <button class="icon-btn" aria-label="Settings" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+  <button class="btn primary" data-go="make" style="min-height:64px;font-size:20px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Make a Hiello</button>
+  <p class="muted" style="margin:10px 2px 0;font-size:15px" id="fam-sub">Takes under a minute: a photo or 15-second video, a note, a sticker.</p>
+  <h3 style="font-size:20px;margin:18px 2px 10px">Sent</h3>
+  <div class="col" id="fam-list" style="gap:10px"></div>
+</section>
+
+<!-- ============ MAKE ============ -->
+<section class="screen light-screen pad-bottom" id="s-make">
+  <div class="row between" style="margin-bottom:10px">
+    <button class="icon-btn" aria-label="Cancel" data-back="fam"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <h2 style="font-size:24px">Make a Hiello</h2><span style="width:52px"></span>
+  </div>
+  <input type="file" id="m-file" accept="image/*,video/*" style="display:none">
+  <button class="pick" id="m-pick"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg>Add a photo or video<span style="font-size:14px;font-weight:700">Short videos work best (about 15 seconds)</span></button>
+  <div id="makePreview" style="display:none"></div>
+  <div id="m-hint" class="muted" style="display:none;font-size:14px;text-align:center;margin-top:8px">Drag the sticker anywhere · <button id="m-change" style="border:0;background:none;color:var(--clay);font-weight:900;font-size:14px;text-decoration:underline">change photo</button></div>
+  <div class="col" style="margin-top:14px;gap:8px">
+    <label class="lbl" for="m-note">Sticker note (short and sweet)</label>
+    <input class="field" id="m-note" maxlength="40">
+    <div class="chips" id="m-quick"></div>
+    <label class="lbl" for="m-cap" style="margin-top:8px">What's happening? (optional)</label>
+    <textarea class="field" id="m-cap" rows="2" maxlength="120" placeholder="e.g. Emma lost her first tooth today!"></textarea>
+    <div class="lbl" style="margin-top:8px">Look</div>
+    <div class="chips" id="m-tpl"></div>
+    <div class="lbl" style="margin-top:8px">What kind of update?</div>
+    <div class="seg" id="m-type"><button data-v="everyday" class="on">Everyday update</button><button data-v="big">Big moment ★</button></div>
+    <div id="m-bigfields" class="panel col" style="display:none;gap:8px">
+      <div style="font-size:14px;color:var(--muted)">Big moments get a gold "worth the trip" card, and Grandpa can tap "I'll be there."</div>
+      <label class="lbl" for="m-btitle">Event</label>
+      <input class="field" id="m-btitle" maxlength="50" placeholder="Championship game">
+      <label class="lbl" for="m-bwhen">When</label>
+      <input class="field" id="m-bwhen" type="datetime-local">
+    </div>
+  </div>
+  <button class="btn primary" id="m-send" style="margin-top:18px;min-height:62px;font-size:20px">Send to Grandpa</button>
+</section>
+
+<!-- ============ SETTINGS ============ -->
+<section class="screen light-screen pad-bottom" id="s-settings">
+  <div class="row between" style="margin-bottom:10px">
+    <button class="icon-btn" aria-label="Back" id="set-back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h2 style="font-size:24px">Settings</h2><span style="width:52px"></span>
+  </div>
+  <div class="col" style="gap:8px">
+    <label class="lbl" for="set-gp">Grandparent's name</label><input class="field" id="set-gp" maxlength="20">
+    <label class="lbl" for="set-me">Your name</label><input class="field" id="set-me" maxlength="20">
+  </div>
+  <div class="panel col" style="margin-top:16px;gap:10px">
+    <div class="serif" style="font-size:19px">Demo tools</div>
+    <button class="btn light" id="set-sim">Send a surprise Hiello in 10 seconds</button>
+    <div class="muted" style="font-size:14px">Then go play mahjong on Grandpa's side to see it arrive live.</div>
+    <button class="btn light" id="set-samples">Add sample family updates</button>
+    <button class="btn light" id="set-reset" style="color:#9C2C2C">Erase everything and start over</button>
+  </div>
+  <p class="muted" style="font-size:14px;margin-top:16px;line-height:1.45">Hiello test build. In this version everything is saved only on this phone. Sending between two phones, the real home screen widget and notifications come next.</p>
+</section>
+
+<div id="demobar"><button data-mode="fam">Family side</button><button data-mode="gp">Grandpa's phone</button></div>
+<div id="toast"><div class="thumb"></div><div style="flex:1;min-width:0"><div class="t1">JUST ARRIVED · LIVE</div><div class="t2"></div></div><button>Watch</button></div>
+<div id="msg"></div>
+<div class="hearts" id="hearts"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   Hiello test build — everything is stored on this device.
+   Posts live in localStorage ('hiello_v1'); photos/videos in IndexedDB ('hiello').
+   ========================================================= */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const DAY = 86400000;
+
+/* ---------- storage ---------- */
+const KEY = 'hiello_v1';
+let S = load();
+function blank(){ return { setup:false, gp:'Grandpa', me:'', kid:'', mode:'fam', posts:[], game:{round:1}, rot:0 }; }
+function load(){ try { const v = JSON.parse(localStorage.getItem(KEY)); return v ? Object.assign(blank(), v) : blank(); } catch(e){ return blank(); } }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){ say('Could not save — phone storage may be full.'); } }
+
+let dbp = null;
+function db(){
+  if (!dbp) dbp = new Promise((res, rej) => {
+    const r = indexedDB.open('hiello', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('media');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+  return dbp;
+}
+async function putMedia(key, blob){ const d = await db(); return new Promise((res, rej) => { const t = d.transaction('media','readwrite'); t.objectStore('media').put(blob, key); t.oncomplete = res; t.onerror = () => rej(t.error); }); }
+async function getMedia(key){ const d = await db(); return new Promise((res) => { const q = d.transaction('media').objectStore('media').get(key); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); }); }
+async function clearMedia(){ const d = await db(); return new Promise(res => { const t = d.transaction('media','readwrite'); t.objectStore('media').clear(); t.oncomplete = res; }); }
+const urlCache = {};
+async function mediaURL(post){
+  if (!post.media) return null;
+  if (urlCache[post.media.key]) return urlCache[post.media.key];
+  const b = await getMedia(post.media.key);
+  if (!b) return null;
+  return (urlCache[post.media.key] = URL.createObjectURL(b));
+}
+
+/* ---------- small UI helpers ---------- */
+let msgT;
+function say(t){ const m = $('#msg'); m.textContent = t; m.classList.add('on'); clearTimeout(msgT); msgT = setTimeout(() => m.classList.remove('on'), 2600); }
+function hearts(){ const h = $('#hearts'); for (let i=0;i<14;i++){ const s = document.createElement('span'); s.textContent = '♥'; s.style.left = (8 + Math.random()*84) + '%'; s.style.animationDelay = (Math.random()*0.5) + 's'; s.style.fontSize = (24 + Math.random()*26) + 'px'; h.appendChild(s); setTimeout(() => s.remove(), 2400); } }
+function haptic(){ try { window.Capacitor?.Plugins?.Haptics?.impact({style:'LIGHT'}); } catch(e){} }
+function gpName(){ return S.gp || 'Grandpa'; }
+function meName(){ return S.me || 'Family'; }
+function dayLabel(t){ const d = new Date(t); const days = Math.floor((startOfDay(Date.now()) - startOfDay(t)) / DAY); if (days <= 0) return 'Today'; if (days === 1) return 'Yesterday'; return d.toLocaleDateString(undefined,{weekday:'long'}); }
+function startOfDay(t){ const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); }
+function ago(t){ const m = Math.round((Date.now()-t)/60000); if (m < 1) return 'just now'; if (m < 60) return m + ' min ago'; const h = Math.round(m/60); if (h < 24) return h + 'h ago'; const d = Math.round(h/24); return d + (d === 1 ? ' day ago' : ' days ago'); }
+function whenLabel(iso){ if (!iso) return ''; const d = new Date(iso); if (isNaN(d)) return ''; return d.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'}) + ' · ' + d.toLocaleTimeString(undefined,{hour:'numeric', minute:'2-digit'}); }
+const HEART = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.4 4.5 6.2 4.5c2.2 0 3.6 1.2 4.3 2.4h3c.7-1.2 2.1-2.4 4.3-2.4 3.8 0 5.8 3.9 4.2 7.2C19.5 16.4 12 21 12 21z"/></svg>';
+const CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
+const PLAY = '<svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>';
+
+/* thumbnail <img>/<video> element html for a post */
+async function thumbHTML(post){
+  const u = await mediaURL(post);
+  if (!u) return '';
+  return post.media.kind === 'video' ? `<video src="${u}#t=0.1" muted playsinline preload="metadata"></video>` : `<img src="${u}" alt="">`;
+}
+
+/* ---------- card templates ---------- */
+const TEMPLATES = [['polaroid','Polaroid'],['comic','Comic'],['retro','Retro TV'],['postcard','Postcard']];
+async function cardHTML(post, opts={}){
+  const u = await mediaURL(post);
+  let media = '';
+  if (u) {
+    if (post.media.kind === 'video') media = opts.live ? `<video src="${u}" playsinline controls autoplay></video>` : `<video src="${u}#t=0.1" muted playsinline preload="metadata"></video><div class="play-badge">${PLAY}</div>`;
+    else media = `<img src="${u}" alt="">`;
+  }
+  const fs = opts.small ? 15 : 22;
+  const stk = post.note ? `<div class="stk" style="left:${post.sx ?? 50}%;top:${post.sy ?? 78}%;font-size:${fs}px">${esc(post.note)}</div>` : '';
+  const from = esc(post.from || meName());
+  const tpl = post.tpl || 'polaroid';
+  if (tpl === 'comic') return `<div class="card tpl-comic"><div class="media">${media}${stk}<div class="pow">${post.type==='big'?'BIG NEWS!':'HIELLO!'}</div></div><div class="foot">${esc(post.caption || ('Love, ' + from))}</div></div>`;
+  if (tpl === 'retro') return `<div class="card tpl-retro"><div class="media">${media}${stk}</div><div class="foot"><span>CHANNEL ${esc((post.from||'FAMILY').toUpperCase())}</span><span class="knobs"><i></i><i></i></span></div></div>`;
+  if (tpl === 'postcard') return `<div class="card tpl-postcard"><div class="media">${media}${stk}</div><div class="foot"><div class="msgtxt">${esc(post.caption || 'Wish you were here!')}<div style="font-size:.8em;color:var(--muted);margin-top:4px">— ${from}</div></div><div class="stamp">${HEART}</div></div></div>`;
+  return `<div class="card tpl-polaroid"><div class="media">${media}${stk}</div><div class="foot">From ${from}</div></div>`;
+}
+
+/* ---------- navigation ---------- */
+let current = null, prevForSettings = 'fam';
+function go(name){
+  if (name === 'settings') prevForSettings = current || 'fam';
+  $$('.screen').forEach(s => s.classList.toggle('on', s.id === 's-' + name));
+  current = name;
+  const showBar = S.setup && ['gp','fam','week'].includes(name);
+  $('#demobar').classList.toggle('on', showBar);
+  $$('#demobar button').forEach(b => b.classList.toggle('on', b.dataset.mode === S.mode));
+  if (name !== 'play') stopPlayback();
+  if (name !== 'game') stopBanner();
+  ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, game:enterGame, settings:renderSettings}[name] || (()=>{}))();
+  const sc = $('#s-' + name); if (sc) sc.scrollTop = 0;
+}
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (g) { go(g.dataset.go); return; }
+  const b = e.target.closest('[data-back]'); if (b) { go(b.dataset.back); return; }
+});
+$$('#demobar button').forEach(b => b.onclick = () => { S.mode = b.dataset.mode; save(); go(S.mode); });
+
+/* ---------- welcome ---------- */
+$('#w-go').onclick = async () => {
+  S.gp = $('#w-gp').value.trim() || 'Grandpa';
+  S.me = $('#w-me').value.trim() || 'Chris';
+  S.kid = $('#w-kid').value.trim() || 'Emma';
+  S.setup = true; S.mode = 'fam';
+  save();
+  try { await addSamples(); say('Sample updates added. Try making your own!'); }
+  catch(e){ say('Photo storage is off in this browser, so samples were skipped.'); }
+  go('fam');
+};
+
+/* ---------- sample content (drawn pictures, no photos needed) ---------- */
+function drawScene(kind){
+  const c = document.createElement('canvas'); c.width = c.height = 900; const x = c.getContext('2d');
+  const sky = (a,b) => { const g = x.createLinearGradient(0,0,0,900); g.addColorStop(0,a); g.addColorStop(1,b); x.fillStyle = g; x.fillRect(0,0,900,900); };
+  if (kind === 'soccer'){
+    sky('#9FD3F0','#CFEAF7');
+    for (let i=0;i<6;i++){ x.fillStyle = i%2 ? '#4FA35A' : '#5BB467'; x.fillRect(0,420+i*80,900,80); }
+    x.strokeStyle = '#fff'; x.lineWidth = 10; x.strokeRect(560,300,280,200); for (let i=0;i<8;i++){ x.beginPath(); x.moveTo(560+i*40,300); x.lineTo(560+i*40,500); x.stroke(); }
+    x.fillStyle='#fff'; x.beginPath(); x.arc(330,640,110,0,7); x.fill(); x.fillStyle='#222';
+    [[330,640],[260,600],[400,600],[290,720],[370,720]].forEach(([a,b],i)=>{ x.beginPath(); x.arc(a,b,i?26:38,0,7); x.fill(); });
+  } else if (kind === 'test'){
+    sky('#F6E7C8','#EBD3A5');
+    x.save(); x.translate(450,470); x.rotate(-0.06); x.fillStyle='#fff'; x.fillRect(-280,-340,560,700);
+    x.strokeStyle='#9DB7E0'; x.lineWidth=4; for (let i=0;i<11;i++){ x.beginPath(); x.moveTo(-240,-220+i*52); x.lineTo(240,-220+i*52); x.stroke(); }
+    x.fillStyle='#D13B2C'; x.font='900 150px Georgia'; x.textAlign='center'; x.fillText('10/10',0,-60);
+    x.font='bold 64px Georgia'; x.fillText('Great job!',60,140); x.restore();
+    star(x,700,200,90,'#F2C14E');
+  } else if (kind === 'tooth'){
+    sky('#FBD9E1','#F7C2CF');
+    x.fillStyle='#fff'; x.beginPath(); x.moveTo(330,300); x.bezierCurveTo(330,190,450,220,450,240); x.bezierCurveTo(450,220,570,190,570,300); x.bezierCurveTo(570,420,540,470,530,600); x.bezierCurveTo(520,680,470,660,465,560); x.lineTo(435,560); x.bezierCurveTo(430,660,380,680,370,600); x.bezierCurveTo(360,470,330,420,330,300); x.fill();
+    x.fillStyle='#222'; x.beginPath(); x.arc(405,350,14,0,7); x.arc(495,350,14,0,7); x.fill(); x.strokeStyle='#222'; x.lineWidth=8; x.beginPath(); x.arc(450,390,34,0.2,2.9); x.stroke();
+    star(x,220,220,50,'#F2C14E'); star(x,700,280,40,'#fff'); star(x,680,640,60,'#F2C14E');
+  } else {
+    sky('#22355E','#3E5A8C');
+    x.fillStyle='#F2C14E'; x.beginPath(); x.moveTo(310,250); x.lineTo(590,250); x.bezierCurveTo(590,450,530,520,450,530); x.bezierCurveTo(370,520,310,450,310,250); x.fill();
+    x.lineWidth=26; x.strokeStyle='#F2C14E'; x.beginPath(); x.arc(310,330,70,1.2,4.9); x.stroke(); x.beginPath(); x.arc(590,330,70,-1.6,1.9); x.stroke();
+    x.fillRect(420,520,60,110); x.fillRect(340,630,220,60);
+    x.fillStyle='#22355E'; x.font='900 74px Georgia'; x.textAlign='center'; x.fillText('#1',450,410);
+    for (let i=0;i<30;i++){ x.fillStyle = ['#F2C14E','#E8402F','#7FD1F0','#fff'][i%4]; x.fillRect(Math.random()*900, Math.random()*300, 14, 24); }
+  }
+  return new Promise(r => c.toBlob(r, 'image/jpeg', 0.85));
+}
+function star(x,cx,cy,r,col){ x.fillStyle=col; x.beginPath(); for (let i=0;i<10;i++){ const a = -Math.PI/2 + i*Math.PI/5, rr = i%2 ? r*0.45 : r; x.lineTo(cx+Math.cos(a)*rr, cy+Math.sin(a)*rr); } x.fill(); }
+
+async function addSamples(){
+  const kid = S.kid || 'Emma', g = gpName(), me = meName();
+  const now = Date.now();
+  const sat = new Date(); sat.setDate(sat.getDate() + ((6 - sat.getDay() + 7) % 7 || 7)); sat.setHours(10,0,0,0);
+  const iso = new Date(sat.getTime() - sat.getTimezoneOffset()*60000).toISOString().slice(0,16);
+  const list = [
+    {scene:'soccer', at: now - 3*DAY, note:`${kid} scored!`, caption:`Soccer practice: ${kid} scored in the drill today!`, tpl:'polaroid', sx:32, sy:22, watched:true},
+    {scene:'test', at: now - 2*DAY, note:'10 out of 10!', caption:`${kid} got every word right on her spelling test.`, tpl:'comic', sx:30, sy:80, watched:true},
+    {scene:'tooth', at: now - 1*DAY, note:`Hi ${g}!\nWe love you!`, caption:`${kid} lost her first tooth! She wanted you to see the gap.`, tpl:'retro', sx:50, sy:80},
+    {scene:'trophy', at: now - 3*3600000, note:'Can you come?', caption:`Championship game Saturday! ${kid} asked if you can come.`, tpl:'postcard', sx:50, sy:82, type:'big', title:'Championship game', when: iso}
+  ];
+  for (const s of list){
+    const key = 'm_' + uid();
+    await putMedia(key, await drawScene(s.scene));
+    S.posts.push({ id: uid(), at: s.at, from: me, note: s.note, caption: s.caption, tpl: s.tpl, sx: s.sx, sy: s.sy, type: s.type || 'everyday', title: s.title || '', when: s.when || '', media:{kind:'image', key}, watched: !!s.watched, hearts: s.watched ? 1 : 0, rsvp: null, sample: true });
+  }
+  S.posts.sort((a,b) => a.at - b.at);
+  save();
+}
+
+/* ---------- family side ---------- */
+async function renderFam(){
+  $('#fam-hello').textContent = `Keep ${gpName()} in the loop`;
+  const list = $('#fam-list');
+  const posts = [...S.posts].sort((a,b) => b.at - a.at);
+  if (!posts.length){ list.innerHTML = `<div class="panel muted" style="text-align:center">Nothing sent yet. Your first Hiello will show up here.</div>`; return; }
+  const rows = [];
+  for (const p of posts){
+    const th = await thumbHTML(p);
+    let pills = p.watched ? `<span class="pill ok">${CHECK.replace('#fff','#1E4D2B')} ${esc(gpName())} watched</span>` : `<span class="pill wait">Not watched yet</span>`;
+    if (p.hearts) pills += ` <span class="pill love">${HEART} ×${p.hearts}</span>`;
+    if (p.type === 'big') pills += ` <span class="pill star">★ ${p.rsvp === 'yes' ? esc(gpName()) + ' is coming!' : p.rsvp === 'recap' ? 'Wants the recap' : 'Big moment'}</span>`;
+    rows.push(`<div class="sent"><div class="sthumb">${th}</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:900;line-height:1.2">${esc(p.caption || p.note || 'Hiello')}</div><div class="muted" style="font-size:13px;margin:2px 0 6px">${ago(p.at)}</div><div style="display:flex;flex-wrap:wrap;gap:6px">${pills}</div></div></div>`);
+  }
+  list.innerHTML = rows.join('');
+}
+
+/* ---------- make a Hiello ---------- */
+const M = { blob:null, kind:null, url:null, tpl:'polaroid', sx:50, sy:78, type:'everyday' };
+function resetMake(){
+  if (M.url) URL.revokeObjectURL(M.url);
+  Object.assign(M, { blob:null, kind:null, url:null, tpl:'polaroid', sx:50, sy:78, type:'everyday' });
+  $('#m-note').value = `Hi ${gpName()}! We love you!`;
+  $('#m-cap').value = ''; $('#m-btitle').value = ''; $('#m-bwhen').value = '';
+  $('#m-pick').style.display = ''; $('#makePreview').style.display = 'none'; $('#m-hint').style.display = 'none';
+  $('#m-send').textContent = `Send to ${gpName()}`;
+  $('#m-quick').innerHTML = ['Love you!','Miss you!','Big news!','Thinking of you','Proud of you!'].map(t => `<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('');
+  $('#m-tpl').innerHTML = TEMPLATES.map(([v,n]) => `<button class="chip${v===M.tpl?' on':''}" data-t="${v}">${n}</button>`).join('');
+  $$('#m-type button').forEach(b => b.classList.toggle('on', b.dataset.v === 'everyday'));
+  $('#m-bigfields').style.display = 'none';
+}
+$('#m-pick').onclick = () => $('#m-file').click();
+$('#m-change').onclick = () => $('#m-file').click();
+$('#m-file').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  if (f.type.startsWith('video/')){
+    if (f.size > 60*1024*1024){ say('That video is too big. Try one under a minute.'); return; }
+    M.blob = f; M.kind = 'video';
+  } else {
+    M.blob = await shrinkImage(f); M.kind = 'image';
+    if (!M.blob){ say("Couldn't open that photo. Try another."); return; }
+  }
+  if (M.url) URL.revokeObjectURL(M.url);
+  M.url = URL.createObjectURL(M.blob);
+  $('#m-pick').style.display = 'none'; $('#makePreview').style.display = ''; $('#m-hint').style.display = '';
+  drawPreview();
+};
+function shrinkImage(file){
+  return new Promise(res => {
+    const img = new Image(); const u = URL.createObjectURL(file);
+    img.onload = () => {
+      const max = 1280, sc = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth*sc); c.height = Math.round(img.naturalHeight*sc);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
+      c.toBlob(b => res(b), 'image/jpeg', 0.84);
+    };
+    img.onerror = () => { URL.revokeObjectURL(u); res(null); };
+    img.src = u;
+  });
+}
+function draftPost(){ return { note: $('#m-note').value.trim(), caption: $('#m-cap').value.trim(), tpl: M.tpl, sx: M.sx, sy: M.sy, type: M.type, from: meName(), media: null }; }
+async function drawPreview(){
+  if (!M.url) return;
+  const p = draftPost();
+  let html = await cardHTML(p);
+  const media = M.kind === 'video' ? `<video src="${M.url}#t=0.1" muted playsinline preload="metadata"></video>` : `<img src="${M.url}" alt="">`;
+  html = html.replace('<div class="media">', '<div class="media">' + media);
+  $('#makePreview').innerHTML = html;
+  const stk = $('#makePreview .stk'); if (stk) makeDraggable(stk);
+}
+function makeDraggable(el){
+  const area = el.parentElement;
+  el.addEventListener('pointerdown', ev => {
+    ev.preventDefault(); el.setPointerCapture(ev.pointerId);
+    const move = e => {
+      const r = area.getBoundingClientRect();
+      M.sx = Math.max(12, Math.min(88, (e.clientX - r.left) / r.width * 100));
+      M.sy = Math.max(10, Math.min(90, (e.clientY - r.top) / r.height * 100));
+      el.style.left = M.sx + '%'; el.style.top = M.sy + '%';
+    };
+    const up = () => { el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
+    el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  });
+}
+$('#m-note').oninput = () => { const s = $('#makePreview .stk'); if (s) s.textContent = $('#m-note').value; else drawPreview(); };
+$('#m-cap').oninput = () => { if (M.tpl === 'comic' || M.tpl === 'postcard') drawPreviewSoon(); };
+let prevT; function drawPreviewSoon(){ clearTimeout(prevT); prevT = setTimeout(drawPreview, 250); }
+$('#m-quick').onclick = e => { const b = e.target.closest('[data-q]'); if (!b) return; $('#m-note').value = b.dataset.q; $('#m-note').oninput(); };
+$('#m-tpl').onclick = e => { const b = e.target.closest('[data-t]'); if (!b) return; M.tpl = b.dataset.t; $$('#m-tpl .chip').forEach(c => c.classList.toggle('on', c === b)); drawPreview(); };
+$('#m-type').onclick = e => { const b = e.target.closest('button'); if (!b) return; M.type = b.dataset.v; $$('#m-type button').forEach(c => c.classList.toggle('on', c === b)); $('#m-bigfields').style.display = M.type === 'big' ? '' : 'none'; drawPreview(); };
+$('#m-send').onclick = async () => {
+  if (!M.blob){ say('Add a photo or video first.'); return; }
+  if (M.type === 'big' && !$('#m-btitle').value.trim()){ say('Give the big moment a name, like "Championship game".'); $('#m-btitle').focus(); return; }
+  const btn = $('#m-send'); btn.disabled = true;
+  try {
+    const key = 'm_' + uid();
+    await putMedia(key, M.blob);
+    const p = draftPost();
+    Object.assign(p, { id: uid(), at: Date.now(), media:{kind:M.kind, key}, watched:false, hearts:0, rsvp:null, title: $('#m-btitle').value.trim(), when: $('#m-bwhen').value });
+    S.posts.push(p); save();
+    haptic();
+    go('fam');
+    say(`Sent! ${gpName()} will see it on his home screen and in his next game break.`);
+  } catch(err){ say('Could not save that one. Try a shorter video.'); }
+  btn.disabled = false;
+};
+
+/* ---------- grandparent home ---------- */
+function newest(){ return [...S.posts].sort((a,b) => b.at - a.at)[0]; }
+function unseen(){ return S.posts.filter(p => !p.watched).sort((a,b) => a.at - b.at); }
+async function renderGP(){
+  $('#gp-hello').textContent = `Hi, ${gpName()}`;
+  const p = unseen().slice(-1)[0] || newest();
+  const w = $('#gp-widget');
+  if (!p){ w.innerHTML = `<div style="padding:20px;text-align:center;font-weight:800">No Hiellos yet. When family sends one, it shows up right here.</div>`; w.onclick = null; }
+  else {
+    const th = await thumbHTML(p);
+    w.innerHTML = `<div class="wimg">${th}<div class="wtag">${p.watched ? 'LATEST HIELLO' : 'NEW HIELLO'}</div>${p.note ? `<div class="wstk">${esc(p.note)}</div>` : ''}</div>
+      <div class="row between" style="padding:10px 4px 2px"><div><div style="font-size:18px;font-weight:900">From ${esc(p.from)}</div><div class="muted" style="font-size:14px">${ago(p.at)}</div></div><span style="background:var(--clay);color:#fff;font-size:15px;font-weight:900;padding:10px 14px;border-radius:999px">Tap to watch</span></div>`;
+    w.onclick = () => openPlayer([p], 'gp');
+  }
+  const n = unseen().length;
+  $('#gp-weeksub').textContent = n ? `${n} new to watch` : "You're all caught up";
+}
+
+/* ---------- week ---------- */
+async function renderWeek(){
+  const weekAgo = Date.now() - 7*DAY;
+  const posts = S.posts.filter(p => p.at >= weekAgo).sort((a,b) => a.at - b.at);
+  const n = posts.filter(p => !p.watched).length;
+  $('#wk-title').textContent = n ? `${n} new update${n>1?'s':''} this week, ${gpName()}.` : `You're all caught up, ${gpName()}.`;
+  $('#wk-status').innerHTML = n ? `<div class="panel" style="background:#FFF4E6;border-color:#F3D3B0;font-weight:800">Watch the recap to catch up in about a minute.</div>`
+    : `<div class="row panel" style="background:#E3EFE6;border-color:#C6DDCC;font-weight:800;color:#1E4D2B"><span class="check yes" style="margin:0">${CHECK}</span>You've seen every update. Nothing important missed.</div>`;
+  $('#wk-recap').style.display = posts.length ? '' : 'none';
+  $('#wk-recap').onclick = () => openPlayer(posts, 'week', true);
+  const rows = [];
+  for (const p of posts){
+    rows.push(`<button class="wrow" data-pid="${p.id}"><div class="wthumb">${await thumbHTML(p)}</div><div style="min-width:0"><div class="day">${dayLabel(p.at)}${p.type==='big'?' · ★ Big moment':''}</div><div class="what">${esc(p.caption || p.note)}</div></div><span class="check ${p.watched?'yes':'no'}">${p.watched ? CHECK : '<span style="color:#fff;font-weight:900;font-size:13px">NEW</span>'}</span></button>`);
+  }
+  $('#wk-list').innerHTML = rows.join('') || `<div class="panel muted" style="text-align:center">No updates this week yet.</div>`;
+  $$('#wk-list .wrow').forEach(r => r.onclick = () => openPlayer([S.posts.find(p => p.id === r.dataset.pid)], 'week'));
+  const bigs = S.posts.filter(p => p.type === 'big' && (!p.when || new Date(p.when).getTime() > Date.now() - DAY)).sort((a,b) => (a.when||'').localeCompare(b.when||''));
+  $('#wk-big').innerHTML = bigs.map(p => `<div class="bigone"><div class="row" style="gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="#F2C14E" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8z"/></svg><span class="kicker" style="color:var(--gold)">The big one · worth the trip</span></div>
+    <div class="serif" style="font-size:22px;line-height:1.2">${esc(p.title || 'Big moment')}</div>${p.when ? `<div style="font-size:16px;font-weight:800;color:var(--gold)">${esc(whenLabel(p.when))}</div>` : ''}
+    <div style="font-size:15px;line-height:1.4;color:#DDE2EE">${esc(p.caption || '')} Save your energy for this one.</div>
+    ${p.rsvp ? `<div class="panel" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff;font-weight:800">${p.rsvp==='yes' ? "You said you'll be there. They can't wait!" : "We'll send you the recap right after."} <button data-rsvp-undo="${p.id}" style="border:0;background:none;color:var(--gold);font-weight:900;text-decoration:underline;font-size:15px">Change</button></div>`
+      : `<div class="row" style="gap:10px"><button class="btn primary" data-rsvp="yes" data-pid="${p.id}" style="min-height:52px;font-size:16px">I'll be there</button><button class="btn ghost" data-rsvp="recap" data-pid="${p.id}" style="min-height:52px;font-size:16px">Send me the recap</button></div>`}</div>`).join('');
+}
+$('#wk-big').onclick = e => {
+  const b = e.target.closest('[data-rsvp]'); const u = e.target.closest('[data-rsvp-undo]');
+  if (b){ const p = S.posts.find(x => x.id === b.dataset.pid); p.rsvp = b.dataset.rsvp; save(); haptic(); if (p.rsvp === 'yes') hearts(); renderWeek(); say(p.rsvp === 'yes' ? 'They\'ll be so happy!' : 'Got it, recap coming.'); }
+  if (u){ const p = S.posts.find(x => x.id === u.dataset.rsvpUndo); p.rsvp = null; save(); renderWeek(); }
+};
+
+/* ---------- player / family break ---------- */
+const P = { queue:[], i:0, back:'gp', recap:false, timer:null };
+function stopPlayback(){ clearTimeout(P.timer); P.timer = null; $$('#playCard video').forEach(v => { try { v.pause(); } catch(e){} }); }
+function openPlayer(queue, back, recap=false){
+  queue = queue.filter(Boolean); if (!queue.length) return;
+  Object.assign(P, { queue, i:0, back, recap });
+  go('play'); showSlide();
+}
+async function showSlide(){
+  stopPlayback();
+  const p = P.queue[P.i];
+  $('#p-title').textContent = P.back === 'game' ? "We'll be right back…" : P.recap ? 'Your week in a minute' : (p.watched ? 'A Hiello from ' + p.from : 'New from ' + p.from);
+  $('#p-count').textContent = P.queue.length > 1 ? `${P.i+1} of ${P.queue.length}` : '';
+  $('#playCard').innerHTML = await cardHTML(p, {live:true});
+  $('#playCard').firstElementChild.classList.add('fade-in');
+  $('#p-caption').textContent = p.caption || '';
+  $('#p-meta').textContent = `From ${p.from} · ${ago(p.at)}` + (p.type === 'big' && p.title ? ` · ★ ${p.title}` : '');
+  $('#p-done').textContent = P.back === 'game' ? 'Back to game' : (P.i < P.queue.length - 1 ? 'Next' : 'Done');
+  $('#p-love').innerHTML = HEART.replace('16','20').replace('16','20') + (p.hearts ? ' Love sent ×' + p.hearts : ' Send love back');
+  if (!p.watched){ p.watched = true; p.watchedAt = Date.now(); save(); }
+  const prog = $('#p-prog');
+  prog.style.display = P.recap ? '' : 'none';
+  const vid = $('#playCard video');
+  if (P.recap){
+    const bar = prog.firstElementChild; bar.style.transition = 'none'; bar.style.width = '0';
+    if (vid){ vid.onended = () => advance(); vid.ontimeupdate = () => { if (vid.duration) bar.style.width = (vid.currentTime / vid.duration * 100) + '%'; }; }
+    else { requestAnimationFrame(() => { bar.style.transition = 'width 6s linear'; bar.style.width = '100%'; }); P.timer = setTimeout(advance, 6000); }
+  }
+  if (vid) vid.play().catch(() => {});
+}
+function advance(){ if (P.i < P.queue.length - 1){ P.i++; showSlide(); } else { stopPlayback(); if (P.recap) say("That's the week! You're all caught up."); go(P.back); } }
+$('#p-love').onclick = () => { const p = P.queue[P.i]; p.hearts = (p.hearts||0) + 1; save(); hearts(); haptic(); $('#p-love').innerHTML = HEART.replace('16','20').replace('16','20') + ' Love sent ×' + p.hearts; };
+$('#p-done').onclick = () => { if (P.back === 'game'){ stopPlayback(); go('game'); nextRoundIfCleared(); return; } advance(); };
+
+/* ---------- settings ---------- */
+function renderSettings(){ $('#set-gp').value = S.gp; $('#set-me').value = S.me; }
+$('#set-back').onclick = () => { S.gp = $('#set-gp').value.trim() || 'Grandpa'; S.me = $('#set-me').value.trim() || 'Family'; save(); go(prevForSettings === 'settings' ? S.mode : prevForSettings); };
+$('#set-samples').onclick = async () => { await addSamples(); say('Sample updates added.'); };
+$('#set-reset').onclick = async () => {
+  if (!confirmTwice()) return;
+  try { localStorage.removeItem(KEY); } catch(e){}
+  await clearMedia(); S = blank(); go('welcome');
+};
+let resetArm = 0;
+function confirmTwice(){ const now = Date.now(); if (now - resetArm < 4000) return true; resetArm = now; say('Tap again to erase everything.'); return false; }
+$('#set-sim').onclick = () => {
+  S.gp = $('#set-gp').value.trim() || 'Grandpa'; S.me = $('#set-me').value.trim() || 'Family'; save();
+  say('A surprise Hiello will arrive in 10 seconds. Go play!');
+  S.mode = 'gp'; save();
+  setTimeout(async () => {
+    const key = 'm_' + uid(); await putMedia(key, await drawScene(['soccer','tooth','test','trophy'][Math.floor(Math.random()*4)]));
+    const p = { id: uid(), at: Date.now(), from: meName(), note: `Thinking of you, ${gpName()}!`, caption: 'Just wanted to say hi between practices!', tpl: 'polaroid', sx:50, sy:80, type:'everyday', media:{kind:'image', key}, watched:false, hearts:0, rsvp:null };
+    S.posts.push(p); save(); arrived(p);
+  }, 10000);
+  go('gp');
+};
+async function arrived(p){
+  const t = $('#toast');
+  t.querySelector('.thumb').innerHTML = await thumbHTML(p);
+  t.querySelector('.t2').textContent = `${p.from} sent a Hiello just now`;
+  t.querySelector('button').onclick = () => { t.classList.remove('on'); openPlayer([p], current === 'game' ? 'game' : (current === 'play' ? P.back : 'gp')); };
+  t.classList.add('on'); haptic();
+  setTimeout(() => t.classList.remove('on'), 9000);
+  if (current === 'gp') renderGP();
+  if (current === 'game') renderBanner();
+  if (current === 'fam') renderFam();
+}
+
+/* =========================================================
+   MAHJONG — 6 x 6 board, 18 pairs. A tile is free when its left or right neighbour is empty.
+   ========================================================= */
+const COLS = 6, ROWS = 6;
+const FACES = [
+  ['一','s-b'],['二','s-b'],['三','s-b'],['四','s-b'],['五','s-b'],['六','s-b'],
+  ['中','s-r'],['發','s-g'],['東',''],['南',''],['西',''],['北',''],
+  ['●','s-r'],['●●','s-g'],['竹','s-g'],['萬','s-r'],['✿','s-r'],['★','s-b']
+];
+const G = { cells:[], sel:-1, cleared:false };
+function newBoard(){
+  let types = []; FACES.forEach((_,i) => types.push(i,i));
+  for (let tries=0; tries<200; tries++){
+    shuffleArr(types);
+    G.cells = types.slice();
+    if (findPair()) break;
+  }
+  G.sel = -1; G.cleared = false;
+}
+function shuffleArr(a){ for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
+function isFree(i){
+  if (G.cells[i] == null) return false;
+  const c = i % COLS, r = i - c;
+  let leftOpen = true, rightOpen = true;
+  for (let k=r; k<i; k++) if (G.cells[k] != null) { leftOpen = false; break; }
+  for (let k=i+1; k<r+COLS; k++) if (G.cells[k] != null) { rightOpen = false; break; }
+  return leftOpen || rightOpen;
+}
+function findPair(){
+  const free = []; G.cells.forEach((t,i) => { if (t != null && isFree(i)) free.push(i); });
+  for (let a=0;a<free.length;a++) for (let b=a+1;b<free.length;b++) if (G.cells[free[a]] === G.cells[free[b]]) return [free[a], free[b]];
+  return null;
+}
+function left(){ return G.cells.filter(t => t != null).length; }
+function renderBoard(){
+  const b = $('#board');
+  b.innerHTML = G.cells.map((t,i) => {
+    if (t == null) return `<button class="tile empty" tabindex="-1" aria-hidden="true"></button>`;
+    const [face, cls] = FACES[t];
+    return `<button class="tile ${cls}${isFree(i)?'':' blocked'}${i===G.sel?' sel':''}" data-i="${i}" aria-label="Tile ${face}">${face}</button>`;
+  }).join('');
+  $('#g-status').textContent = `Round ${S.game.round} · ${left()/2} pairs left`;
+}
+$('#board').onclick = e => {
+  const el = e.target.closest('.tile[data-i]'); if (!el) return;
+  const i = +el.dataset.i;
+  if (!isFree(i)){ el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); return; }
+  haptic();
+  if (G.sel === -1 || G.sel === i){ G.sel = G.sel === i ? -1 : i; renderBoard(); return; }
+  if (G.cells[G.sel] === G.cells[i]){
+    const a = G.sel; G.sel = -1;
+    $$('#board .tile').forEach(t => { if (+t.dataset.i === a || +t.dataset.i === i) t.classList.add('gone'); });
+    setTimeout(() => {
+      G.cells[a] = null; G.cells[i] = null;
+      if (!left()){ roundCleared(); return; }
+      if (!findPair()) { reshuffle(); say('No moves left, so we shuffled the tiles.'); }
+      renderBoard();
+    }, 230);
+  } else { G.sel = i; renderBoard(); }
+};
+function reshuffle(){
+  const idx = [], vals = [];
+  G.cells.forEach((t,i) => { if (t != null){ idx.push(i); vals.push(t); } });
+  for (let tries=0; tries<100; tries++){ shuffleArr(vals); idx.forEach((ix,k) => G.cells[ix] = vals[k]); if (findPair()) break; }
+}
+$('#g-shuffle').onclick = () => { reshuffle(); G.sel = -1; renderBoard(); };
+$('#g-hint').onclick = () => { const p = findPair(); if (!p) return; renderBoard(); p.forEach(i => $(`#board .tile[data-i="${i}"]`)?.classList.add('hint')); };
+function enterGame(){ if (!G.cells.length || G.cleared) newBoard(); renderBoard(); renderBanner(); startBanner(); }
+function roundCleared(){
+  G.cleared = true; renderBoard(); hearts();
+  say(`Round ${S.game.round} complete!`);
+  S.game.round++; save();
+  setTimeout(() => { const p = nextBreakPost(); if (p) openPlayer([p], 'game'); else { newBoard(); renderBoard(); } }, 900);
+}
+function nextRoundIfCleared(){ if (G.cleared){ newBoard(); renderBoard(); renderBanner(); } }
+/* Which Hiello plays in a break: the oldest unwatched one first, otherwise an "encore" from the rotation. */
+function nextBreakPost(){
+  const u = unseen(); if (u.length) return u[0];
+  if (!S.posts.length) return null;
+  const sorted = [...S.posts].sort((a,b) => b.at - a.at).slice(0, 8);
+  S.rot = (S.rot + 1) % sorted.length; save();
+  return sorted[S.rot];
+}
+/* bottom banner rotates every 12 seconds */
+let bannerT = null, bannerIdx = 0;
+function bannerPool(){ const u = unseen(); return u.length ? u : [...S.posts].sort((a,b) => b.at - a.at).slice(0, 5); }
+async function renderBanner(){
+  const pool = bannerPool(); const el = $('#g-banner');
+  if (!pool.length){ el.innerHTML = `<div style="padding:8px;font-weight:800">Family breaks will appear here when someone sends a Hiello.</div>`; el.onclick = null; return; }
+  bannerIdx %= pool.length; const p = pool[bannerIdx];
+  const isNew = !p.watched;
+  el.innerHTML = `<div class="bthumb">${await thumbHTML(p)}</div><div style="flex:1;min-width:0"><div class="bk" style="color:${isNew?'var(--clay)':'#1F5A75'}">${isNew ? 'FAMILY BREAK · NEW' : 'ENCORE · ' + dayLabel(p.at).toUpperCase()}</div><div class="bt">${esc(p.caption || p.note)}</div>${pool.length > 1 ? `<div class="dots" style="margin-top:6px">${pool.map((_,k) => `<i class="${k===bannerIdx?'on':''}"></i>`).join('')}</div>` : ''}</div><span class="go">${isNew ? 'Watch' : 'Replay'}</span>`;
+  el.onclick = () => openPlayer([p], 'game');
+}
+function startBanner(){ stopBanner(); bannerT = setInterval(() => { bannerIdx++; renderBanner(); }, 12000); }
+function stopBanner(){ clearInterval(bannerT); bannerT = null; }
+
+/* expose a small test hook */
+window.__hi = { S:()=>S, G, isFree, findPair, go, addSamples, openPlayer };
+
+/* ---------- start ---------- */
+if (!S.setup) go('welcome'); else go(S.mode === 'gp' ? 'gp' : 'fam');
+</script>
+</body>
+</html>
