@@ -713,6 +713,7 @@ function go(name){
   if (name !== 'photos') $$('#ph-deck video').forEach(v => v.pause());
   if (name !== 'golf') stopGolf();
   if (name !== 'cam') stopCam();
+  const rx = document.getElementById('react'); if (rx) rx.hidden = true;
   ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, cam:enterCam, game:enterGame, golf:enterGolf, trivia:enterTrivia, photos:renderPhotos, rsvp:renderRsvp, story:showStory, settings:renderSettings}[name] || (()=>{}))();
   const sc = $('#s-' + name); if (sc) sc.scrollTop = 0;
 }
