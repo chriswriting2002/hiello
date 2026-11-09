@@ -26,7 +26,7 @@ workflows:
         script: |
           if [ ! -d ios ]; then npx cap add ios; fi
       - name: App icon and launch screen
-        script: npx capacitor-assets generate --ios --iconBackgroundColor '#B9541A' --splashBackgroundColor '#FBF6EC'
+        script: npx capacitor-assets generate --ios --iconBackgroundColor '#AD5236' --splashBackgroundColor '#F7F1E8'
       - name: iPhone only, portrait only, app settings
         script: |
           PLIST=ios/App/App/Info.plist
