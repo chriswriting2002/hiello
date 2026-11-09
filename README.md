@@ -32,13 +32,16 @@ Sending between two phones (needs a server such as Supabase), the real iPhone ho
 `window.__hi` in the browser console: `S()` state, `findPair()`, `G` board, `go(name)`.
 
 ## Brand colors (Heritage forest)
+Order of loudness: **green leads, pink is second, red and faded yellow are only hints, navy is never louder than the green.**
+
 | Use | Color |
 |---|---|
-| Icon background, Grandpa's home, mahjong table | Forest `#23463A` |
-| Main buttons on light screens, headings | Navy `#1B2A4A` |
-| "hi" in the logo, buttons on dark screens, highlights | Khaki `#E3D5B8` |
-| Heart fill | Pink `#F2B8C6` |
-| Heart outline | Deep red `#A51D2A` |
-| Backgrounds | Warm white `#F7F5F0` |
+| Dark backdrops (Grandpa's home, mahjong table, Family Break), icon background | Forest `#23463A` / deep green ink `#1F3A31` |
+| Light backdrops | Pale green `#EEF4EE` (cards stay white) |
+| Main buttons, NEW tags, sticker borders, "This week" tile | Pink `#F2B8C6` with deep green text |
+| Text and headings | Deep green ink `#1F3A31` |
+| Hints: heart outlines, "NEW" text, red tiles | Deep red `#A51D2A` |
+| Hints: stars, Big One border, small labels on dark | Faded yellow `#F3E3B5` |
+| Logo "hi" | Khaki `#E3D5B8` |
 
-Rules: buttons on dark screens are khaki with navy text. Never put pink or red text on navy or forest.
+Rules: red never outshines pink; yellow is never the headline; pink or red text never sits on dark green.
