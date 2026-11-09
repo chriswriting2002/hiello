@@ -44,9 +44,9 @@ h1,h2,h3,.serif{font-family:Baskerville,'Libre Baskerville',Georgia,serif;font-w
 textarea.field{resize:none;line-height:1.35}
 .panel{background:#fff;border:2px solid var(--line);border-radius:20px;padding:14px}
 /* demo switch */
-#demobar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--sb) + 10px);z-index:50;background:rgba(20,26,44,.92);border-radius:999px;padding:5px;display:none;gap:4px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+#demobar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--sb) + 4px);z-index:50;background:rgba(20,26,44,.92);border-radius:999px;padding:5px;display:none;gap:4px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
 #demobar.on{display:flex}
-#demobar button{border:0;border-radius:999px;min-height:40px;padding:0 14px;font-size:14px;font-weight:900;background:transparent;color:#C9CFE0}
+#demobar button{border:0;border-radius:999px;min-height:30px;padding:0 12px;font-size:12px;white-space:nowrap;font-weight:900;background:transparent;color:#C9CFE0}
 #demobar button.on{background:#fff;color:var(--navy)}
 .pad-bottom{padding-bottom:calc(var(--sb) + 80px)}
 /* toast */
@@ -111,6 +111,12 @@ textarea.field{resize:none;line-height:1.35}
 .mj.shake{animation:shake .3s}
 #golfWrap{position:relative;margin:10px 0 8px;border-radius:20px;overflow:hidden;align-self:center;box-shadow:0 0 0 4px #8B5E3C}
 #golf{display:block;touch-action:none}
+.gfm{align-self:center;width:min(100%,420px);background:rgba(255,255,255,.08);border-radius:18px;padding:12px 16px;text-align:center}
+.gfm-l{font-size:17px;font-weight:900;margin-bottom:8px}
+.gfm-bar{height:18px;border-radius:9px;background:#2B3B66;overflow:hidden}
+.gfm-bar i{display:block;height:100%;width:0;border-radius:9px;background:#7FD39A;transition:width .05s}
+.gfm.hint .gfm-l{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.45}}
 .ans{min-height:64px;border:0;border-radius:16px;background:#fff;color:var(--navy);font-size:19px;font-weight:800;padding:10px 16px;text-align:left;width:100%}
 .ans.right{background:#DDF0E2;box-shadow:0 0 0 3px #2E6B3F}
 .ans.wrong{background:#FBE3EA;box-shadow:0 0 0 3px #9B1B1F}
@@ -197,10 +203,11 @@ textarea.field{resize:none;line-height:1.35}
 .hearts span{color:#F2B8C6!important;-webkit-text-stroke:2px #9B1B1F}
 
 /* ---- Grandpa home: Aura-frame style ---- */
-#s-gp{display:flex;flex-direction:column;gap:14px}
+#s-gp{flex-direction:column;gap:14px}
 #s-gp>*{flex-shrink:0}
-#s-gp{height:100dvh;min-height:0;overflow-y:auto}
-#s-gp>.frame{flex:1 1 300px;min-height:210px}
+#s-gp{height:100dvh;min-height:0;overflow-y:auto;padding-bottom:calc(var(--sb) + 52px)}
+#s-gp>.frame{flex:1 1 300px;min-height:210px;transition:margin .4s}
+#s-gp.hasnew>.frame{margin-right:70px}
 .faces{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 2px;scrollbar-width:none}
 .faces::-webkit-scrollbar{display:none}
 .face{flex:0 0 auto;border:0;background:none;color:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;width:86px;padding:0}
@@ -224,8 +231,53 @@ textarea.field{resize:none;line-height:1.35}
 .gpbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .gpbtn{border:0;border-radius:24px;min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:21px;font-weight:900;color:var(--navy);position:relative}
 .gpbtn .cnt{position:absolute;right:10px;top:10px;background:#9B1B1F;color:#fff;font-size:14px;font-weight:900;border-radius:999px;padding:3px 9px}
-@media (max-height:720px){#s-gp{gap:10px}#s-gp h1{font-size:24px}.face .av{width:54px;height:54px;font-size:24px}.gpbtn{min-height:92px;font-size:19px;gap:4px}.gpbtn svg{width:32px;height:32px}.bigstrip{font-size:15px;padding:10px 12px}}
+@media (max-height:720px){#s-gp{gap:9px}#s-gp>.frame{min-height:180px}#s-gp h1{font-size:24px}.face .av{width:54px;height:54px;font-size:24px}.gpbtn{min-height:92px;font-size:19px;gap:4px}.gpbtn svg{width:32px;height:32px}.bigstrip{font-size:15px;padding:10px 12px}}
 .bigstrip{border:0;border-radius:18px;background:#22366A;color:#fff;display:flex;align-items:center;gap:10px;padding:12px 14px;font-size:16px;font-weight:800;text-align:left}
+
+/* ---- swipe deck: slides follow the finger ---- */
+.sw{position:relative;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.sw-track{position:absolute;inset:0;will-change:transform}
+.sw-s{position:absolute;top:0;bottom:0;width:100%}
+.sw img,.sw video{pointer-events:none;-webkit-user-drag:none}
+.frame .sw-s{overflow:hidden}
+/* ---- NEW tab on the right edge ---- */
+.newtab{position:fixed;right:0;top:var(--tabtop,38%);z-index:30;border:0;background:var(--pink);color:var(--navy);border-radius:26px 0 0 26px;padding:14px 12px 14px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:-6px 8px 24px rgba(0,0,0,.45),0 0 0 3px #9B1B1F;animation:tabIn .6s cubic-bezier(.2,.9,.3,1.3),tabNudge 5s 2s ease-in-out infinite}
+.newtab .lab{font-size:15px;font-weight:900;letter-spacing:1px}
+.newtab .thumbs{display:flex;flex-direction:column;align-items:center}
+.newtab .thumbs span{width:58px;height:58px;border-radius:50%;overflow:hidden;border:3px solid #fff;background:#DADBDF;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.newtab .thumbs span+span{margin-top:-30px}
+.newtab .thumbs img,.newtab .thumbs video{width:100%;height:100%;object-fit:cover}
+.newtab .go{font-size:15px;font-weight:900;background:var(--navy);color:#fff;border-radius:999px;padding:6px 12px}
+@keyframes tabIn{from{transform:translateX(110%)}to{transform:none}}
+@keyframes tabNudge{0%,88%,100%{transform:none}92%{transform:translateX(-10px)}96%{transform:translateX(0)}}
+/* ---- story viewer ---- */
+#s-story{background:#000;color:#fff;padding:calc(var(--st) + 10px) 14px calc(var(--sb) + 16px)}
+.st-bars{display:flex;gap:5px}
+.st-bars i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.3);overflow:hidden}
+.st-bars i b{display:block;height:100%;width:0;background:#fff}
+.st-bars i.done b{width:100%}
+.st-top{display:flex;align-items:center;gap:10px;margin:12px 0 10px}
+.st-av{width:46px;height:46px;border-radius:50%;background:var(--pink);color:var(--navy);display:flex;align-items:center;justify-content:center;font-family:Baskerville,Georgia,serif;font-weight:700;font-size:22px;flex:none}
+.st-close{margin-left:auto;border:0;background:#fff;color:var(--navy);font-size:18px;font-weight:900;border-radius:999px;padding:12px 18px;display:flex;align-items:center;gap:6px}
+.st-body{position:relative;flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+.st-body .card{max-height:100%}
+.st-tap{position:absolute;top:0;bottom:0;width:35%;z-index:2;border:0;background:none}
+.st-cap{font-size:19px;font-weight:700;line-height:1.35;margin:12px 2px 0;min-height:26px}
+.st-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+/* ---- photos rolodex ---- */
+#s-photos{background:#0B1733;color:#fff}
+#ph-deck{flex:1 1 auto;min-height:260px;margin:10px -18px 0}
+#ph-deck .sw-s{display:flex;align-items:center;justify-content:center;padding:0 22px}
+#ph-deck .card{max-width:420px}
+.pop{position:absolute;left:50%;top:45%;z-index:5;pointer-events:none;animation:pop .9s ease-out forwards}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}60%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-80%) scale(1);opacity:0}}
+.lovebtn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:64px;border:0;border-radius:20px;background:var(--pink);color:var(--navy);font-size:20px;font-weight:900}
+.homebtn{display:flex;align-items:center;gap:6px;border:0;background:#fff;color:var(--navy);font-size:18px;font-weight:900;border-radius:999px;padding:12px 18px}
+/* ---- RSVP ---- */
+.rsvp-yes,.rsvp-no{display:flex;align-items:center;gap:14px;width:100%;min-height:76px;border:0;border-radius:20px;padding:12px 18px;font-size:21px;font-weight:900;text-align:left}
+.rsvp-yes{background:var(--pink);color:var(--navy)}
+.rsvp-no{background:#fff;color:var(--navy)}
+.rsvp-yes small,.rsvp-no small{display:block;font-size:15px;font-weight:700;opacity:.8;margin-top:2px}
 </style>
 </head>
 <body>
@@ -258,10 +310,12 @@ textarea.field{resize:none;line-height:1.35}
   <div class="faces" id="gp-faces"></div>
   <button class="frame" id="gp-frame" aria-label="Watch Hiello"></button>
   <div class="fdots" id="gp-dots"></div>
+  <div id="gp-tab"></div>
   <div id="gp-big"></div>
   <div class="gpbtns">
+    <button class="gpbtn" style="background:#F2B8C6" data-go="photos"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="15" height="13" rx="2"/><path d="M7 21h12a2 2 0 0 0 2-2V8"/><circle cx="8" cy="10" r="1.6"/><path d="M18 15l-4-4-8 7"/></svg>Photos</button>
     <button class="gpbtn" style="background:#C8CACE" data-go="games"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>Play a game</button>
-    <button class="gpbtn" style="background:#F2B8C6" data-go="week"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>This week<span class="cnt" id="gp-cnt" hidden></span></button>
+
   </div>
 </section>
 
@@ -301,8 +355,9 @@ textarea.field{resize:none;line-height:1.35}
     <div style="text-align:center"><div class="serif" style="font-size:23px">Putt-Putt Golf</div><div style="font-size:15px;font-weight:800;color:#CFD6E6" id="gf-status">Hole 1 of 6</div></div>
     <button class="icon-btn" aria-label="Restart hole" id="gf-reset"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button>
   </div>
-  <div style="text-align:center;font-size:15px;color:#CFD6E6;margin-top:8px">Touch anywhere, pull back like a slingshot, and let go.</div>
+  <div style="text-align:center;font-size:15px;color:#CFD6E6;margin-top:8px">Pull back on the ball like a slingshot. Farther back = more power.</div>
   <div id="golfWrap"><canvas id="golf"></canvas></div>
+  <div id="gf-meter" class="gfm"><div class="gfm-l" id="gf-label">Pull back on the ball, then let go</div><div class="gfm-bar"><i id="gf-fill"></i></div></div>
 </section>
 
 <!-- ============ TRIVIA ============ -->
@@ -313,6 +368,39 @@ textarea.field{resize:none;line-height:1.35}
     <span style="width:52px"></span>
   </div>
   <div id="tv-body" class="col" style="gap:12px;margin-top:6px"></div>
+</section>
+
+
+<!-- ============ STORIES: new Hiellos, Instagram-style ============ -->
+<section class="screen" id="s-story">
+  <div class="st-bars" id="st-bars"></div>
+  <div class="st-top"><div class="st-av" id="st-av"></div><div style="min-width:0"><div style="font-size:19px;font-weight:900" id="st-from"></div><div style="font-size:15px;color:#C9CFE0" id="st-ago"></div></div>
+    <button class="st-close" id="st-close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Home</button></div>
+  <div class="st-body" id="st-body"></div>
+  <div class="st-cap" id="st-cap"></div>
+  <div class="st-btns"><button class="lovebtn" id="st-love"></button><button class="lovebtn" id="st-next" style="background:#fff">Next ›</button></div>
+</section>
+
+<!-- ============ PHOTOS: flip through everything, like a frame ============ -->
+<section class="screen pad-bottom" id="s-photos">
+  <div class="row between">
+    <button class="homebtn" data-back="gp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Home</button>
+    <span style="font-size:16px;font-weight:800;color:#C9CFE0" id="ph-count"></span>
+  </div>
+  <div id="ph-status" style="margin-top:12px;font-size:16px;font-weight:800;color:#DDE2EE"></div>
+  <div id="ph-deck"></div>
+  <div class="st-cap" id="ph-cap" style="text-align:center"></div>
+  <div style="text-align:center;font-size:14px;color:#9FA9C4;margin:6px 0 10px">Tap the picture to send love · Slide for the next one</div>
+  <button class="lovebtn" id="ph-love"></button>
+</section>
+
+<!-- ============ BIG EVENT: can you come? ============ -->
+<section class="screen light-screen pad-bottom" id="s-rsvp">
+  <div class="row between" style="margin-bottom:10px">
+    <button class="icon-btn" aria-label="Home" data-back="gp"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <span class="kicker">The big one</span><span style="width:52px"></span>
+  </div>
+  <div id="rv-body" class="col" style="gap:14px"></div>
 </section>
 
 <!-- ============ FAMILY BREAK / PLAYER ============ -->
@@ -505,8 +593,10 @@ function go(name){
   if (name !== 'play') stopPlayback();
   if (name !== 'game') stopBanner();
   if (name !== 'gp') stopFrame();
+  if (name !== 'story') stopStory();
+  if (name !== 'photos') $$('#ph-deck video').forEach(v => v.pause());
   if (name !== 'golf') stopGolf();
-  ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, game:enterGame, golf:enterGolf, trivia:enterTrivia, settings:renderSettings}[name] || (()=>{}))();
+  ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, game:enterGame, golf:enterGolf, trivia:enterTrivia, photos:renderPhotos, rsvp:renderRsvp, settings:renderSettings}[name] || (()=>{}))();
   const sc = $('#s-' + name); if (sc) sc.scrollTop = 0;
 }
 document.addEventListener('click', e => {
@@ -592,7 +682,7 @@ async function renderFam(){
     const th = await thumbHTML(p);
     let pills = p.watched ? `<span class="pill ok">${CHECK.replace('#fff','#1E4D2B')} ${esc(gpName())} watched</span>` : `<span class="pill wait">Not watched yet</span>`;
     if (p.hearts) pills += ` <span class="pill love">${HEART} ×${p.hearts}</span>`;
-    if (p.type === 'big') pills += ` <span class="pill star">★ ${p.rsvp === 'yes' ? esc(gpName()) + ' is coming!' : p.rsvp === 'recap' ? 'Wants the recap' : 'Big moment'}</span>`;
+    if (p.type === 'big') pills += ` <span class="pill star">★ ${p.rsvp === 'yes' ? esc(gpName()) + ' is coming!' : p.rsvp === 'recap' ? "Can't make it, send the video" : 'Big moment'}</span>`;
     rows.push(`<div class="sent"><div class="sthumb">${th}</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:900;line-height:1.2">${esc(p.caption || p.note || 'Hiello')}</div><div class="muted" style="font-size:13px;margin:2px 0 6px">${ago(p.at)}</div><div style="display:flex;flex-wrap:wrap;gap:6px">${pills}</div></div></div>`);
   }
   list.innerHTML = rows.join('');
@@ -692,42 +782,62 @@ $('#m-send').onclick = async () => {
 /* ---------- grandparent home ---------- */
 function newest(){ return [...S.posts].sort((a,b) => b.at - a.at)[0]; }
 function unseen(){ return S.posts.filter(p => !p.watched).sort((a,b) => a.at - b.at); }
-/* Aura-frame style: one big photo that slowly cycles. New Hiellos come first.
-   Tap the photo to watch, swipe to flip, tap a face to see just that person's Hiellos. */
-const FR = { list:[], i:0, timer:null };
-const FACE_COLORS = [['#F2B8C6','#14285A'],['#C8CACE','#14285A'],['#FFFFFF','#14285A'],['#22366A','#FFFFFF']];
-function frameList(){
-  const fresh = unseen().slice().reverse();
-  const seen = [...S.posts].filter(p => p.watched).sort((a,b) => b.at - a.at).slice(0, 12);
-  return [...fresh, ...seen];
-}
-function stopFrame(){ clearInterval(FR.timer); FR.timer = null; }
-async function showFrame(){
-  const f = $('#gp-frame'); const p = FR.list[FR.i];
-  if (!p){
-    f.innerHTML = `<div class="empty">No Hiellos yet.<br><span style="font-weight:600;font-size:17px;color:#DDE2EE;margin-top:8px;display:block">When family sends a photo or video, it shows up right here.</span></div>`;
-    f.onclick = null; $('#gp-dots').innerHTML = ''; return;
+/* ---------- swipe deck: the slide follows your finger and only flips once you've pulled it far enough ---------- */
+function Deck(el, o){
+  el.classList.add('sw');
+  el.innerHTML = '<div class="sw-track"><div class="sw-s" style="left:-100%"></div><div class="sw-s" style="left:0"></div><div class="sw-s" style="left:100%"></div></div>';
+  const tr = el.firstChild, sl = [...tr.children], st = { i:0, busy:false };
+  const N = () => o.count(), idx = k => { const n = N(); return n ? ((k % n) + n) % n : 0; };
+  const set = (x, anim) => { tr.style.transition = anim ? 'transform .42s cubic-bezier(.2,.8,.2,1)' : 'none'; tr.style.transform = `translateX(${x})`; };
+  async function paint(){
+    const n = N();
+    const html = await Promise.all([n > 1 ? o.render(idx(st.i-1)) : '', o.render(n ? st.i : -1), n > 1 ? o.render(idx(st.i+1)) : '']);
+    sl.forEach((d,k) => d.innerHTML = html[k]); set('0px', false);
+    sl.forEach((d,k) => d.querySelectorAll('video').forEach(v => { if (k === 1 && o.playVideo) v.play().catch(()=>{}); else v.pause(); }));
+    o.change && o.change(st.i);
   }
-  const th = await thumbHTML(p);
-  f.innerHTML = `<div class="ph">${th}</div><div class="shade"></div>
-    ${p.watched ? '' : '<div class="tag">NEW</div>'}
-    ${p.note ? `<div class="stk">${esc(p.note)}</div>` : ''}
-    <div class="info"><div style="min-width:0"><div class="who">From ${esc(p.from)}</div><div class="when">${ago(p.at)}</div></div><span class="watch">${PLAY.replace('fill="#fff"','fill="#14285A"').replace(/28/g,'20')}Watch</span></div>`;
-  f.onclick = () => { if (FR.swiped) return; stopFrame(); openPlayer([p], 'gp'); };
-  const n = Math.min(FR.list.length, 8);
-  $('#gp-dots').innerHTML = FR.list.length > 1 ? Array.from({length:n}, (_,k) => `<i class="${k === Math.min(FR.i, n-1) ? 'on' : ''}"></i>`).join('') : '';
+  function flip(d){
+    if (N() < 2 || st.busy) return; st.busy = true; set(`${-d*100}%`, true);
+    setTimeout(async () => { st.i = idx(st.i + d); await paint(); st.busy = false; }, 430);
+  }
+  let x0 = null, y0 = 0, t0 = 0, dx = 0, drag = false;
+  el.addEventListener('pointerdown', e => { if (st.busy) return; x0 = e.clientX; y0 = e.clientY; t0 = performance.now(); dx = 0; drag = false; o.touch && o.touch(); });
+  el.addEventListener('pointermove', e => {
+    if (x0 === null) return; dx = e.clientX - x0; const dy = e.clientY - y0;
+    if (!drag && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)){ drag = true; try { el.setPointerCapture(e.pointerId); } catch(_){} }
+    if (drag) set(`${N() < 2 ? dx * 0.25 : dx}px`, false);
+  });
+  const up = e => {
+    if (x0 === null) return; const w = el.clientWidth, v = dx / Math.max(1, performance.now() - t0); x0 = null;
+    if (!drag){ if (e.type === 'pointerup' && o.tap) o.tap(st.i, e); return; }
+    if (N() > 1 && (dx < -w*0.3 || (v < -0.6 && dx < -30))) flip(1);
+    else if (N() > 1 && (dx > w*0.3 || (v > 0.6 && dx > 30))) flip(-1);
+    else set('0px', true);
+  };
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  return { paint, flip, get i(){ return st.i; }, set i(v){ st.i = v; } };
 }
-function flipFrame(d){ if (FR.list.length < 2) return; FR.i = (FR.i + d + FR.list.length) % FR.list.length; showFrame(); }
-function startFrame(){ stopFrame(); if (FR.list.length > 1) FR.timer = setInterval(() => flipFrame(1), 8000); }
-(() => { let x0 = null;
-  const f = $('#gp-frame');
-  f.addEventListener('pointerdown', e => { x0 = e.clientX; FR.swiped = false; });
-  f.addEventListener('pointerup', e => { if (x0 === null) return; const dx = e.clientX - x0; x0 = null;
-    if (Math.abs(dx) > 50){ FR.swiped = true; flipFrame(dx < 0 ? 1 : -1); startFrame(); setTimeout(() => FR.swiped = false, 50); } });
-})();
+
+/* ---------- Grandpa home: an Aura-style frame ---------- */
+const FR = { list:[], timer:null, deck:null, touched:0 };
+const FACE_COLORS = [['#F2B8C6','#14285A'],['#C8CACE','#14285A'],['#FFFFFF','#14285A'],['#22366A','#FFFFFF']];
+function allNewestFirst(){ return [...S.posts].sort((a,b) => b.at - a.at); }
+function stopFrame(){ clearInterval(FR.timer); FR.timer = null; }
+async function frameSlide(i){
+  const p = FR.list[i];
+  if (!p) return `<div class="empty">No Hiellos yet.<br><span style="font-weight:600;font-size:17px;color:#DDE2EE;margin-top:8px;display:block">When family sends a photo or video, it shows up right here.</span></div>`;
+  return `<div class="ph">${await thumbHTML(p)}</div><div class="shade"></div>
+    ${p.watched ? '' : '<div class="tag">NEW</div>'}${p.note ? `<div class="stk">${esc(p.note)}</div>` : ''}
+    <div class="info"><div style="min-width:0"><div class="who">From ${esc(p.from)}</div><div class="when">${ago(p.at)}${p.hearts ? ' · ' + HEART + ' ' + p.hearts : ''}</div></div><span class="watch">${p.media && p.media.kind === 'video' ? PLAY.replace('fill="#fff"','fill="#14285A"').replace(/28/g,'20') + 'Play' : 'Open'}</span></div>`;
+}
+function frameDots(i){
+  const n = Math.min(FR.list.length, 8);
+  $('#gp-dots').innerHTML = FR.list.length > 1 ? Array.from({length:n}, (_,k) => `<i class="${k === Math.min(i, n-1) ? 'on' : ''}"></i>`).join('') : '';
+}
+function startFrame(){ stopFrame(); FR.timer = setInterval(() => { if (Date.now() - FR.touched > 6000 && FR.list.length > 1) FR.deck.flip(1); }, 8000); }
 function renderFaces(){
   const people = [];
-  [...S.posts].sort((a,b) => b.at - a.at).forEach(p => { if (!people.find(x => x.name === p.from)) people.push({ name:p.from }); });
+  allNewestFirst().forEach(p => { if (!people.find(x => x.name === p.from)) people.push({ name:p.from }); });
   people.forEach(x => x.fresh = S.posts.some(p => p.from === x.name && !p.watched));
   people.sort((a,b) => b.fresh - a.fresh);
   $('#gp-faces').innerHTML = people.map((x,k) => { const [bg,fg] = FACE_COLORS[k % FACE_COLORS.length];
@@ -735,21 +845,120 @@ function renderFaces(){
   $('#gp-faces').style.display = people.length ? '' : 'none';
   $$('#gp-faces .face').forEach(b => b.onclick = () => {
     const mine = S.posts.filter(p => p.from === b.dataset.who);
-    const q = mine.filter(p => !p.watched).sort((a,b) => a.at - b.at);
-    stopFrame(); openPlayer(q.length ? q : mine.sort((a,b) => b.at - a.at).slice(0, 3), 'gp');
+    const fresh = mine.filter(p => !p.watched).sort((a,b) => a.at - b.at);
+    if (fresh.length) openStory(fresh); else openPhotos(mine.sort((a,b) => b.at - a.at)[0]);
   });
+}
+async function renderNewTab(){
+  const fresh = unseen();
+  $('#s-gp').classList.toggle('hasnew', !!fresh.length);
+  if (!fresh.length){ $('#gp-tab').innerHTML = ''; return; }
+  const th = await Promise.all(fresh.slice(-3).reverse().map(p => thumbHTML(p)));
+  $('#gp-tab').innerHTML = `<button class="newtab" id="newtab" aria-label="${fresh.length} new Hiellos. Tap to watch."><span class="lab">NEW</span><span class="thumbs">${th.map(t => `<span>${t}</span>`).join('')}</span><span class="go">${fresh.length} ›</span></button>`;
+  $('#newtab').onclick = () => openStory(unseen());
+  requestAnimationFrame(() => { const f = $('#gp-frame').getBoundingClientRect(), t = $('#newtab'); if (t) t.style.setProperty('--tabtop', Math.max(f.top, f.top + f.height/2 - t.offsetHeight/2) + 'px'); });
 }
 async function renderGP(){
   $('#gp-hello').textContent = `Hi, ${gpName()}`;
   renderFaces();
-  const cur = FR.list[FR.i];
-  FR.list = frameList();
-  const fresh = unseen().length;
-  FR.i = fresh ? 0 : Math.max(0, FR.list.indexOf(cur));
-  await showFrame(); startFrame();
-  const c = $('#gp-cnt'); c.hidden = !fresh; c.textContent = fresh;
-  const big = S.posts.filter(p => p.type === 'big' && !p.rsvp && (!p.when || new Date(p.when).getTime() > Date.now())).sort((a,b) => (a.when||'').localeCompare(b.when||''))[0];
-  $('#gp-big').innerHTML = big ? `<button class="bigstrip" data-go="week" style="width:100%"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F2B8C6" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8z"/></svg><span style="flex:1;min-width:0">The big one: ${esc(big.title || 'Big moment')}${big.when ? ' · ' + esc(new Date(big.when).toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'})) : ''}</span><span style="color:var(--pink)">RSVP ›</span></button>` : '';
+  const cur = FR.list[FR.deck?.i];
+  FR.list = allNewestFirst();
+  if (!FR.deck) FR.deck = Deck($('#gp-frame'), { count:() => FR.list.length, render:frameSlide, change:frameDots, touch:() => FR.touched = Date.now(), tap:i => { const p = FR.list[i]; if (p) openPhotos(p); } });
+  FR.deck.i = Math.max(0, FR.list.indexOf(cur));
+  await FR.deck.paint(); startFrame();
+  renderNewTab();
+  const big = S.posts.filter(p => p.type === 'big' && (!p.when || new Date(p.when).getTime() > Date.now())).sort((a,b) => (a.when||'').localeCompare(b.when||''))[0];
+  const day = big && big.when ? esc(new Date(big.when).toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'})) : '';
+  $('#gp-big').innerHTML = !big ? '' : big.rsvp
+    ? `<button class="bigstrip" data-rsvp-open="${big.id}" style="width:100%"><span style="font-size:20px">${big.rsvp === 'yes' ? '✓' : '♥'}</span><span style="flex:1;min-width:0">${big.rsvp === 'yes' ? "You're going to" : 'Video coming of'} the ${esc(big.title || 'big moment')}${day ? ' · ' + day : ''}</span></button>`
+    : `<button class="bigstrip" data-rsvp-open="${big.id}" style="width:100%;box-shadow:0 0 0 3px var(--pink)"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F2B8C6" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8z"/></svg><span style="flex:1;min-width:0">Can you come to the ${esc(big.title || 'big moment')}?${day ? `<span style="display:block;font-size:.9em;color:#C9CFE0">${day}</span>` : ''}</span><span style="color:var(--pink);flex:none">Answer ›</span></button>`;
+  const o = $('#gp-big [data-rsvp-open]'); if (o) o.onclick = () => openRsvp(o.dataset.rsvpOpen);
+}
+
+/* ---------- stories: new Hiellos one after another, like Instagram. Tap right for next, left for back. ---------- */
+const STY = { q:[], i:0, timer:null, t0:0, dur:8000 };
+function openStory(q){ q = q.filter(Boolean); if (!q.length) return; STY.q = q.slice(); STY.i = 0; go('story'); showStory(); }
+function stopStory(){ cancelAnimationFrame(STY.timer); STY.timer = null; $$('#st-body video').forEach(v => { try { v.pause(); } catch(_){} }); }
+async function showStory(){
+  stopStory();
+  const p = STY.q[STY.i]; if (!p) return closeStory();
+  $('#st-bars').innerHTML = STY.q.map((_,k) => `<i class="${k < STY.i ? 'done' : ''}"><b></b></i>`).join('');
+  $('#st-av').textContent = (p.from || '?').trim()[0].toUpperCase();
+  $('#st-from').textContent = p.from; $('#st-ago').textContent = ago(p.at);
+  $('#st-body').innerHTML = `<button class="st-tap" style="left:0" aria-label="Previous" id="st-prev-z"></button>${await cardHTML(p, {live:true})}<button class="st-tap" style="right:0" aria-label="Next" id="st-next-z"></button>`;
+  $('#st-cap').textContent = p.caption || '';
+  $('#st-next').textContent = STY.i < STY.q.length - 1 ? 'Next ›' : 'Done ✓';
+  loveLabel($('#st-love'), p);
+  if (!p.watched){ p.watched = true; p.watchedAt = Date.now(); save(); }
+  $('#st-prev-z').onclick = () => { if (STY.i > 0){ STY.i--; showStory(); } };
+  $('#st-next-z').onclick = nextStory;
+  const bar = $('#st-bars i:nth-child(' + (STY.i+1) + ') b'), vid = $('#st-body video');
+  STY.t0 = performance.now();
+  const tick = () => {
+    const f = vid && vid.duration ? vid.currentTime / vid.duration : (performance.now() - STY.t0) / STY.dur;
+    bar.style.width = Math.min(100, f*100) + '%';
+    if (f >= 1 || (vid && vid.ended)) return nextStory();
+    STY.timer = requestAnimationFrame(tick);
+  };
+  if (vid) vid.play().catch(()=>{});
+  STY.timer = requestAnimationFrame(tick);
+}
+function nextStory(){ if (STY.i < STY.q.length - 1){ STY.i++; showStory(); } else closeStory(true); }
+function closeStory(done){ stopStory(); go('gp'); if (done && !unseen().length) say("You're all caught up!"); }
+$('#st-close').onclick = () => closeStory();
+$('#st-next').onclick = nextStory;
+$('#st-love').onclick = () => { const p = STY.q[STY.i]; sendLove(p, $('#st-body')); loveLabel($('#st-love'), p); STY.t0 = performance.now(); };
+function loveLabel(btn, p){ btn.innerHTML = HEART.replace(/16/g,'24') + (p.hearts ? ` Loved ×${p.hearts}` : ' Send love'); }
+function sendLove(p, where){
+  p.hearts = (p.hearts||0) + 1; save(); haptic(); hearts();
+  if (where){ const h = document.createElement('div'); h.className = 'pop'; h.innerHTML = HEART.replace(/16/g,'120'); where.appendChild(h); setTimeout(() => h.remove(), 950); }
+}
+
+/* ---------- photos: flip through every Hiello like a picture frame; tap one to send love ---------- */
+const PH = { list:[], deck:null };
+function openPhotos(start){ PH.start = start || null; go('photos'); }
+async function renderPhotos(){
+  PH.list = allNewestFirst();
+  if (!PH.deck) PH.deck = Deck($('#ph-deck'), { count:() => PH.list.length, playVideo:true,
+    render: async i => { const p = PH.list[i]; return p ? await cardHTML(p, {live:false}) : '<div style="font-size:19px;font-weight:800;text-align:center;padding:30px">No photos yet. They’ll show up here as family sends them.</div>'; },
+    change: i => phInfo(i),
+    tap: i => { const p = PH.list[i]; if (!p) return; const v = $('#ph-deck .sw-s:nth-child(2) video'); if (v && v.paused){ v.muted = false; v.play().catch(()=>{}); return; } sendLove(p, $('#ph-deck')); phInfo(i); } });
+  PH.deck.i = PH.start ? Math.max(0, PH.list.indexOf(PH.start)) : 0; PH.start = null;
+  await PH.deck.paint();
+  const n = unseen().length;
+  $('#ph-status').innerHTML = n ? `${n} new Hiello${n>1?'s':''} waiting` : `<span style="color:#9FE0B2">✓</span> You're all caught up`;
+}
+function phInfo(i){
+  const p = PH.list[i]; if (!p){ $('#ph-count').textContent = ''; $('#ph-cap').textContent = ''; $('#ph-love').style.display = 'none'; return; }
+  $('#ph-love').style.display = '';
+  $('#ph-count').textContent = `${i+1} of ${PH.list.length}`;
+  $('#ph-cap').textContent = (p.caption || p.note || '') + ` (${p.from}, ${ago(p.at)})`;
+  loveLabel($('#ph-love'), p);
+  if (!p.watched){ p.watched = true; p.watchedAt = Date.now(); save(); }
+}
+$('#ph-love').onclick = () => { const p = PH.list[PH.deck.i]; if (p){ sendLove(p, $('#ph-deck')); phInfo(PH.deck.i); } };
+
+/* ---------- the big one: one simple yes/no question ---------- */
+let RV = null;
+function openRsvp(id){ RV = id; go('rsvp'); }
+async function renderRsvp(){
+  const p = S.posts.find(x => x.id === RV); if (!p) return go('gp');
+  const when = p.when ? whenLabel(p.when) : '';
+  const head = `<div style="border-radius:20px;overflow:hidden;height:190px;background:var(--ph)">${(await thumbHTML(p)).replace('<img','<img style="width:100%;height:100%;object-fit:cover"')}</div>
+    <div class="serif" style="font-size:28px;line-height:1.15">${esc(p.title || 'Big moment')}</div>
+    ${when ? `<div style="font-size:19px;font-weight:800">${esc(when)}</div>` : ''}
+    ${p.caption ? `<div style="font-size:17px;line-height:1.4;color:var(--muted)">${esc(p.caption)}</div>` : ''}`;
+  if (!p.rsvp){
+    $('#rv-body').innerHTML = head + `<div style="font-size:23px;font-weight:900;margin-top:4px">${esc(p.from)} asked: can you come?</div>
+      <button class="rsvp-yes" data-ans="yes"><span style="font-size:30px">✓</span><span>Yes, I'm coming<small>We'll tell ${esc(p.from)} right away</small></span></button>
+      <button class="rsvp-no" data-ans="recap"><span style="font-size:30px">♥</span><span>I can't make it<small>That's okay, they'll send you the video</small></span></button>`;
+  } else {
+    $('#rv-body').innerHTML = head + `<div class="panel" style="background:${p.rsvp==='yes' ? '#DDF0E2' : '#FBE3EA'};border:0;font-size:20px;font-weight:900;color:var(--navy);padding:18px">${p.rsvp === 'yes' ? `You're going! We told ${esc(p.from)}.` : `No problem. ${esc(p.from)} will send you the video.`}</div>
+      <button class="btn primary" data-back="gp">Back home</button>
+      <button style="border:0;background:none;color:var(--muted);font-size:16px;font-weight:800;text-decoration:underline" id="rv-change">Change my answer</button>`;
+    $('#rv-change').onclick = () => { p.rsvp = null; save(); renderRsvp(); };
+  }
+  $$('#rv-body [data-ans]').forEach(b => b.onclick = () => { p.rsvp = b.dataset.ans; save(); haptic(); if (p.rsvp === 'yes') hearts(); renderRsvp(); });
 }
 
 /* ---------- week ---------- */
@@ -841,6 +1050,7 @@ $('#set-sim').onclick = () => {
   go('gp');
 };
 async function arrived(p){
+  if (current === 'gp'){ haptic(); renderGP(); return; }
   const t = $('#toast');
   t.querySelector('.thumb').innerHTML = await thumbHTML(p);
   t.querySelector('.t2').textContent = `${p.from} sent a Hiello just now`;
@@ -858,14 +1068,17 @@ async function arrived(p){
    Boards are built backwards from pairs of free tiles, so every board can be solved.
    ========================================================= */
 const FACES = [['一','s-b'],['二','s-b'],['三','s-b'],['中','s-r'],['發','s-g'],['東',''],['南',''],['●','s-r'],['竹','s-g'],['✿','s-r'],['★','s-b']];
+/* Pyramid with half-tile offsets, so every upper tile sits across the seams of the tiles below it.
+   Base 6x5 (30) · 3x4 at half steps (12) · 2x3 (6) · top pair across the middle (2) = 50 tiles */
 const LAYOUT = (() => { const p = [];
   for (let y=0;y<5;y++) for (let x=0;x<6;x++) p.push({x,y,z:0});
-  for (let y=1;y<4;y++) for (let x=1;x<5;x++) p.push({x,y,z:1});
-  p.push({x:2,y:2,z:2},{x:3,y:2,z:2}); return p; })();
+  for (const y of [0.5,1.5,2.5,3.5]) for (const x of [1.5,2.5,3.5]) p.push({x,y,z:1});
+  for (const y of [1,2,3]) for (const x of [2,3]) p.push({x,y,z:2});
+  p.push({x:2.5,y:1.5,z:3},{x:2.5,y:2.5,z:3}); return p; })();
 const G = { face:[], alive:[], sel:-1, cleared:false };
 function shuffleArr(a){ for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
-function covered(i, al){ const a = LAYOUT[i]; return LAYOUT.some((b,j) => al[j] && b.z > a.z && b.x === a.x && b.y === a.y); }
-function sideTaken(i, al, dx){ const a = LAYOUT[i]; return LAYOUT.some((b,j) => al[j] && b.z === a.z && b.y === a.y && b.x === a.x + dx); }
+function covered(i, al){ const a = LAYOUT[i]; return LAYOUT.some((b,j) => al[j] && b.z > a.z && Math.abs(b.x - a.x) < 1 && Math.abs(b.y - a.y) < 1); }
+function sideTaken(i, al, dx){ const a = LAYOUT[i]; return LAYOUT.some((b,j) => al[j] && j !== i && b.z === a.z && Math.abs(b.y - a.y) < 1 && (b.x - a.x) * dx > 0 && Math.abs(b.x - a.x) <= 1); }
 function isFree(i, al = G.alive){ return !!al[i] && !covered(i, al) && (!sideTaken(i, al, -1) || !sideTaken(i, al, 1)); }
 function deal(slots, pairFaces){
   for (let tries=0; tries<400; tries++){
@@ -906,15 +1119,15 @@ function reshuffle(){
 }
 function renderBoard(){
   const b = $('#board'); const bw = Math.min(b.clientWidth || 360, 420);
-  const W = Math.floor((bw - 14) / 6), H = Math.round(W * 1.3), d = Math.max(6, Math.round(W * 0.15));
-  b.style.height = (5*H + 2*d + 14) + 'px';
+  const W = Math.floor((bw - 14) / 6.4), H = Math.round(W * 1.3), d = Math.max(6, Math.round(W * 0.14));
+  b.style.height = (5*H + 3*d + 14) + 'px';
   const fs = Math.round(W * 0.48);
   b.innerHTML = LAYOUT.map((t,i) => {
     if (!G.alive[i]) return '';
     const [face, cls] = FACES[G.face[i]];
     const free = isFree(i);
-    const x = 4 + t.x*W + (2 - t.z)*d, y = 4 + t.y*H + (2 - t.z)*d;
-    return `<button class="mj ${cls}${free?'':' blocked'}${i===G.sel?' sel':''}" data-i="${i}" aria-label="Tile ${face}${free?'':' (blocked)'}" style="left:${x}px;top:${y}px;width:${W-3}px;height:${H-3}px;z-index:${t.z*100 + t.y*10 + t.x};font-size:${face.length>1?Math.round(fs*0.7):fs}px">${face}</button>`;
+    const x = 4 + t.x*W + (3 - t.z)*d, y = 4 + t.y*H + (3 - t.z)*d;
+    return `<button class="mj ${cls}${free?'':' blocked'}${i===G.sel?' sel':''}" data-i="${i}" aria-label="Tile ${face}${free?'':' (blocked)'}" style="left:${x}px;top:${y}px;width:${W-3}px;height:${H-3}px;z-index:${t.z*100 + Math.round(t.y*10 + t.x)};font-size:${face.length>1?Math.round(fs*0.7):fs}px">${face}</button>`;
   }).join('');
   $('#g-status').textContent = `Round ${S.game.round} · ${left()/2} pairs left`;
 }
@@ -950,17 +1163,17 @@ window.addEventListener('resize', () => { if (current === 'game') renderBoard();
    PUTT-PUTT GOLF — six short holes. Touch, pull back like a slingshot, let go.
    ========================================================= */
 const HOLES = [
-  {par:2, start:[.5,.86], cup:[.5,.16], walls:[]},
-  {par:3, start:[.22,.86], cup:[.78,.16], walls:[[0,.47,.62,.045]]},
-  {par:3, start:[.5,.87], cup:[.5,.14], walls:[[.28,.46,.44,.045]]},
-  {par:3, start:[.18,.86], cup:[.82,.18], walls:[[.47,0,.06,.62]]},
-  {par:4, start:[.2,.9], cup:[.2,.13], walls:[[0,.64,.66,.04],[.34,.37,.66,.04]]},
-  {par:3, start:[.5,.88], cup:[.5,.14], walls:[[.14,.56,.2,.045],[.66,.56,.2,.045],[.4,.34,.2,.045]]}
+  {par:2, start:[.5,.76], cup:[.5,.16], walls:[]},
+  {par:3, start:[.22,.76], cup:[.78,.16], walls:[[0,.47,.62,.045]]},
+  {par:3, start:[.5,.76], cup:[.5,.14], walls:[[.28,.46,.44,.045]]},
+  {par:3, start:[.18,.76], cup:[.82,.18], walls:[[.47,0,.06,.62]]},
+  {par:4, start:[.2,.76], cup:[.2,.13], walls:[[0,.64,.66,.04],[.34,.37,.66,.04]]},
+  {par:3, start:[.5,.76], cup:[.5,.14], walls:[[.14,.56,.2,.045],[.66,.56,.2,.045],[.4,.34,.2,.045]]}
 ];
-const GF = { hole:0, strokes:0, total:0, ball:{x:0,y:0,vx:0,vy:0}, aim:null, sunk:false, raf:0, W:0, H:0, ctx:null, dpr:1 };
+const GF = { idle:0, hole:0, strokes:0, total:0, ball:{x:0,y:0,vx:0,vy:0}, aim:null, sunk:false, raf:0, W:0, H:0, ctx:null, dpr:1 };
 function sizeGolf(){
   const c = $('#golf'), wrap = $('#golfWrap');
-  const maxW = Math.min(window.innerWidth - 36, 420), maxH = window.innerHeight - 220;
+  const maxW = Math.min(window.innerWidth - 36, 420), maxH = window.innerHeight - 300;
   let W = maxW, H = Math.round(W * 1.3); if (H > maxH){ H = Math.max(360, maxH); W = Math.round(H / 1.3); }
   const r = GF.W ? { x: GF.ball.x / GF.W, y: GF.ball.y / GF.H } : null;
   GF.W = W; GF.H = H; GF.dpr = window.devicePixelRatio || 1;
@@ -972,7 +1185,7 @@ function sizeGolf(){
 function golfRect(w){ return {x:w[0]*GF.W, y:w[1]*GF.H, w:w[2]*GF.W, h:w[3]*GF.H}; }
 function startHole(){
   const h = HOLES[GF.hole];
-  GF.ball = { x:h.start[0]*GF.W, y:h.start[1]*GF.H, vx:0, vy:0 }; GF.strokes = 0; GF.sunk = false; GF.aim = null;
+  GF.ball = { x:h.start[0]*GF.W, y:h.start[1]*GF.H, vx:0, vy:0 }; GF.strokes = 0; GF.sunk = false; GF.aim = null; GF.idle = performance.now() - 1500;
   golfStatus();
 }
 function golfStatus(){ const h = HOLES[GF.hole]; $('#gf-status').textContent = `Hole ${GF.hole+1} of ${HOLES.length} · Par ${h.par} · Strokes ${GF.strokes}`; }
@@ -996,10 +1209,16 @@ function golfLoop(){
     const sp = Math.hypot(b.vx, b.vy), dc = Math.hypot(b.x - cup.x, b.y - cup.y);
     if (dc < cup.r * 0.9 && sp < W * 0.022){ GF.sunk = true; b.x = cup.x; b.y = cup.y; b.vx = b.vy = 0; holeDone(); }
     else if (dc < cup.r){ b.vx *= 0.9; b.vy *= 0.9; b.vx += (cup.x - b.x) * 0.004; b.vy += (cup.y - b.y) * 0.004; }
-    if (sp < W * 0.0006){ b.vx = 0; b.vy = 0; }
+    if (sp < W * 0.0006){ b.vx = 0; b.vy = 0; GF.idle = performance.now(); }
   }
   drawGolf(r, cup, h);
   GF.raf = requestAnimationFrame(golfLoop);
+}
+function golfMeter(still){
+  const a = GF.aim, m = $('#gf-meter'), f = $('#gf-fill'), l = $('#gf-label');
+  if (a && a.p > 0 && still){ f.style.width = Math.round(a.p*100) + '%'; f.style.background = a.p < 0.4 ? '#7FD39A' : a.p < 0.75 ? '#F2B8C6' : '#E0566B'; l.textContent = `Power ${Math.round(a.p*100)}%` + (a.p > 0.85 ? ' (that\u2019s a big one!)' : ''); m.classList.remove('hint'); }
+  else if (!still){ f.style.width = '0%'; l.textContent = GF.sunk ? 'In the hole!' : 'Rolling\u2026'; m.classList.remove('hint'); }
+  else { f.style.width = '0%'; l.textContent = '\u{1F446} Pull back on the ball, then let go'; m.classList.toggle('hint', performance.now() - GF.idle > 2500); }
 }
 function drawGolf(r, cup, h){
   const x = GF.ctx, W = GF.W, H = GF.H;
@@ -1008,10 +1227,27 @@ function drawGolf(r, cup, h){
   x.fillStyle = '#1B1B1B'; x.beginPath(); x.arc(cup.x, cup.y, cup.r*0.8, 0, 7); x.fill();
   x.strokeStyle = '#F4F5F7'; x.lineWidth = 3; x.beginPath(); x.moveTo(cup.x, cup.y); x.lineTo(cup.x, cup.y - W*0.16); x.stroke();
   x.fillStyle = '#F2B8C6'; x.strokeStyle = '#9B1B1F'; x.lineWidth = 2; x.beginPath(); x.moveTo(cup.x, cup.y - W*0.16); x.lineTo(cup.x + W*0.1, cup.y - W*0.13); x.lineTo(cup.x, cup.y - W*0.1); x.closePath(); x.fill(); x.stroke();
-  const b = GF.ball;
-  if (GF.aim && !(b.vx || b.vy) && !GF.sunk){
-    const a = GF.aim; const n = 8;
-    for (let k=1;k<=n;k++){ const t = k/n; x.fillStyle = `rgba(242,184,198,${1 - t*0.6})`; x.beginPath(); x.arc(b.x + a.dx*a.p*W*0.45*t, b.y + a.dy*a.p*W*0.45*t, r*0.45, 0, 7); x.fill(); }
+  const b = GF.ball, still = !(b.vx || b.vy) && !GF.sunk;
+  golfMeter(still);
+  if (GF.aim && still && GF.aim.p > 0){
+    const a = GF.aim, pull = a.p * W * 0.3;
+    /* the stretched band, from the ball back to your finger */
+    const bx = b.x - a.dx*pull, by = b.y - a.dy*pull;
+    x.lineCap = 'round'; x.strokeStyle = 'rgba(255,255,255,.9)'; x.lineWidth = 6; x.beginPath(); x.moveTo(b.x, b.y); x.lineTo(bx, by); x.stroke();
+    x.fillStyle = '#F2B8C6'; x.strokeStyle = '#14285A'; x.lineWidth = 3; x.beginPath(); x.arc(bx, by, r*1.25, 0, 7); x.fill(); x.stroke();
+    /* one arrow showing where the ball will go; it grows with power */
+    const L = r*2.5 + a.p * W * 0.22, tx = b.x + a.dx*L, ty = b.y + a.dy*L, px = -a.dy, py = a.dx;
+    x.strokeStyle = '#FFFFFF'; x.lineWidth = 5; x.setLineDash([10,8]); x.beginPath(); x.moveTo(b.x + a.dx*r*1.6, b.y + a.dy*r*1.6); x.lineTo(tx, ty); x.stroke(); x.setLineDash([]);
+    x.fillStyle = '#FFFFFF'; x.beginPath(); x.moveTo(tx + a.dx*r*1.6, ty + a.dy*r*1.6); x.lineTo(tx + px*r*1.1, ty + py*r*1.1); x.lineTo(tx - px*r*1.1, ty - py*r*1.1); x.closePath(); x.fill();
+  } else if (still && !GF.drag && performance.now() - GF.idle > 2500){
+    /* idle hint: a finger pulls back on the ball */
+    const t = ((performance.now() - GF.idle - 2500) % 1800) / 1800, e = Math.min(1, t/0.7), back = e * W * 0.2;
+    const toCup = Math.atan2(HOLES[GF.hole].cup[1]*H - b.y, HOLES[GF.hole].cup[0]*W - b.x);
+    const fx = b.x - Math.cos(toCup)*back, fy = b.y - Math.sin(toCup)*back;
+    x.globalAlpha = t < 0.85 ? 1 : (1 - t)/0.15;
+    x.strokeStyle = 'rgba(255,255,255,.75)'; x.lineWidth = 5; x.lineCap = 'round'; x.beginPath(); x.moveTo(b.x, b.y); x.lineTo(fx, fy); x.stroke();
+    x.font = '44px -apple-system,"Apple Color Emoji","Segoe UI Emoji"'; x.textAlign = 'center'; x.fillText('\u{1F446}', fx + 4, fy + 40); x.textAlign = 'start';
+    x.globalAlpha = 1;
   }
   if (!GF.sunk){ x.fillStyle = 'rgba(0,0,0,.25)'; x.beginPath(); x.arc(b.x+2, b.y+3, r, 0, 7); x.fill(); x.fillStyle = '#FFFFFF'; x.beginPath(); x.arc(b.x, b.y, r, 0, 7); x.fill(); }
 }
@@ -1020,12 +1256,12 @@ $('#golf').addEventListener('pointerdown', e => { if (GF.sunk || GF.ball.vx || G
 $('#golf').addEventListener('pointermove', e => {
   if (!GF.drag) return; const q = golfPoint(e);
   const dx = GF.drag.x - q.x, dy = GF.drag.y - q.y, len = Math.hypot(dx, dy);
-  GF.aim = len > 2 ? { dx:dx/len, dy:dy/len, p:Math.min(len, GF.W*0.38)/(GF.W*0.38) } : {dx:0, dy:-1, p:0};
+  GF.aim = len > 2 ? { dx:dx/len, dy:dy/len, p:Math.min(len, GF.W*0.3)/(GF.W*0.3) } : {dx:0, dy:-1, p:0};
 });
 const golfRelease = () => {
-  if (!GF.drag) return; GF.drag = null; const a = GF.aim; GF.aim = null;
+  if (!GF.drag) return; GF.drag = null; const a = GF.aim; GF.aim = null; GF.idle = performance.now();
   if (!a || a.p < 0.06) return;
-  const v = GF.W * 0.03 * a.p; GF.ball.vx = a.dx * v; GF.ball.vy = a.dy * v; GF.strokes++; golfStatus(); haptic();
+  const v = GF.W * 0.032 * a.p; GF.ball.vx = a.dx * v; GF.ball.vy = a.dy * v; GF.strokes++; golfStatus(); haptic();
 };
 $('#golf').addEventListener('pointerup', golfRelease); $('#golf').addEventListener('pointercancel', golfRelease);
 $('#gf-reset').onclick = () => { startHole(); };
