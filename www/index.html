@@ -195,6 +195,37 @@ textarea.field{resize:none;line-height:1.35}
 .bigone{background:var(--midnight);border-color:var(--silver)}
 .dark{background:var(--midnight)}
 .hearts span{color:#F2B8C6!important;-webkit-text-stroke:2px #9B1B1F}
+
+/* ---- Grandpa home: Aura-frame style ---- */
+#s-gp{display:flex;flex-direction:column;gap:14px}
+#s-gp>*{flex-shrink:0}
+#s-gp{height:100dvh;min-height:0;overflow-y:auto}
+#s-gp>.frame{flex:1 1 300px;min-height:210px}
+.faces{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 2px;scrollbar-width:none}
+.faces::-webkit-scrollbar{display:none}
+.face{flex:0 0 auto;border:0;background:none;color:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;width:86px;padding:0}
+.face .av{position:relative;width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Baskerville,Georgia,serif;font-size:28px;font-weight:700;box-shadow:0 0 0 3px #22366A}
+.face.new .av{box-shadow:0 0 0 4px var(--pink)}
+.face .av b{position:absolute;right:-2px;top:-2px;width:20px;height:20px;border-radius:50%;background:#9B1B1F;border:3px solid #0B1733}
+.face .nm{font-size:14px;font-weight:800;max-width:86px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frame{position:relative;border:0;padding:0;border-radius:28px;overflow:hidden;background:#22366A;box-shadow:0 0 0 6px #C8CACE,0 14px 30px rgba(0,0,0,.45);color:#fff;text-align:left;touch-action:pan-y}
+.frame .ph{position:absolute;inset:0;transition:opacity .8s}
+.frame .ph img,.frame .ph video{width:100%;height:100%;object-fit:cover;display:block}
+.frame .shade{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(transparent,rgba(5,12,30,.85))}
+.frame .tag{position:absolute;left:14px;top:14px;background:var(--pink);color:var(--navy);font-size:14px;font-weight:900;letter-spacing:1px;padding:7px 12px;border-radius:999px}
+.frame .stk{position:absolute;right:14px;top:56px;transform:rotate(-5deg);background:#fff;border:3px solid var(--navy);color:var(--navy);border-radius:14px;padding:7px 11px;font-family:Baskerville,Georgia,serif;font-weight:800;font-size:19px;line-height:1.1;max-width:62%;box-shadow:0 4px 10px rgba(0,0,0,.25)}
+.frame .info{position:absolute;left:16px;right:16px;bottom:16px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.frame .who{font-size:22px;font-weight:900;line-height:1.15}
+.frame .when{font-size:15px;color:#DDE2EE;font-weight:700;margin-top:2px}
+.frame .watch{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#fff;color:var(--navy);font-size:19px;font-weight:900;padding:14px 18px;border-radius:999px}
+.frame .empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px;font-weight:800;line-height:1.35}
+.fdots{display:flex;justify-content:center;gap:7px;min-height:10px}
+.fdots i{width:9px;height:9px;border-radius:50%;background:#3A4A78}.fdots i.on{background:#fff}
+.gpbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.gpbtn{border:0;border-radius:24px;min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:21px;font-weight:900;color:var(--navy);position:relative}
+.gpbtn .cnt{position:absolute;right:10px;top:10px;background:#9B1B1F;color:#fff;font-size:14px;font-weight:900;border-radius:999px;padding:3px 9px}
+@media (max-height:720px){#s-gp{gap:10px}#s-gp h1{font-size:24px}.face .av{width:54px;height:54px;font-size:24px}.gpbtn{min-height:92px;font-size:19px;gap:4px}.gpbtn svg{width:32px;height:32px}.bigstrip{font-size:15px;padding:10px 12px}}
+.bigstrip{border:0;border-radius:18px;background:#22366A;color:#fff;display:flex;align-items:center;gap:10px;padding:12px 14px;font-size:16px;font-weight:800;text-align:left}
 </style>
 </head>
 <body>
@@ -220,19 +251,17 @@ textarea.field{resize:none;line-height:1.35}
 
 <!-- ============ GRANDPARENT HOME ============ -->
 <section class="screen pad-bottom" id="s-gp" style="background:#0B1733;color:#fff">
-  <div class="row between" style="margin-bottom:14px">
-    <div><div class="kicker" style="color:var(--gold)">Hiello</div><h1 style="font-size:30px" id="gp-hello">Hi, Grandpa</h1></div>
+  <div class="row between">
+    <h1 style="font-size:28px" id="gp-hello">Hi, Grandpa</h1>
     <button class="icon-btn" aria-label="Settings" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
-  <div style="font-size:13px;font-weight:800;opacity:.85;margin:0 4px 6px">Home screen widget (preview)</div>
-  <button class="widget" id="gp-widget"></button>
-  <div class="col" style="margin-top:18px;gap:12px">
-    <button class="bigtile" style="background:#C8CACE;color:var(--navy)" data-go="games">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>
-      <span>Play a game<span class="sub">Mahjong, putt-putt golf or trivia</span></span></button>
-    <button class="bigtile" style="background:#FFFFFF;color:var(--navy)" data-go="week">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-      <span>This week in the family<span class="sub" id="gp-weeksub">See what everyone's up to</span></span></button>
+  <div class="faces" id="gp-faces"></div>
+  <button class="frame" id="gp-frame" aria-label="Watch Hiello"></button>
+  <div class="fdots" id="gp-dots"></div>
+  <div id="gp-big"></div>
+  <div class="gpbtns">
+    <button class="gpbtn" style="background:#C8CACE" data-go="games"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>Play a game</button>
+    <button class="gpbtn" style="background:#F2B8C6" data-go="week"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>This week<span class="cnt" id="gp-cnt" hidden></span></button>
   </div>
 </section>
 
@@ -475,6 +504,7 @@ function go(name){
   $$('#demobar button').forEach(b => b.classList.toggle('on', b.dataset.mode === S.mode));
   if (name !== 'play') stopPlayback();
   if (name !== 'game') stopBanner();
+  if (name !== 'gp') stopFrame();
   if (name !== 'golf') stopGolf();
   ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, game:enterGame, golf:enterGolf, trivia:enterTrivia, settings:renderSettings}[name] || (()=>{}))();
   const sc = $('#s-' + name); if (sc) sc.scrollTop = 0;
@@ -537,15 +567,15 @@ async function addSamples(){
   const sat = new Date(); sat.setDate(sat.getDate() + ((6 - sat.getDay() + 7) % 7 || 7)); sat.setHours(10,0,0,0);
   const iso = new Date(sat.getTime() - sat.getTimezoneOffset()*60000).toISOString().slice(0,16);
   const list = [
-    {scene:'soccer', at: now - 3*DAY, note:`${kid} scored!`, caption:`Soccer practice: ${kid} scored in the drill today!`, tpl:'polaroid', sx:32, sy:22, watched:true},
-    {scene:'test', at: now - 2*DAY, note:'10 out of 10!', caption:`${kid} got every word right on her spelling test.`, tpl:'comic', sx:30, sy:80, watched:true},
+    {scene:'soccer', at: now - 3*DAY, note:`${kid} scored!`, caption:`Soccer practice: ${kid} scored in the drill today!`, tpl:'polaroid', sx:32, sy:22, watched:true, from:'Aunt Lisa'},
+    {scene:'test', at: now - 2*DAY, note:'10 out of 10!', caption:`${kid} got every word right on her spelling test.`, tpl:'comic', sx:30, sy:80, from:'Uncle Dan'},
     {scene:'tooth', at: now - 1*DAY, note:`Hi ${g}!\nWe love you!`, caption:`${kid} lost her first tooth! She wanted you to see the gap.`, tpl:'retro', sx:50, sy:80},
     {scene:'trophy', at: now - 3*3600000, note:'Can you come?', caption:`Championship game Saturday! ${kid} asked if you can come.`, tpl:'postcard', sx:50, sy:82, type:'big', title:'Championship game', when: iso}
   ];
   for (const s of list){
     const key = 'm_' + uid();
     await putMedia(key, await drawScene(s.scene));
-    S.posts.push({ id: uid(), at: s.at, from: me, note: s.note, caption: s.caption, tpl: s.tpl, sx: s.sx, sy: s.sy, type: s.type || 'everyday', title: s.title || '', when: s.when || '', media:{kind:'image', key}, watched: !!s.watched, hearts: s.watched ? 1 : 0, rsvp: null, sample: true });
+    S.posts.push({ id: uid(), at: s.at, from: s.from || me, note: s.note, caption: s.caption, tpl: s.tpl, sx: s.sx, sy: s.sy, type: s.type || 'everyday', title: s.title || '', when: s.when || '', media:{kind:'image', key}, watched: !!s.watched, hearts: s.watched ? 1 : 0, rsvp: null, sample: true });
   }
   S.posts.sort((a,b) => a.at - b.at);
   save();
@@ -662,19 +692,64 @@ $('#m-send').onclick = async () => {
 /* ---------- grandparent home ---------- */
 function newest(){ return [...S.posts].sort((a,b) => b.at - a.at)[0]; }
 function unseen(){ return S.posts.filter(p => !p.watched).sort((a,b) => a.at - b.at); }
+/* Aura-frame style: one big photo that slowly cycles. New Hiellos come first.
+   Tap the photo to watch, swipe to flip, tap a face to see just that person's Hiellos. */
+const FR = { list:[], i:0, timer:null };
+const FACE_COLORS = [['#F2B8C6','#14285A'],['#C8CACE','#14285A'],['#FFFFFF','#14285A'],['#22366A','#FFFFFF']];
+function frameList(){
+  const fresh = unseen().slice().reverse();
+  const seen = [...S.posts].filter(p => p.watched).sort((a,b) => b.at - a.at).slice(0, 12);
+  return [...fresh, ...seen];
+}
+function stopFrame(){ clearInterval(FR.timer); FR.timer = null; }
+async function showFrame(){
+  const f = $('#gp-frame'); const p = FR.list[FR.i];
+  if (!p){
+    f.innerHTML = `<div class="empty">No Hiellos yet.<br><span style="font-weight:600;font-size:17px;color:#DDE2EE;margin-top:8px;display:block">When family sends a photo or video, it shows up right here.</span></div>`;
+    f.onclick = null; $('#gp-dots').innerHTML = ''; return;
+  }
+  const th = await thumbHTML(p);
+  f.innerHTML = `<div class="ph">${th}</div><div class="shade"></div>
+    ${p.watched ? '' : '<div class="tag">NEW</div>'}
+    ${p.note ? `<div class="stk">${esc(p.note)}</div>` : ''}
+    <div class="info"><div style="min-width:0"><div class="who">From ${esc(p.from)}</div><div class="when">${ago(p.at)}</div></div><span class="watch">${PLAY.replace('fill="#fff"','fill="#14285A"').replace(/28/g,'20')}Watch</span></div>`;
+  f.onclick = () => { if (FR.swiped) return; stopFrame(); openPlayer([p], 'gp'); };
+  const n = Math.min(FR.list.length, 8);
+  $('#gp-dots').innerHTML = FR.list.length > 1 ? Array.from({length:n}, (_,k) => `<i class="${k === Math.min(FR.i, n-1) ? 'on' : ''}"></i>`).join('') : '';
+}
+function flipFrame(d){ if (FR.list.length < 2) return; FR.i = (FR.i + d + FR.list.length) % FR.list.length; showFrame(); }
+function startFrame(){ stopFrame(); if (FR.list.length > 1) FR.timer = setInterval(() => flipFrame(1), 8000); }
+(() => { let x0 = null;
+  const f = $('#gp-frame');
+  f.addEventListener('pointerdown', e => { x0 = e.clientX; FR.swiped = false; });
+  f.addEventListener('pointerup', e => { if (x0 === null) return; const dx = e.clientX - x0; x0 = null;
+    if (Math.abs(dx) > 50){ FR.swiped = true; flipFrame(dx < 0 ? 1 : -1); startFrame(); setTimeout(() => FR.swiped = false, 50); } });
+})();
+function renderFaces(){
+  const people = [];
+  [...S.posts].sort((a,b) => b.at - a.at).forEach(p => { if (!people.find(x => x.name === p.from)) people.push({ name:p.from }); });
+  people.forEach(x => x.fresh = S.posts.some(p => p.from === x.name && !p.watched));
+  people.sort((a,b) => b.fresh - a.fresh);
+  $('#gp-faces').innerHTML = people.map((x,k) => { const [bg,fg] = FACE_COLORS[k % FACE_COLORS.length];
+    return `<button class="face${x.fresh?' new':''}" data-who="${esc(x.name)}" aria-label="Hiellos from ${esc(x.name)}"><span class="av" style="background:${bg};color:${fg}">${esc((x.name||'?').trim()[0].toUpperCase())}${x.fresh?'<b></b>':''}</span><span class="nm">${esc(x.name)}</span></button>`; }).join('');
+  $('#gp-faces').style.display = people.length ? '' : 'none';
+  $$('#gp-faces .face').forEach(b => b.onclick = () => {
+    const mine = S.posts.filter(p => p.from === b.dataset.who);
+    const q = mine.filter(p => !p.watched).sort((a,b) => a.at - b.at);
+    stopFrame(); openPlayer(q.length ? q : mine.sort((a,b) => b.at - a.at).slice(0, 3), 'gp');
+  });
+}
 async function renderGP(){
   $('#gp-hello').textContent = `Hi, ${gpName()}`;
-  const p = unseen().slice(-1)[0] || newest();
-  const w = $('#gp-widget');
-  if (!p){ w.innerHTML = `<div style="padding:20px;text-align:center;font-weight:800">No Hiellos yet. When family sends one, it shows up right here.</div>`; w.onclick = null; }
-  else {
-    const th = await thumbHTML(p);
-    w.innerHTML = `<div class="wimg">${th}<div class="wtag">${p.watched ? 'LATEST HIELLO' : 'NEW HIELLO'}</div>${p.note ? `<div class="wstk">${esc(p.note)}</div>` : ''}</div>
-      <div class="row between" style="padding:10px 4px 2px"><div><div style="font-size:18px;font-weight:900">From ${esc(p.from)}</div><div class="muted" style="font-size:14px">${ago(p.at)}</div></div><span style="background:var(--teal);color:#fff;font-size:15px;font-weight:900;padding:10px 14px;border-radius:999px">Tap to watch</span></div>`;
-    w.onclick = () => openPlayer([p], 'gp');
-  }
-  const n = unseen().length;
-  $('#gp-weeksub').textContent = n ? `${n} new to watch` : "You're all caught up";
+  renderFaces();
+  const cur = FR.list[FR.i];
+  FR.list = frameList();
+  const fresh = unseen().length;
+  FR.i = fresh ? 0 : Math.max(0, FR.list.indexOf(cur));
+  await showFrame(); startFrame();
+  const c = $('#gp-cnt'); c.hidden = !fresh; c.textContent = fresh;
+  const big = S.posts.filter(p => p.type === 'big' && !p.rsvp && (!p.when || new Date(p.when).getTime() > Date.now())).sort((a,b) => (a.when||'').localeCompare(b.when||''))[0];
+  $('#gp-big').innerHTML = big ? `<button class="bigstrip" data-go="week" style="width:100%"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F2B8C6" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8z"/></svg><span style="flex:1;min-width:0">The big one: ${esc(big.title || 'Big moment')}${big.when ? ' · ' + esc(new Date(big.when).toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'})) : ''}</span><span style="color:var(--pink)">RSVP ›</span></button>` : '';
 }
 
 /* ---------- week ---------- */
