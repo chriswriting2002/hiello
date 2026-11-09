@@ -12,7 +12,7 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.hiello.app
+        bundle_identifier: com.hiello.family
       vars:
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
@@ -46,7 +46,7 @@ workflows:
           /usr/libexec/PlistBuddy -c "Add :UIRequiresFullScreen bool true" "$PLIST"
           /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName 'Hiello'" "$PLIST" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string 'Hiello'" "$PLIST"
           sed -i '' 's/TARGETED_DEVICE_FAMILY = "1,2";/TARGETED_DEVICE_FAMILY = 1;/g' ios/App/App.xcodeproj/project.pbxproj
-          sed -i '' -E 's/PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/PRODUCT_BUNDLE_IDENTIFIER = com.hiello.app;/g' ios/App/App.xcodeproj/project.pbxproj
+          sed -i '' -E 's/PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/PRODUCT_BUNDLE_IDENTIFIER = com.hiello.family;/g' ios/App/App.xcodeproj/project.pbxproj
           sed -i '' -E 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]+;/IPHONEOS_DEPLOYMENT_TARGET = 15.0;/g' ios/App/App.xcodeproj/project.pbxproj
           sed -i '' -E "s/platform :ios, '[0-9.]+'/platform :ios, '15.0'/" ios/App/Podfile
       - name: Copy the app in

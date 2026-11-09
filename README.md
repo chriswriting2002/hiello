@@ -7,7 +7,7 @@ This is the **one-phone demo**: everything is saved on the phone itself. Use the
 ## What's in it
 - `www/index.html`: the whole app (layout, styles and code in one file). Fonts are the iPhone's own Baskerville and Helvetica Neue.
 - `resources/`: app icon and launch screen.
-- `capacitor.config.json`: app name and ID (`com.hiello.app`).
+- `capacitor.config.json`: app name and ID (`com.hiello.family`).
 - `codemagic.yaml`: builds the iPhone app on Codemagic's Macs and sends it to TestFlight.
 
 ## Screens
@@ -20,7 +20,7 @@ This is the **one-phone demo**: everything is saved on the phone itself. Use the
 - **Settings → Demo tools**: send a surprise Hiello in 10 seconds (to show live arrival while playing), add samples, erase everything.
 
 ## Putting it on your iPhone (TestFlight)
-1. In **App Store Connect**: Apps → **+** → New App. Platform iOS, name **Hiello**, bundle ID **com.hiello.app** (if it's not in the list, add it under Certificates, Identifiers & Profiles → Identifiers first), SKU `hiello`.
+1. In **App Store Connect**: Apps → **+** → New App. Platform iOS, name **Hiello**, bundle ID **com.hiello.family** (if it's not in the list, add it under Certificates, Identifiers & Profiles → Identifiers first), SKU `hiello`.
 2. In **Codemagic**: Add application → connect GitHub → pick the `hiello` repo → it finds `codemagic.yaml`.
 3. Start the **Hiello for iPhone** workflow. It uses the same App Store Connect key as your Paper Meadow games ("PaperMeadow").
 4. When the build finishes (about 15–20 min) it uploads to TestFlight. Open the TestFlight app on your iPhone and install Hiello.
