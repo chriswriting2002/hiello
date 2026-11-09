@@ -101,7 +101,20 @@ textarea.field{resize:none;line-height:1.35}
 .bigtile svg{flex:none}
 
 /* ===== game ===== */
-#board{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin:auto 0;width:100%;max-width:420px;align-self:center}
+#board{position:relative;margin:10px auto;width:100%;max-width:420px}
+.mj{position:absolute;border:0;padding:0;border-radius:9px;background:#FFFFFF;box-shadow:4px 5px 0 #A9ADB5,7px 10px 10px rgba(0,0,0,.45);font-family:-apple-system,'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:900;color:var(--navy);display:flex;align-items:center;justify-content:center;line-height:1;transition:transform .15s,opacity .25s,filter .15s}
+.mj.s-r{color:#B8243A}.mj.s-g{color:#2E6B3F}.mj.s-b{color:#1F4FA0}
+.mj.blocked{filter:brightness(.72)}
+.mj.sel{transform:translate(-3px,-5px);box-shadow:0 0 0 4px var(--pink),5px 8px 10px rgba(0,0,0,.4)}
+.mj.hint{box-shadow:0 0 0 4px #C8CACE,5px 7px 8px rgba(0,0,0,.35)}
+.mj.gone{opacity:0;transform:scale(.6);pointer-events:none}
+.mj.shake{animation:shake .3s}
+#golfWrap{position:relative;margin:10px 0 8px;border-radius:20px;overflow:hidden;align-self:center;box-shadow:0 0 0 4px #8B5E3C}
+#golf{display:block;touch-action:none}
+.ans{min-height:64px;border:0;border-radius:16px;background:#fff;color:var(--navy);font-size:19px;font-weight:800;padding:10px 16px;text-align:left;width:100%}
+.ans.right{background:#DDF0E2;box-shadow:0 0 0 3px #2E6B3F}
+.ans.wrong{background:#FBE3EA;box-shadow:0 0 0 3px #9B1B1F}
+.ans:disabled{opacity:1}
 .tile{aspect-ratio:5/6.4;border:0;border-radius:10px;background:var(--cream);border-bottom:6px solid #C9C9D1;font-family:-apple-system,'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:1000;font-size:clamp(22px,7vw,30px);color:var(--navy);display:flex;align-items:center;justify-content:center;transition:transform .15s,opacity .25s;padding:0;line-height:1}
 .tile.s-r{color:var(--clay)}.tile.s-g{color:#2E6B3F}.tile.s-b{color:#1F5A75}
 .tile.blocked{filter:brightness(.78)}
@@ -214,9 +227,9 @@ textarea.field{resize:none;line-height:1.35}
   <div style="font-size:13px;font-weight:800;opacity:.85;margin:0 4px 6px">Home screen widget (preview)</div>
   <button class="widget" id="gp-widget"></button>
   <div class="col" style="margin-top:18px;gap:12px">
-    <button class="bigtile" style="background:#C8CACE;color:var(--navy)" data-go="game">
+    <button class="bigtile" style="background:#C8CACE;color:var(--navy)" data-go="games">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>
-      <span>Play Mahjong<span class="sub">Family breaks between rounds</span></span></button>
+      <span>Play a game<span class="sub">Mahjong, putt-putt golf or trivia</span></span></button>
     <button class="bigtile" style="background:#FFFFFF;color:var(--navy)" data-go="week">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
       <span>This week in the family<span class="sub" id="gp-weeksub">See what everyone's up to</span></span></button>
@@ -226,14 +239,51 @@ textarea.field{resize:none;line-height:1.35}
 <!-- ============ GAME ============ -->
 <section class="screen felt pad-bottom" id="s-game">
   <div class="row between">
-    <button class="icon-btn" aria-label="Home" data-back="gp"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg></button>
+    <button class="icon-btn" aria-label="Back to games" data-back="games"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
     <div style="text-align:center"><div class="serif" style="font-size:23px">Hiello Mahjong</div><div style="font-size:15px;font-weight:800;color:#CFE3D6" id="g-status">Round 1</div></div>
     <button class="icon-btn" aria-label="Hint" id="g-hint"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></button>
   </div>
-  <div style="text-align:center;font-size:14px;color:#CFE3D6;margin-top:8px">Match two of the same tile. A tile can move if its left or right side is open.</div>
+  <div style="text-align:center;font-size:14px;color:#CFE3D6;margin-top:8px">Tap two matching tiles. A tile can be picked if nothing is on top of it and its left or right side is open.</div>
   <div id="board"></div>
   <div class="row" style="justify-content:center;margin:6px 0 12px"><button class="chip" id="g-shuffle" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)">Shuffle tiles</button></div>
   <button class="banner" id="g-banner"></button>
+</section>
+
+
+<!-- ============ GAMES MENU ============ -->
+<section class="screen dark pad-bottom" id="s-games">
+  <div class="row between" style="margin-bottom:12px">
+    <button class="icon-btn" aria-label="Home" data-back="gp"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg></button>
+    <span class="kicker">Hiello games</span><span style="width:52px"></span>
+  </div>
+  <h1 style="font-size:30px;margin-bottom:6px">Pick a game</h1>
+  <p class="muted" style="margin:0 0 16px;font-size:16px">Family Hiellos play between rounds.</p>
+  <div class="col" style="gap:14px">
+    <button class="bigtile" style="background:#fff;color:var(--navy);min-height:96px" data-go="game"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="9" height="12" rx="2"/><rect x="8" y="4" width="9" height="12" rx="2" fill="#fff"/><rect x="11" y="9" width="9" height="12" rx="2" fill="#fff"/></svg><span>Mahjong<span class="sub">Stacked tiles, match the pairs</span></span></button>
+    <button class="bigtile" style="background:#C8CACE;color:var(--navy);min-height:96px" data-go="golf"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 20V4l8 3-8 3"/><circle cx="16" cy="18" r="2.2"/><path d="M4 21h16"/></svg><span>Putt-Putt Golf<span class="sub">Pull back, let go, sink the putt</span></span></button>
+    <button class="bigtile" style="background:#F2B8C6;color:var(--navy);min-height:96px" data-go="trivia"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M10 9.5a2 2 0 1 1 2.5 1.9c-.4.1-.5.5-.5.9V13M12 15h.01"/></svg><span>Trivia Time<span class="sub">Fun questions from the '70s to the 2000s</span></span></button>
+  </div>
+</section>
+
+<!-- ============ PUTT-PUTT GOLF ============ -->
+<section class="screen felt" id="s-golf">
+  <div class="row between">
+    <button class="icon-btn" aria-label="Back to games" data-back="games"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div style="text-align:center"><div class="serif" style="font-size:23px">Putt-Putt Golf</div><div style="font-size:15px;font-weight:800;color:#CFD6E6" id="gf-status">Hole 1 of 6</div></div>
+    <button class="icon-btn" aria-label="Restart hole" id="gf-reset"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button>
+  </div>
+  <div style="text-align:center;font-size:15px;color:#CFD6E6;margin-top:8px">Touch anywhere, pull back like a slingshot, and let go.</div>
+  <div id="golfWrap"><canvas id="golf"></canvas></div>
+</section>
+
+<!-- ============ TRIVIA ============ -->
+<section class="screen dark pad-bottom" id="s-trivia">
+  <div class="row between" style="margin-bottom:10px">
+    <button class="icon-btn" aria-label="Back to games" data-back="games"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div style="text-align:center"><div class="serif" style="font-size:23px">Trivia Time</div><div style="font-size:15px;font-weight:800;color:#CFD6E6" id="tv-status">Question 1 of 10</div></div>
+    <span style="width:52px"></span>
+  </div>
+  <div id="tv-body" class="col" style="gap:12px;margin-top:6px"></div>
 </section>
 
 <!-- ============ FAMILY BREAK / PLAYER ============ -->
@@ -425,7 +475,8 @@ function go(name){
   $$('#demobar button').forEach(b => b.classList.toggle('on', b.dataset.mode === S.mode));
   if (name !== 'play') stopPlayback();
   if (name !== 'game') stopBanner();
-  ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, game:enterGame, settings:renderSettings}[name] || (()=>{}))();
+  if (name !== 'golf') stopGolf();
+  ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, game:enterGame, golf:enterGolf, trivia:enterTrivia, settings:renderSettings}[name] || (()=>{}))();
   const sc = $('#s-' + name); if (sc) sc.scrollTop = 0;
 }
 document.addEventListener('click', e => {
@@ -656,23 +707,24 @@ $('#wk-big').onclick = e => {
 };
 
 /* ---------- player / family break ---------- */
-const P = { queue:[], i:0, back:'gp', recap:false, timer:null };
+const P = { queue:[], i:0, back:'gp', recap:false, timer:null, after:null };
+const GAMES = ['game','golf','trivia'];
 function stopPlayback(){ clearTimeout(P.timer); P.timer = null; $$('#playCard video').forEach(v => { try { v.pause(); } catch(e){} }); }
-function openPlayer(queue, back, recap=false){
-  queue = queue.filter(Boolean); if (!queue.length) return;
-  Object.assign(P, { queue, i:0, back, recap });
+function openPlayer(queue, back, recap=false, after=null){
+  queue = queue.filter(Boolean); if (!queue.length) { if (after) after(); return; }
+  Object.assign(P, { queue, i:0, back, recap, after });
   go('play'); showSlide();
 }
 async function showSlide(){
   stopPlayback();
   const p = P.queue[P.i];
-  $('#p-title').textContent = P.back === 'game' ? "We'll be right back…" : P.recap ? 'Your week in a minute' : (p.watched ? 'A Hiello from ' + p.from : 'New from ' + p.from);
+  $('#p-title').textContent = GAMES.includes(P.back) ? "We'll be right back…" : P.recap ? 'Your week in a minute' : (p.watched ? 'A Hiello from ' + p.from : 'New from ' + p.from);
   $('#p-count').textContent = P.queue.length > 1 ? `${P.i+1} of ${P.queue.length}` : '';
   $('#playCard').innerHTML = await cardHTML(p, {live:true});
   $('#playCard').firstElementChild.classList.add('fade-in');
   $('#p-caption').textContent = p.caption || '';
   $('#p-meta').textContent = `From ${p.from} · ${ago(p.at)}` + (p.type === 'big' && p.title ? ` · ★ ${p.title}` : '');
-  $('#p-done').textContent = P.back === 'game' ? 'Back to game' : (P.i < P.queue.length - 1 ? 'Next' : 'Done');
+  $('#p-done').textContent = GAMES.includes(P.back) ? 'Back to game' : (P.i < P.queue.length - 1 ? 'Next' : 'Done');
   $('#p-love').innerHTML = HEART.replace('16','20').replace('16','20') + (p.hearts ? ' Love sent ×' + p.hearts : ' Send love back');
   if (!p.watched){ p.watched = true; p.watchedAt = Date.now(); save(); }
   const prog = $('#p-prog');
@@ -687,7 +739,9 @@ async function showSlide(){
 }
 function advance(){ if (P.i < P.queue.length - 1){ P.i++; showSlide(); } else { stopPlayback(); if (P.recap) say("That's the week! You're all caught up."); go(P.back); } }
 $('#p-love').onclick = () => { const p = P.queue[P.i]; p.hearts = (p.hearts||0) + 1; save(); hearts(); haptic(); $('#p-love').innerHTML = HEART.replace('16','20').replace('16','20') + ' Love sent ×' + p.hearts; };
-$('#p-done').onclick = () => { if (P.back === 'game'){ stopPlayback(); go('game'); nextRoundIfCleared(); return; } advance(); };
+$('#p-done').onclick = () => { if (GAMES.includes(P.back)){ stopPlayback(); const a = P.after; P.after = null; go(P.back); if (a) a(); return; } advance(); };
+/* a Family Break between rounds: plays the next Hiello, then runs "after" when Grandpa taps Back to game */
+function gameBreak(back, after){ const p = nextBreakPost(); if (p) openPlayer([p], back, false, after); else after(); }
 
 /* ---------- settings ---------- */
 function renderSettings(){ $('#set-gp').value = S.gp; $('#set-me').value = S.me; }
@@ -715,7 +769,7 @@ async function arrived(p){
   const t = $('#toast');
   t.querySelector('.thumb').innerHTML = await thumbHTML(p);
   t.querySelector('.t2').textContent = `${p.from} sent a Hiello just now`;
-  t.querySelector('button').onclick = () => { t.classList.remove('on'); openPlayer([p], current === 'game' ? 'game' : (current === 'play' ? P.back : 'gp')); };
+  t.querySelector('button').onclick = () => { t.classList.remove('on'); openPlayer([p], GAMES.includes(current) ? current : (current === 'play' ? P.back : 'gp')); };
   t.classList.add('on'); haptic();
   setTimeout(() => t.classList.remove('on'), 9000);
   if (current === 'gp') renderGP();
@@ -724,80 +778,264 @@ async function arrived(p){
 }
 
 /* =========================================================
-   MAHJONG — 6 x 6 board, 18 pairs. A tile is free when its left or right neighbour is empty.
+   MAHJONG — classic stacked solitaire: 44 tiles in three layers (6x5, 4x3, 2x1).
+   A tile is free when nothing is on top of it and its left or right side is open.
+   Boards are built backwards from pairs of free tiles, so every board can be solved.
    ========================================================= */
-const COLS = 6, ROWS = 6;
-const FACES = [
-  ['一','s-b'],['二','s-b'],['三','s-b'],['四','s-b'],['五','s-b'],['六','s-b'],
-  ['中','s-r'],['發','s-g'],['東',''],['南',''],['西',''],['北',''],
-  ['●','s-r'],['●●','s-g'],['竹','s-g'],['萬','s-r'],['✿','s-r'],['★','s-b']
-];
-const G = { cells:[], sel:-1, cleared:false };
-function newBoard(){
-  let types = []; FACES.forEach((_,i) => types.push(i,i));
-  for (let tries=0; tries<200; tries++){
-    shuffleArr(types);
-    G.cells = types.slice();
-    if (findPair()) break;
-  }
-  G.sel = -1; G.cleared = false;
-}
+const FACES = [['一','s-b'],['二','s-b'],['三','s-b'],['中','s-r'],['發','s-g'],['東',''],['南',''],['●','s-r'],['竹','s-g'],['✿','s-r'],['★','s-b']];
+const LAYOUT = (() => { const p = [];
+  for (let y=0;y<5;y++) for (let x=0;x<6;x++) p.push({x,y,z:0});
+  for (let y=1;y<4;y++) for (let x=1;x<5;x++) p.push({x,y,z:1});
+  p.push({x:2,y:2,z:2},{x:3,y:2,z:2}); return p; })();
+const G = { face:[], alive:[], sel:-1, cleared:false };
 function shuffleArr(a){ for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
-function isFree(i){
-  if (G.cells[i] == null) return false;
-  const c = i % COLS, r = i - c;
-  let leftOpen = true, rightOpen = true;
-  for (let k=r; k<i; k++) if (G.cells[k] != null) { leftOpen = false; break; }
-  for (let k=i+1; k<r+COLS; k++) if (G.cells[k] != null) { rightOpen = false; break; }
-  return leftOpen || rightOpen;
-}
-function findPair(){
-  const free = []; G.cells.forEach((t,i) => { if (t != null && isFree(i)) free.push(i); });
-  for (let a=0;a<free.length;a++) for (let b=a+1;b<free.length;b++) if (G.cells[free[a]] === G.cells[free[b]]) return [free[a], free[b]];
+function covered(i, al){ const a = LAYOUT[i]; return LAYOUT.some((b,j) => al[j] && b.z > a.z && b.x === a.x && b.y === a.y); }
+function sideTaken(i, al, dx){ const a = LAYOUT[i]; return LAYOUT.some((b,j) => al[j] && b.z === a.z && b.y === a.y && b.x === a.x + dx); }
+function isFree(i, al = G.alive){ return !!al[i] && !covered(i, al) && (!sideTaken(i, al, -1) || !sideTaken(i, al, 1)); }
+function deal(slots, pairFaces){
+  for (let tries=0; tries<400; tries++){
+    shuffleArr(pairFaces);
+    const al = LAYOUT.map((_,i) => slots.includes(i)); const face = G.face.slice(); let ok = true;
+    for (const f of pairFaces){
+      const free = shuffleArr(slots.filter(i => isFree(i, al)));
+      if (free.length < 2){ ok = false; break; }
+      face[free[0]] = f; face[free[1]] = f; al[free[0]] = false; al[free[1]] = false;
+    }
+    if (ok) return face;
+  }
   return null;
 }
-function left(){ return G.cells.filter(t => t != null).length; }
+function newBoard(){
+  const all = LAYOUT.map((_,i) => i); const pf = all.slice(0, all.length/2).map((_,k) => k % FACES.length);
+  G.face = Array(LAYOUT.length).fill(-1);
+  G.face = deal(all, pf) || G.face;
+  G.alive = LAYOUT.map(() => true); G.sel = -1; G.cleared = false;
+}
+function findPair(){
+  const free = LAYOUT.map((_,i) => i).filter(i => isFree(i));
+  for (let a=0;a<free.length;a++) for (let b=a+1;b<free.length;b++) if (G.face[free[a]] === G.face[free[b]]) return [free[a], free[b]];
+  return null;
+}
+function left(){ return G.alive.filter(Boolean).length; }
+function reshuffle(){
+  const slots = LAYOUT.map((_,i) => i).filter(i => G.alive[i]);
+  const counts = {}; slots.forEach(i => counts[G.face[i]] = (counts[G.face[i]]||0) + 1);
+  const pf = []; Object.keys(counts).forEach(f => { for (let k=0;k<counts[f]/2;k++) pf.push(+f); });
+  const face = deal(slots, pf); if (face) G.face = face;
+}
 function renderBoard(){
-  const b = $('#board');
-  b.innerHTML = G.cells.map((t,i) => {
-    if (t == null) return `<button class="tile empty" tabindex="-1" aria-hidden="true"></button>`;
-    const [face, cls] = FACES[t];
-    return `<button class="tile ${cls}${isFree(i)?'':' blocked'}${i===G.sel?' sel':''}" data-i="${i}" aria-label="Tile ${face}">${face}</button>`;
+  const b = $('#board'); const bw = Math.min(b.clientWidth || 360, 420);
+  const W = Math.floor((bw - 14) / 6), H = Math.round(W * 1.3), d = Math.max(6, Math.round(W * 0.15));
+  b.style.height = (5*H + 2*d + 14) + 'px';
+  const fs = Math.round(W * 0.48);
+  b.innerHTML = LAYOUT.map((t,i) => {
+    if (!G.alive[i]) return '';
+    const [face, cls] = FACES[G.face[i]];
+    const free = isFree(i);
+    const x = 4 + t.x*W + (2 - t.z)*d, y = 4 + t.y*H + (2 - t.z)*d;
+    return `<button class="mj ${cls}${free?'':' blocked'}${i===G.sel?' sel':''}" data-i="${i}" aria-label="Tile ${face}${free?'':' (blocked)'}" style="left:${x}px;top:${y}px;width:${W-3}px;height:${H-3}px;z-index:${t.z*100 + t.y*10 + t.x};font-size:${face.length>1?Math.round(fs*0.7):fs}px">${face}</button>`;
   }).join('');
   $('#g-status').textContent = `Round ${S.game.round} · ${left()/2} pairs left`;
 }
 $('#board').onclick = e => {
-  const el = e.target.closest('.tile[data-i]'); if (!el) return;
+  const el = e.target.closest('.mj[data-i]'); if (!el) return;
   const i = +el.dataset.i;
   if (!isFree(i)){ el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); return; }
   haptic();
   if (G.sel === -1 || G.sel === i){ G.sel = G.sel === i ? -1 : i; renderBoard(); return; }
-  if (G.cells[G.sel] === G.cells[i]){
+  if (G.face[G.sel] === G.face[i]){
     const a = G.sel; G.sel = -1;
-    $$('#board .tile').forEach(t => { if (+t.dataset.i === a || +t.dataset.i === i) t.classList.add('gone'); });
+    $$('#board .mj').forEach(t => { if (+t.dataset.i === a || +t.dataset.i === i) t.classList.add('gone'); });
     setTimeout(() => {
-      G.cells[a] = null; G.cells[i] = null;
+      G.alive[a] = false; G.alive[i] = false;
       if (!left()){ roundCleared(); return; }
       if (!findPair()) { reshuffle(); say('No moves left, so we shuffled the tiles.'); }
       renderBoard();
     }, 230);
   } else { G.sel = i; renderBoard(); }
 };
-function reshuffle(){
-  const idx = [], vals = [];
-  G.cells.forEach((t,i) => { if (t != null){ idx.push(i); vals.push(t); } });
-  for (let tries=0; tries<100; tries++){ shuffleArr(vals); idx.forEach((ix,k) => G.cells[ix] = vals[k]); if (findPair()) break; }
-}
 $('#g-shuffle').onclick = () => { reshuffle(); G.sel = -1; renderBoard(); };
-$('#g-hint').onclick = () => { const p = findPair(); if (!p) return; renderBoard(); p.forEach(i => $(`#board .tile[data-i="${i}"]`)?.classList.add('hint')); };
-function enterGame(){ if (!G.cells.length || G.cleared) newBoard(); renderBoard(); renderBanner(); startBanner(); }
+$('#g-hint').onclick = () => { const p = findPair(); if (!p) return; renderBoard(); p.forEach(i => $(`#board .mj[data-i="${i}"]`)?.classList.add('hint')); };
+function enterGame(){ if (!G.face.length || G.cleared) newBoard(); requestAnimationFrame(renderBoard); renderBanner(); startBanner(); }
 function roundCleared(){
   G.cleared = true; renderBoard(); hearts();
   say(`Round ${S.game.round} complete!`);
   S.game.round++; save();
-  setTimeout(() => { const p = nextBreakPost(); if (p) openPlayer([p], 'game'); else { newBoard(); renderBoard(); } }, 900);
+  setTimeout(() => gameBreak('game', () => { newBoard(); renderBoard(); renderBanner(); }), 900);
 }
-function nextRoundIfCleared(){ if (G.cleared){ newBoard(); renderBoard(); renderBanner(); } }
+window.addEventListener('resize', () => { if (current === 'game') renderBoard(); if (current === 'golf') sizeGolf(); });
+
+/* =========================================================
+   PUTT-PUTT GOLF — six short holes. Touch, pull back like a slingshot, let go.
+   ========================================================= */
+const HOLES = [
+  {par:2, start:[.5,.86], cup:[.5,.16], walls:[]},
+  {par:3, start:[.22,.86], cup:[.78,.16], walls:[[0,.47,.62,.045]]},
+  {par:3, start:[.5,.87], cup:[.5,.14], walls:[[.28,.46,.44,.045]]},
+  {par:3, start:[.18,.86], cup:[.82,.18], walls:[[.47,0,.06,.62]]},
+  {par:4, start:[.2,.9], cup:[.2,.13], walls:[[0,.64,.66,.04],[.34,.37,.66,.04]]},
+  {par:3, start:[.5,.88], cup:[.5,.14], walls:[[.14,.56,.2,.045],[.66,.56,.2,.045],[.4,.34,.2,.045]]}
+];
+const GF = { hole:0, strokes:0, total:0, ball:{x:0,y:0,vx:0,vy:0}, aim:null, sunk:false, raf:0, W:0, H:0, ctx:null, dpr:1 };
+function sizeGolf(){
+  const c = $('#golf'), wrap = $('#golfWrap');
+  const maxW = Math.min(window.innerWidth - 36, 420), maxH = window.innerHeight - 220;
+  let W = maxW, H = Math.round(W * 1.3); if (H > maxH){ H = Math.max(360, maxH); W = Math.round(H / 1.3); }
+  const r = GF.W ? { x: GF.ball.x / GF.W, y: GF.ball.y / GF.H } : null;
+  GF.W = W; GF.H = H; GF.dpr = window.devicePixelRatio || 1;
+  c.width = W * GF.dpr; c.height = H * GF.dpr; c.style.width = W + 'px'; c.style.height = H + 'px';
+  wrap.style.width = W + 'px';
+  GF.ctx = c.getContext('2d'); GF.ctx.setTransform(GF.dpr,0,0,GF.dpr,0,0);
+  if (r){ GF.ball.x = r.x * W; GF.ball.y = r.y * H; }
+}
+function golfRect(w){ return {x:w[0]*GF.W, y:w[1]*GF.H, w:w[2]*GF.W, h:w[3]*GF.H}; }
+function startHole(){
+  const h = HOLES[GF.hole];
+  GF.ball = { x:h.start[0]*GF.W, y:h.start[1]*GF.H, vx:0, vy:0 }; GF.strokes = 0; GF.sunk = false; GF.aim = null;
+  golfStatus();
+}
+function golfStatus(){ const h = HOLES[GF.hole]; $('#gf-status').textContent = `Hole ${GF.hole+1} of ${HOLES.length} · Par ${h.par} · Strokes ${GF.strokes}`; }
+function enterGolf(){ sizeGolf(); if (!GF.started){ GF.started = true; GF.hole = 0; GF.total = 0; startHole(); } stopGolf(); GF.raf = requestAnimationFrame(golfLoop); }
+function stopGolf(){ cancelAnimationFrame(GF.raf); GF.raf = 0; }
+function golfLoop(){
+  const b = GF.ball, W = GF.W, H = GF.H, r = W * 0.024, h = HOLES[GF.hole];
+  const cup = { x:h.cup[0]*W, y:h.cup[1]*H, r:W*0.045 };
+  if (!GF.sunk && (b.vx || b.vy)){
+    for (let step=0; step<2; step++){
+      b.x += b.vx/2; b.y += b.vy/2;
+      if (b.x < r){ b.x = r; b.vx = -b.vx*0.8; } if (b.x > W - r){ b.x = W - r; b.vx = -b.vx*0.8; }
+      if (b.y < r){ b.y = r; b.vy = -b.vy*0.8; } if (b.y > H - r){ b.y = H - r; b.vy = -b.vy*0.8; }
+      for (const w of h.walls){
+        const R = golfRect(w); const cx = Math.max(R.x, Math.min(b.x, R.x+R.w)), cy = Math.max(R.y, Math.min(b.y, R.y+R.h));
+        const dx = b.x - cx, dy = b.y - cy, dd = Math.hypot(dx, dy);
+        if (dd < r){ const nx = dd ? dx/dd : 0, ny = dd ? dy/dd : -1; b.x = cx + nx*r; b.y = cy + ny*r; const dot = b.vx*nx + b.vy*ny; if (dot < 0){ b.vx = (b.vx - 2*dot*nx)*0.8; b.vy = (b.vy - 2*dot*ny)*0.8; } }
+      }
+    }
+    b.vx *= 0.982; b.vy *= 0.982;
+    const sp = Math.hypot(b.vx, b.vy), dc = Math.hypot(b.x - cup.x, b.y - cup.y);
+    if (dc < cup.r * 0.9 && sp < W * 0.022){ GF.sunk = true; b.x = cup.x; b.y = cup.y; b.vx = b.vy = 0; holeDone(); }
+    else if (dc < cup.r){ b.vx *= 0.9; b.vy *= 0.9; b.vx += (cup.x - b.x) * 0.004; b.vy += (cup.y - b.y) * 0.004; }
+    if (sp < W * 0.0006){ b.vx = 0; b.vy = 0; }
+  }
+  drawGolf(r, cup, h);
+  GF.raf = requestAnimationFrame(golfLoop);
+}
+function drawGolf(r, cup, h){
+  const x = GF.ctx, W = GF.W, H = GF.H;
+  for (let i=0;i<10;i++){ x.fillStyle = i%2 ? '#3F8F57' : '#45995E'; x.fillRect(0, i*H/10, W, H/10 + 1); }
+  for (const w of h.walls){ const R = golfRect(w); x.fillStyle = '#8B5E3C'; x.fillRect(R.x, R.y, R.w, R.h); x.fillStyle = '#A8754E'; x.fillRect(R.x, R.y, R.w, Math.max(3, R.h*0.35)); }
+  x.fillStyle = '#1B1B1B'; x.beginPath(); x.arc(cup.x, cup.y, cup.r*0.8, 0, 7); x.fill();
+  x.strokeStyle = '#F4F5F7'; x.lineWidth = 3; x.beginPath(); x.moveTo(cup.x, cup.y); x.lineTo(cup.x, cup.y - W*0.16); x.stroke();
+  x.fillStyle = '#F2B8C6'; x.strokeStyle = '#9B1B1F'; x.lineWidth = 2; x.beginPath(); x.moveTo(cup.x, cup.y - W*0.16); x.lineTo(cup.x + W*0.1, cup.y - W*0.13); x.lineTo(cup.x, cup.y - W*0.1); x.closePath(); x.fill(); x.stroke();
+  const b = GF.ball;
+  if (GF.aim && !(b.vx || b.vy) && !GF.sunk){
+    const a = GF.aim; const n = 8;
+    for (let k=1;k<=n;k++){ const t = k/n; x.fillStyle = `rgba(242,184,198,${1 - t*0.6})`; x.beginPath(); x.arc(b.x + a.dx*a.p*W*0.45*t, b.y + a.dy*a.p*W*0.45*t, r*0.45, 0, 7); x.fill(); }
+  }
+  if (!GF.sunk){ x.fillStyle = 'rgba(0,0,0,.25)'; x.beginPath(); x.arc(b.x+2, b.y+3, r, 0, 7); x.fill(); x.fillStyle = '#FFFFFF'; x.beginPath(); x.arc(b.x, b.y, r, 0, 7); x.fill(); }
+}
+function golfPoint(e){ const rc = $('#golf').getBoundingClientRect(); return { x:e.clientX - rc.left, y:e.clientY - rc.top }; }
+$('#golf').addEventListener('pointerdown', e => { if (GF.sunk || GF.ball.vx || GF.ball.vy) return; $('#golf').setPointerCapture(e.pointerId); GF.drag = golfPoint(e); GF.aim = {dx:0, dy:-1, p:0}; });
+$('#golf').addEventListener('pointermove', e => {
+  if (!GF.drag) return; const q = golfPoint(e);
+  const dx = GF.drag.x - q.x, dy = GF.drag.y - q.y, len = Math.hypot(dx, dy);
+  GF.aim = len > 2 ? { dx:dx/len, dy:dy/len, p:Math.min(len, GF.W*0.38)/(GF.W*0.38) } : {dx:0, dy:-1, p:0};
+});
+const golfRelease = () => {
+  if (!GF.drag) return; GF.drag = null; const a = GF.aim; GF.aim = null;
+  if (!a || a.p < 0.06) return;
+  const v = GF.W * 0.03 * a.p; GF.ball.vx = a.dx * v; GF.ball.vy = a.dy * v; GF.strokes++; golfStatus(); haptic();
+};
+$('#golf').addEventListener('pointerup', golfRelease); $('#golf').addEventListener('pointercancel', golfRelease);
+$('#gf-reset').onclick = () => { startHole(); };
+function holeDone(){
+  hearts(); haptic(); GF.total += GF.strokes;
+  const h = HOLES[GF.hole]; const diff = GF.strokes - h.par;
+  const words = GF.strokes === 1 ? 'Hole in one!' : diff <= -1 ? 'Birdie!' : diff === 0 ? 'Par, nice putting!' : `In the hole in ${GF.strokes}.`;
+  say(words);
+  setTimeout(() => {
+    const last = GF.hole === HOLES.length - 1;
+    gameBreak('golf', () => {
+      if (last){ const par = HOLES.reduce((s,h) => s + h.par, 0); say(`Course done: ${GF.total} strokes (par ${par}). Let's go again!`); GF.hole = 0; GF.total = 0; }
+      else GF.hole++;
+      startHole();
+    });
+  }, 1100);
+}
+
+/* =========================================================
+   TRIVIA TIME — easy pop-culture questions, 1970s to 2006. Ten per game, a Family Break every five.
+   ========================================================= */
+const TRIVIA = [
+  {e:"1970s", q:"Which TV show featured the Fonz?", a:["Happy Days","The Brady Bunch","M*A*S*H"], f:"Henry Winkler played Arthur \"Fonzie\" Fonzarelli on Happy Days."},
+  {e:"1970s", q:"In the 1975 movie Jaws, what was terrorizing the beach town?", a:["A great white shark","A giant octopus","A killer whale"], f:"Jaws was one of the first summer blockbusters."},
+  {e:"1970s", q:"Who played the boxer Rocky Balboa?", a:["Sylvester Stallone","Burt Reynolds","Clint Eastwood"], f:"Stallone also wrote the script for the first Rocky (1976)."},
+  {e:"1970s", q:"In Star Wars (1977), what is the name of the young farm boy hero?", a:["Luke Skywalker","Han Solo","Obi-Wan Kenobi"], f:"Mark Hamill played Luke Skywalker."},
+  {e:"1970s", q:"Which Swedish group sang \"Dancing Queen\"?", a:["ABBA","The Bee Gees","Fleetwood Mac"], f:"ABBA released \"Dancing Queen\" in 1976."},
+  {e:"1970s", q:"Which movie starred John Travolta in a white suit on a disco floor?", a:["Saturday Night Fever","Grease","Footloose"], f:"Saturday Night Fever came out in 1977."},
+  {e:"1970s", q:"Which singer was nicknamed \"The Boss\"?", a:["Bruce Springsteen","Billy Joel","Bob Seger"], f:"Springsteen has been called The Boss since the early 1970s."},
+  {e:"1970s", q:"Which kids' show is home to Big Bird?", a:["Sesame Street","Mister Rogers' Neighborhood","The Electric Company"], f:"Sesame Street first aired in 1969 and is still running."},
+  {e:"1980s", q:"Which puzzle cube became a worldwide craze around 1980?", a:["Rubik's Cube","Magic 8 Ball","Etch A Sketch"], f:"It was invented by Hungarian professor Ernő Rubik."},
+  {e:"1980s", q:"What did E.T. famously want to do?", a:["Phone home","Find his spaceship keys","Ride a skateboard"], f:"E.T. the Extra-Terrestrial came out in 1982."},
+  {e:"1980s", q:"Which 1985 movie featured a DeLorean time machine?", a:["Back to the Future","Ghostbusters","The Goonies"], f:"The DeLorean needed 1.21 gigawatts to travel through time."},
+  {e:"1980s", q:"Which yellow video game hero eats dots while ghosts chase him?", a:["Pac-Man","Mario","Q*bert"], f:"Pac-Man hit arcades in 1980."},
+  {e:"1980s", q:"Who sang the 1982 hit \"Thriller\"?", a:["Michael Jackson","Prince","Lionel Richie"], f:"Thriller became the best-selling album of all time."},
+  {e:"1980s", q:"In 1980, millions of TV viewers wanted to know: \"Who shot J.R.?\" Which show was it?", a:["Dallas","Dynasty","Falcon Crest"], f:"The answer drew one of the biggest TV audiences in history."},
+  {e:"1980s", q:"Which 1984 movie asked \"Who you gonna call?\"", a:["Ghostbusters","Gremlins","The Karate Kid"], f:"Ray Parker Jr. sang the Ghostbusters theme."},
+  {e:"1980s", q:"Which singer was known as the \"Material Girl\"?", a:["Madonna","Cyndi Lauper","Whitney Houston"], f:"\"Material Girl\" was released in 1985."},
+  {e:"1980s", q:"Which show was set in a Boston bar \"where everybody knows your name\"?", a:["Cheers","Taxi","Night Court"], f:"Cheers ran for 11 seasons, from 1982 to 1993."},
+  {e:"1980s", q:"Who hosted The Tonight Show for 30 years until 1992?", a:["Johnny Carson","David Letterman","Dick Cavett"], f:"Jay Leno took over when Carson retired."},
+  {e:"1980s", q:"Which game console did Nintendo launch in the U.S. in 1985?", a:["Nintendo Entertainment System","Game Boy","Super Nintendo"], f:"It came with Super Mario Bros. in many bundles."},
+  {e:"1980s", q:"Which family sitcom starred Bob Saget and the Olsen twins?", a:["Full House","Family Ties","Growing Pains"], f:"Full House premiered in 1987."},
+  {e:"1980s", q:"Which 1980s TV team included Mr. T as B.A. Baracus?", a:["The A-Team","Knight Rider","Magnum, P.I."], f:"The A-Team ran from 1983 to 1987."},
+  {e:"1990s", q:"Which cartoon family lives in Springfield?", a:["The Simpsons","The Flintstones","The Jetsons"], f:"The Simpsons became a half-hour show in 1989."},
+  {e:"1990s", q:"Which sitcom was famously called \"a show about nothing\"?", a:["Seinfeld","Frasier","Home Improvement"], f:"Seinfeld ran from 1989 to 1998."},
+  {e:"1990s", q:"Which show followed six friends who hung out at Central Perk?", a:["Friends","Will & Grace","Mad About You"], f:"Friends ran for ten seasons, 1994 to 2004."},
+  {e:"1990s", q:"Who starred as The Fresh Prince of Bel-Air?", a:["Will Smith","Martin Lawrence","Jamie Foxx"], f:"The show ran from 1990 to 1996."},
+  {e:"1990s", q:"In the 1997 movie Titanic, what does the ship hit?", a:["An iceberg","A whale","Another ship"], f:"Titanic won 11 Academy Awards."},
+  {e:"1990s", q:"Which beach show made slow-motion running famous?", a:["Baywatch","Saved by the Bell","Beverly Hills, 90210"], f:"Baywatch was once called the most-watched show in the world."},
+  {e:"1990s", q:"Which 1990s collectible plush toys came with heart-shaped tags?", a:["Beanie Babies","Care Bears","Cabbage Patch Kids"], f:"Some people stored their tags in plastic protectors."},
+  {e:"1990s", q:"What was a Tamagotchi?", a:["A virtual pet on a keychain","A Japanese snack","A type of scooter"], f:"Tamagotchis arrived in the U.S. in 1997."},
+  {e:"1990s", q:"What was the \"Y2K bug\" feared to do?", a:["Make computers fail when 2000 began","Ruin the summer harvest","Shut down TV channels on New Year's"], f:"Many older computers stored years with only two digits."},
+  {e:"2000s", q:"What year did Apple release the very first iPod?", a:["2001","1995","2008"], f:"It promised \"1,000 songs in your pocket.\""},
+  {e:"2000s", q:"Who won the first season of American Idol in 2002?", a:["Kelly Clarkson","Carrie Underwood","Clay Aiken"], f:"Clay Aiken was runner-up in season two."},
+  {e:"2000s", q:"Which talk show host gave every audience member a car in 2004?", a:["Oprah Winfrey","Ellen DeGeneres","Rosie O'Donnell"], f:"\"You get a car! You get a car!\""},
+  {e:"2000s", q:"Which social network started in a Harvard dorm in 2004?", a:["Facebook","MySpace","Friendster"], f:"It was first open only to college students."},
+  {e:"2000s", q:"Which TV chef was famous for shouting \"Bam!\"?", a:["Emeril Lagasse","Julia Child","Bobby Flay"], f:"Emeril Live aired on Food Network."},
+  {e:"2000s", q:"Which animated 2003 movie is about a clownfish looking for his son?", a:["Finding Nemo","Shark Tale","The Little Mermaid"], f:"Dory, the forgetful blue tang, steals the show."}
+];
+const TV = { list:[], i:0, score:0, answered:false };
+function enterTrivia(){ if (!TV.list.length || TV.i >= TV.list.length) newTrivia(); renderTrivia(); }
+function newTrivia(){ TV.list = shuffleArr(TRIVIA.slice()).slice(0, 10).map(t => ({...t, opts: shuffleArr(t.a.slice())})); TV.i = 0; TV.score = 0; TV.answered = false; }
+function renderTrivia(){
+  const body = $('#tv-body');
+  if (TV.i >= TV.list.length){
+    $('#tv-status').textContent = 'Game over';
+    body.innerHTML = `<div class="panel" style="background:#fff;color:var(--navy);text-align:center;padding:24px"><div class="serif" style="font-size:28px">You got ${TV.score} of ${TV.list.length}!</div><div style="font-size:17px;margin-top:8px">${TV.score >= 8 ? 'A true trivia champ.' : TV.score >= 5 ? 'Nicely done!' : 'Good game. Want another round?'}</div></div><button class="btn primary" id="tv-again" style="background:var(--pink);color:var(--navy)">Play again</button>`;
+    $('#tv-again').onclick = () => { newTrivia(); renderTrivia(); };
+    return;
+  }
+  const t = TV.list[TV.i];
+  $('#tv-status').textContent = `Question ${TV.i+1} of ${TV.list.length} · Score ${TV.score}`;
+  body.innerHTML = `<span class="pill" style="background:#C8CACE;color:var(--navy);align-self:flex-start">${t.e}</span>
+    <div class="serif" style="font-size:25px;line-height:1.25">${esc(t.q)}</div>
+    <div class="col" style="gap:10px">${t.opts.map((o,k) => `<button class="ans" data-k="${k}">${esc(o)}</button>`).join('')}</div>
+    <div id="tv-fb"></div>`;
+  TV.answered = false;
+  $$('#tv-body .ans').forEach(btn => btn.onclick = () => answerTrivia(+btn.dataset.k));
+}
+function answerTrivia(k){
+  if (TV.answered) return; TV.answered = true;
+  const t = TV.list[TV.i]; const pick = t.opts[k]; const right = pick === t.a[0];
+  if (right){ TV.score++; hearts(); }
+  haptic();
+  $$('#tv-body .ans').forEach(btn => { const o = t.opts[+btn.dataset.k]; btn.disabled = true; if (o === t.a[0]) btn.classList.add('right'); else if (+btn.dataset.k === k) btn.classList.add('wrong'); });
+  const lastOfFive = (TV.i + 1) % 5 === 0;
+  $('#tv-fb').innerHTML = `<div class="panel" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff"><div style="font-weight:900;font-size:18px">${right ? 'That’s right!' : 'The answer: ' + esc(t.a[0])}</div><div style="font-size:16px;margin-top:4px;color:#DDE2EE">${esc(t.f)}</div></div><button class="btn primary" id="tv-next" style="margin-top:12px;background:var(--pink);color:var(--navy)">${lastOfFive ? 'Next (family break first)' : 'Next question'}</button>`;
+  $('#tv-status').textContent = `Question ${TV.i+1} of ${TV.list.length} · Score ${TV.score}`;
+  $('#tv-next').onclick = () => { TV.i++; if (lastOfFive) gameBreak('trivia', renderTrivia); else renderTrivia(); };
+}
+
 /* Which Hiello plays in a break: the oldest unwatched one first, otherwise an "encore" from the rotation. */
 function nextBreakPost(){
   const u = unseen(); if (u.length) return u[0];
@@ -821,7 +1059,7 @@ function startBanner(){ stopBanner(); bannerT = setInterval(() => { bannerIdx++;
 function stopBanner(){ clearInterval(bannerT); bannerT = null; }
 
 /* expose a small test hook */
-window.__hi = { S:()=>S, G, isFree, findPair, go, addSamples, openPlayer };
+window.__hi = { S:()=>S, G, isFree, findPair, go, addSamples, openPlayer, GF, TV, LAYOUT };
 
 /* ---------- start ---------- */
 if (!S.setup) go('welcome'); else go(S.mode === 'gp' ? 'gp' : 'fam');
