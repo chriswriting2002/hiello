@@ -31,17 +31,18 @@ Sending between two phones (needs a server such as Supabase), the real iPhone ho
 ## Test hook
 `window.__hi` in the browser console: `S()` state, `findPair()`, `G` board, `go(name)`.
 
-## Brand colors (Heritage forest)
-Order of loudness: **green leads, pink is second, red and faded yellow are only hints, navy is never louder than the green.**
+## Brand colors (final)
+Late-90s shopping-bag navy, the rare silver bag, ballet pink and white. Full reasoning: "Hiello final color scheme" report.
 
-| Use | Color |
-|---|---|
-| Dark backdrops (Grandpa's home, mahjong table, Family Break), icon background | Forest `#23463A` / deep green ink `#1F3A31` |
-| Light backdrops | Pale green `#EEF4EE` (cards stay white) |
-| Main buttons, NEW tags, sticker borders, "This week" tile | Pink `#F2B8C6` with deep green text |
-| Text and headings | Deep green ink `#1F3A31` |
-| Hints: heart outlines, "NEW" text, red tiles | Deep red `#A51D2A` |
-| Hints: stars, Big One border, small labels on dark | Faded yellow `#F3E3B5` |
-| Logo "hi" | Khaki `#E3D5B8` |
+| Color | Hex | Job |
+|---|---|---|
+| Navy | `#14285A` | All text, main buttons, the "hi" in the icon |
+| Silver | `#C8CACE` | Icon tile (matte gradient to `#E6E7EA`), surfaces, hints, labels on dark screens |
+| Ballet pink | `#F2B8C6` | Heart fill, pills, buttons on dark screens (always navy text on top) |
+| White | `#FFFFFF` | Cards, widget, photo frames |
+| Off-white | `#F5F5F7` | Page backgrounds |
+| Slate | `#4B5263` | Secondary text, small labels |
+| Midnight | `#0B1733` | Dark screens: Grandpa's home, mahjong, Family Break, Big One card |
+| Heart red | `#9B1B1F` | Heart outline only |
 
-Rules: red never outshines pink; yellow is never the headline; pink or red text never sits on dark green.
+Rules: pink never sits on white or silver without a navy label or red outline; silver is never text on light backgrounds; nothing depends on telling navy from midnight; heart red is only for the heart; no orange, yellow, green or purple in the brand.

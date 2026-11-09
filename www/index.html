@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#23463A">
+<meta name="theme-color" content="#14285A">
 <title>Hiello</title>
 <style>
 :root{
-  --navy:#1F3A31;--navy2:#2C4A3F;--cream:#EEF4EE;--paper:#FFFFFF;--line:#DCE6DC;
-  --clay:#F2B8C6;--gold:#F3E3B5;--green:#23463A;--ok:#2E6B3F;--muted:#4F5F58;--ph:#D9CDB4;
-  --red:#A51D2A;--blush:#FBE6EC;
+  --navy:#14285A;--navy2:#22366A;--cream:#F5F5F7;--paper:#FFFFFF;--line:#E3E4E8;
+  --clay:#14285A;--gold:#C8CACE;--green:#0B1733;--ok:#14285A;--muted:#4B5263;--ph:#DADBDF;
+  --red:#9B1B1F;--blush:#FBE3EA;--pink:#F2B8C6;--silver:#C8CACE;--slate:#4B5263;--midnight:#0B1733;
   --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -150,31 +150,38 @@ textarea.field{resize:none;line-height:1.35}
 @keyframes up{to{transform:translateY(-110vh) rotate(20deg);opacity:0}}
 .progress{height:6px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden}
 .progress i{display:block;height:100%;width:0;background:var(--gold)}
-/* Heritage forest balance: green leads, pink second, red and faded yellow as hints, navy never louder than green */
-.btn.primary{color:var(--navy)}
-.kicker{color:var(--green)}
-.dark .kicker,.felt .kicker{color:var(--gold)}
-#toast{border-color:var(--clay)}
-#toast button{color:var(--navy)}
-#demobar{background:rgba(26,58,47,.94)}
-.widget .wtag{background:var(--clay);color:var(--navy)}
-.widget .wstk,.tpl-polaroid .stk{color:var(--green);border-color:var(--clay)}
-.tpl-polaroid .foot{color:var(--green)}
-.tile{background:#FBF8F1;border-bottom-color:#D8D0BE}
-.tile.sel{box-shadow:0 0 0 4px var(--clay)}
-.tile.hint{box-shadow:0 0 0 4px var(--gold)}
+/* Final palette (GAP-bag navy, silver, ballet pink, white). Navy = text + main buttons; pink = hearts and pills with navy text;
+   silver = surfaces and hints; midnight = dark screens; heart red = heart outline only. */
+.btn.primary{background:var(--navy);color:#fff}
+.dark .btn.primary,.felt .btn.primary,.bigone .btn.primary{background:var(--pink);color:var(--navy)}
+.kicker{color:var(--slate)}
+.dark .kicker,.felt .kicker{color:var(--silver)}
+#toast{border-color:var(--silver)}
+#toast button{background:var(--navy);color:#fff}
+#demobar{background:rgba(11,23,51,.94)}
+.widget .wtag{background:var(--pink);color:var(--navy)}
+.widget .wstk,.tpl-polaroid .stk{color:var(--navy);border-color:var(--navy)}
+.tpl-polaroid .foot{color:var(--navy)}
+.tpl-postcard{border-color:var(--silver)}
+.tpl-postcard .stamp{border-color:var(--silver);color:var(--navy)}
+.tile{background:#FFFFFF;border-bottom-color:#C8CACE}
+.tile.s-r{color:#B8466A}.tile.s-g{color:var(--slate)}.tile.s-b{color:var(--navy)}
+.tile.sel{box-shadow:0 0 0 4px var(--pink)}
+.tile.hint{box-shadow:0 0 0 4px var(--silver)}
 .banner{background:#fff}
-.banner .go{background:var(--clay);color:var(--navy)}
-.check.no{background:var(--blush)}
-.check.no span{color:var(--red)!important}
-.progress i{background:var(--clay)}
-.pill.wait{background:#FBF1D6;color:#5C4A12}
-.pill.love{background:var(--blush);color:var(--red)}
-.chip.on{background:var(--green);border-color:var(--green)}
-.seg button.on{box-shadow:0 0 0 2px var(--clay)}
-.tile.s-r{color:#A51D2A}
-.hearts span{color:#F2B8C6!important;-webkit-text-stroke:2px #A51D2A}
-.pill.love{background:#FBE6EC;color:#8E2F52}
+.banner .go{background:var(--navy);color:#fff}
+.check.no{background:var(--pink)}
+.check.no span{color:var(--navy)!important}
+.progress i{background:var(--pink)}
+.pill.ok{background:#E9EAEE;color:var(--navy)}
+.pill.wait{background:#F5F5F7;color:var(--slate);border:1px solid #DADBDF}
+.pill.star{background:#E9EAEE;color:var(--navy)}
+.pill.love{background:#FBE3EA;color:var(--navy)}
+.chip.on{background:var(--navy);border-color:var(--navy)}
+.seg button.on{box-shadow:0 0 0 2px var(--navy)}
+.bigone{background:var(--midnight);border-color:var(--silver)}
+.dark{background:var(--midnight)}
+.hearts span{color:#F2B8C6!important;-webkit-text-stroke:2px #9B1B1F}
 </style>
 </head>
 <body>
@@ -182,7 +189,7 @@ textarea.field{resize:none;line-height:1.35}
 <!-- ============ WELCOME ============ -->
 <section class="screen light-screen" id="s-welcome">
   <div class="col" style="margin:auto 0;gap:18px">
-    <div class="row" style="gap:12px"><div style="width:64px;height:64px;border-radius:18px;background:var(--green);color:#E3D5B8;display:flex;align-items:center;justify-content:center" class="serif"><span style="font-size:30px;font-weight:400">hi</span></div><h1 style="font-size:34px;letter-spacing:6px;text-transform:uppercase;font-weight:400">Hiello</h1></div>
+    <div class="row" style="gap:12px"><div style="width:64px;height:64px;border-radius:18px;background:#C8CACE;color:var(--navy);display:flex;align-items:center;justify-content:center" class="serif"><span style="font-size:30px;font-weight:400">hi</span></div><h1 style="font-size:34px;letter-spacing:6px;text-transform:uppercase;font-weight:400">Hiello</h1></div>
     <h2 style="font-size:26px;line-height:1.2">Family breaks for the people you love.</h2>
     <p class="muted" style="margin:0;font-size:17px;line-height:1.45">Send Grandpa quick photo and video "commercials." He sees them on his home screen and between rounds of his mahjong game, so he's always caught up.</p>
     <div class="col" style="gap:8px">
@@ -199,7 +206,7 @@ textarea.field{resize:none;line-height:1.35}
 </section>
 
 <!-- ============ GRANDPARENT HOME ============ -->
-<section class="screen pad-bottom" id="s-gp" style="background:#23463A;color:#fff">
+<section class="screen pad-bottom" id="s-gp" style="background:#0B1733;color:#fff">
   <div class="row between" style="margin-bottom:14px">
     <div><div class="kicker" style="color:var(--gold)">Hiello</div><h1 style="font-size:30px" id="gp-hello">Hi, Grandpa</h1></div>
     <button class="icon-btn" aria-label="Settings" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
@@ -207,11 +214,11 @@ textarea.field{resize:none;line-height:1.35}
   <div style="font-size:13px;font-weight:800;opacity:.85;margin:0 4px 6px">Home screen widget (preview)</div>
   <button class="widget" id="gp-widget"></button>
   <div class="col" style="margin-top:18px;gap:12px">
-    <button class="bigtile" style="background:#1A3A2F;color:#fff" data-go="game">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F2B8C6" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>
+    <button class="bigtile" style="background:#C8CACE;color:var(--navy)" data-go="game">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>
       <span>Play Mahjong<span class="sub">Family breaks between rounds</span></span></button>
-    <button class="bigtile" style="background:var(--blush);color:var(--navy)" data-go="week">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#A51D2A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+    <button class="bigtile" style="background:#FFFFFF;color:var(--navy)" data-go="week">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
       <span>This week in the family<span class="sub" id="gp-weeksub">See what everyone's up to</span></span></button>
   </div>
 </section>
@@ -232,7 +239,7 @@ textarea.field{resize:none;line-height:1.35}
 <!-- ============ FAMILY BREAK / PLAYER ============ -->
 <section class="screen dark" id="s-play">
   <div class="row between" style="margin-bottom:12px">
-    <span class="serif" style="font-size:22px;color:var(--clay)" id="p-title">We'll be right back…</span>
+    <span class="serif" style="font-size:22px;color:var(--pink)" id="p-title">We'll be right back…</span>
     <span style="font-size:14px;font-weight:800;color:#C9CFE0" id="p-count"></span>
   </div>
   <div class="progress" id="p-prog" style="margin-bottom:12px;display:none"><i></i></div>
@@ -240,7 +247,7 @@ textarea.field{resize:none;line-height:1.35}
   <div style="font-size:18px;font-weight:700;line-height:1.4;margin:14px 2px 0" id="p-caption"></div>
   <div class="muted" style="font-size:14px;margin:6px 2px 0" id="p-meta"></div>
   <div class="row" style="margin-top:auto;padding-top:16px;gap:12px">
-    <button class="btn primary" id="p-love"><svg width="20" height="20" viewBox="0 0 24 24" fill="#F2B8C6" stroke="#A51D2A" stroke-width="2" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.4 4.5 6.2 4.5c2.2 0 3.6 1.2 4.3 2.4h3c.7-1.2 2.1-2.4 4.3-2.4 3.8 0 5.8 3.9 4.2 7.2C19.5 16.4 12 21 12 21z"/></svg>Send love back</button>
+    <button class="btn primary" id="p-love"><svg width="20" height="20" viewBox="0 0 24 24" fill="#F2B8C6" stroke="#9B1B1F" stroke-width="2" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.4 4.5 6.2 4.5c2.2 0 3.6 1.2 4.3 2.4h3c.7-1.2 2.1-2.4 4.3-2.4 3.8 0 5.8 3.9 4.2 7.2C19.5 16.4 12 21 12 21z"/></svg>Send love back</button>
     <button class="btn ghost" id="p-done">Back to game</button>
   </div>
 </section>
@@ -279,7 +286,7 @@ textarea.field{resize:none;line-height:1.35}
   <input type="file" id="m-file" accept="image/*,video/*" style="display:none">
   <button class="pick" id="m-pick"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg>Add a photo or video<span style="font-size:14px;font-weight:700">Short videos work best (about 15 seconds)</span></button>
   <div id="makePreview" style="display:none"></div>
-  <div id="m-hint" class="muted" style="display:none;font-size:14px;text-align:center;margin-top:8px">Drag the sticker anywhere · <button id="m-change" style="border:0;background:none;color:var(--green);font-weight:900;font-size:14px;text-decoration:underline">change photo</button></div>
+  <div id="m-hint" class="muted" style="display:none;font-size:14px;text-align:center;margin-top:8px">Drag the sticker anywhere · <button id="m-change" style="border:0;background:none;color:var(--navy);font-weight:900;font-size:14px;text-decoration:underline">change photo</button></div>
   <div class="col" style="margin-top:14px;gap:8px">
     <label class="lbl" for="m-note">Sticker note (short and sweet)</label>
     <input class="field" id="m-note" maxlength="40">
@@ -377,7 +384,7 @@ function dayLabel(t){ const d = new Date(t); const days = Math.floor((startOfDay
 function startOfDay(t){ const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); }
 function ago(t){ const m = Math.round((Date.now()-t)/60000); if (m < 1) return 'just now'; if (m < 60) return m + ' min ago'; const h = Math.round(m/60); if (h < 24) return h + 'h ago'; const d = Math.round(h/24); return d + (d === 1 ? ' day ago' : ' days ago'); }
 function whenLabel(iso){ if (!iso) return ''; const d = new Date(iso); if (isNaN(d)) return ''; return d.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'}) + ' · ' + d.toLocaleTimeString(undefined,{hour:'numeric', minute:'2-digit'}); }
-const HEART = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#F2B8C6" stroke="#A51D2A" stroke-width="2" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.4 4.5 6.2 4.5c2.2 0 3.6 1.2 4.3 2.4h3c.7-1.2 2.1-2.4 4.3-2.4 3.8 0 5.8 3.9 4.2 7.2C19.5 16.4 12 21 12 21z"/></svg>';
+const HEART = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#F2B8C6" stroke="#9B1B1F" stroke-width="2" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.4 4.5 6.2 4.5c2.2 0 3.6 1.2 4.3 2.4h3c.7-1.2 2.1-2.4 4.3-2.4 3.8 0 5.8 3.9 4.2 7.2C19.5 16.4 12 21 12 21z"/></svg>';
 const CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
 const PLAY = '<svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>';
 
@@ -612,7 +619,7 @@ async function renderGP(){
   else {
     const th = await thumbHTML(p);
     w.innerHTML = `<div class="wimg">${th}<div class="wtag">${p.watched ? 'LATEST HIELLO' : 'NEW HIELLO'}</div>${p.note ? `<div class="wstk">${esc(p.note)}</div>` : ''}</div>
-      <div class="row between" style="padding:10px 4px 2px"><div><div style="font-size:18px;font-weight:900">From ${esc(p.from)}</div><div class="muted" style="font-size:14px">${ago(p.at)}</div></div><span style="background:var(--clay);color:var(--navy);font-size:15px;font-weight:900;padding:10px 14px;border-radius:999px">Tap to watch</span></div>`;
+      <div class="row between" style="padding:10px 4px 2px"><div><div style="font-size:18px;font-weight:900">From ${esc(p.from)}</div><div class="muted" style="font-size:14px">${ago(p.at)}</div></div><span style="background:var(--navy);color:#fff;font-size:15px;font-weight:900;padding:10px 14px;border-radius:999px">Tap to watch</span></div>`;
     w.onclick = () => openPlayer([p], 'gp');
   }
   const n = unseen().length;
@@ -807,7 +814,7 @@ async function renderBanner(){
   if (!pool.length){ el.innerHTML = `<div style="padding:8px;font-weight:800">Family breaks will appear here when someone sends a Hiello.</div>`; el.onclick = null; return; }
   bannerIdx %= pool.length; const p = pool[bannerIdx];
   const isNew = !p.watched;
-  el.innerHTML = `<div class="bthumb">${await thumbHTML(p)}</div><div style="flex:1;min-width:0"><div class="bk" style="color:${isNew?'var(--red)':'var(--green)'}">${isNew ? 'FAMILY BREAK · NEW' : 'ENCORE · ' + dayLabel(p.at).toUpperCase()}</div><div class="bt">${esc(p.caption || p.note)}</div>${pool.length > 1 ? `<div class="dots" style="margin-top:6px">${pool.map((_,k) => `<i class="${k===bannerIdx?'on':''}"></i>`).join('')}</div>` : ''}</div><span class="go">${isNew ? 'Watch' : 'Replay'}</span>`;
+  el.innerHTML = `<div class="bthumb">${await thumbHTML(p)}</div><div style="flex:1;min-width:0"><div class="bk" style="color:${isNew?'var(--navy)':'var(--slate)'}">${isNew ? 'FAMILY BREAK · NEW' : 'ENCORE · ' + dayLabel(p.at).toUpperCase()}</div><div class="bt">${esc(p.caption || p.note)}</div>${pool.length > 1 ? `<div class="dots" style="margin-top:6px">${pool.map((_,k) => `<i class="${k===bannerIdx?'on':''}"></i>`).join('')}</div>` : ''}</div><span class="go">${isNew ? 'Watch' : 'Replay'}</span>`;
   el.onclick = () => openPlayer([p], 'game');
 }
 function startBanner(){ stopBanner(); bannerT = setInterval(() => { bannerIdx++; renderBanner(); }, 12000); }
