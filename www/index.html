@@ -278,6 +278,30 @@ textarea.field{resize:none;line-height:1.35}
 .rsvp-yes{background:var(--pink);color:var(--navy)}
 .rsvp-no{background:#fff;color:var(--navy)}
 .rsvp-yes small,.rsvp-no small{display:block;font-size:15px;font-weight:700;opacity:.8;margin-top:2px}
+
+/* ---- camera, Locket-style ---- */
+#s-cam{background:#0B1733;color:#fff;align-items:center;gap:16px}
+.cam-top{width:100%;display:flex;align-items:center;justify-content:space-between}
+.cam-rb{width:52px;height:52px;border-radius:50%;border:0;background:#22366A;color:#fff;display:flex;align-items:center;justify-content:center;position:relative}
+.cam-rb b{position:absolute;right:-3px;top:-3px;min-width:22px;height:22px;border-radius:11px;background:#9B1B1F;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid #0B1733}
+.cam-to{background:#22366A;border-radius:999px;padding:10px 18px;font-size:17px;font-weight:900}
+.cam-sq{position:relative;width:min(100%,calc(100dvh - 330px),460px);aspect-ratio:1;border-radius:44px;overflow:hidden;background:#22366A;flex:none;box-shadow:0 0 0 4px #C8CACE}
+.cam-sq video,.cam-sq img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cam-sq video.mirror{transform:scaleX(-1)}
+.cam-off[hidden]{display:none}
+.cam-off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:24px;font-size:18px;font-weight:800}
+.cam-note{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:82%;border:0;border-radius:999px;background:rgba(11,23,51,.72);color:#fff;font-size:19px;font-weight:800;text-align:center;padding:14px 18px;outline:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.cam-note::placeholder{color:#C9CFE0}
+.cam-ctl{width:min(100%,460px);display:flex;align-items:center;justify-content:space-between;padding:0 10px}
+.cam-side{width:58px;height:58px;border-radius:50%;border:0;background:#22366A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-direction:column;gap:2px}
+.shutter{position:relative;width:92px;height:92px;border-radius:50%;border:6px solid #F2B8C6;background:transparent;padding:6px;touch-action:none}
+.shutter i{display:block;width:100%;height:100%;border-radius:50%;background:#fff;transition:transform .15s,background .15s}
+.shutter.rec i{background:#9B1B1F;transform:scale(.6);border-radius:16px}
+.shutter svg.ring{position:absolute;inset:-6px;width:92px;height:92px;transform:rotate(-90deg);pointer-events:none}
+.sendbtn{width:92px;height:92px;border-radius:50%;border:0;background:#F2B8C6;color:#14285A;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px #9B1B1F}
+.cam-hint{font-size:15px;color:#C9CFE0;font-weight:700;text-align:center}
+.cam-sent{border:0;background:#22366A;color:#fff;border-radius:999px;padding:12px 22px;font-size:17px;font-weight:900;display:flex;align-items:center;gap:8px}
+.gp-cambtn{border:0;background:#F2B8C6;color:#14285A;border-radius:999px;padding:0 14px;height:52px;font-size:17px;white-space:nowrap;font-weight:900;display:flex;align-items:center;gap:8px}
 </style>
 </head>
 <body>
@@ -304,8 +328,10 @@ textarea.field{resize:none;line-height:1.35}
 <!-- ============ GRANDPARENT HOME ============ -->
 <section class="screen pad-bottom" id="s-gp" style="background:#0B1733;color:#fff">
   <div class="row between">
-    <h1 style="font-size:28px" id="gp-hello">Hi, Grandpa</h1>
-    <button class="icon-btn" aria-label="Settings" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    <h1 style="font-size:25px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0" id="gp-hello">Hi, Grandpa</h1>
+    <span style="flex:1"></span>
+    <button class="gp-cambtn" id="gp-cam"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg>Send a hi</button>
+    <button class="icon-btn" aria-label="Settings" data-go="settings" style="display:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
   <div class="faces" id="gp-faces"></div>
   <button class="frame" id="gp-frame" aria-label="Watch Hiello"></button>
@@ -435,20 +461,39 @@ textarea.field{resize:none;line-height:1.35}
 <!-- ============ FAMILY HOME ============ -->
 <section class="screen light-screen pad-bottom" id="s-fam">
   <div class="row between" style="margin-bottom:12px">
-    <div><div class="kicker">Hiello · Family side</div><h1 style="font-size:28px" id="fam-hello">Keep Grandpa in the loop</h1></div>
+    <button class="icon-btn" aria-label="Back to camera" data-back="cam"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div style="flex:1;text-align:center"><div class="kicker">Hiello · Family side</div><h1 style="font-size:24px" id="fam-hello">Sent to Grandpa</h1></div>
     <button class="icon-btn" aria-label="Settings" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
-  <button class="btn primary" data-go="make" style="min-height:64px;font-size:20px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Make a Hiello</button>
-  <p class="muted" style="margin:10px 2px 0;font-size:15px" id="fam-sub">Takes under a minute: a photo or 15-second video, a note, a sticker.</p>
-  <h3 style="font-size:20px;margin:18px 2px 10px">Sent</h3>
+  <div id="fam-replies"></div>
+  <h3 style="font-size:20px;margin:14px 2px 10px">What you've sent</h3>
   <div class="col" id="fam-list" style="gap:10px"></div>
+</section>
+
+
+<!-- ============ CAMERA (opens first on the family side, like Locket) ============ -->
+<section class="screen pad-bottom" id="s-cam">
+  <div class="cam-top">
+    <button class="cam-rb" id="cam-left" aria-label="Sent"></button>
+    <span class="cam-to" id="cam-to">To Grandpa</span>
+    <button class="cam-rb" id="cam-right" aria-label="Settings"></button>
+  </div>
+  <div class="cam-sq" id="cam-sq"><video id="cam-v" playsinline muted autoplay></video><div id="cam-shot"></div><div class="cam-off" id="cam-off" hidden></div><input class="cam-note" id="cam-note" maxlength="40" hidden></div>
+  <div class="cam-ctl">
+    <button class="cam-side" id="cam-a"></button>
+    <div id="cam-mid"></div>
+    <button class="cam-side" id="cam-b"></button>
+  </div>
+  <div class="cam-hint" id="cam-hint">Tap for a photo · hold for a video</div>
+  <button class="cam-sent" id="cam-sent"></button>
+  <input type="file" id="cam-file" accept="image/*,video/*" style="display:none">
 </section>
 
 <!-- ============ MAKE ============ -->
 <section class="screen light-screen pad-bottom" id="s-make">
   <div class="row between" style="margin-bottom:10px">
-    <button class="icon-btn" aria-label="Cancel" data-back="fam"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-    <h2 style="font-size:24px">Make a Hiello</h2><span style="width:52px"></span>
+    <button class="icon-btn" aria-label="Cancel" data-back="cam"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <h2 style="font-size:24px">More options</h2><span style="width:52px"></span>
   </div>
   <input type="file" id="m-file" accept="image/*,video/*" style="display:none">
   <button class="pick" id="m-pick"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg>Add a photo or video<span style="font-size:14px;font-weight:700">Short videos work best (about 15 seconds)</span></button>
@@ -587,23 +632,24 @@ function go(name){
   if (name === 'settings') prevForSettings = current || 'fam';
   $$('.screen').forEach(s => s.classList.toggle('on', s.id === 's-' + name));
   current = name;
-  const showBar = S.setup && ['gp','fam','week'].includes(name);
+  const showBar = S.setup && ['gp','cam'].includes(name);
   $('#demobar').classList.toggle('on', showBar);
-  $$('#demobar button').forEach(b => b.classList.toggle('on', b.dataset.mode === S.mode));
+  $$('#demobar button').forEach(b => b.classList.toggle('on', b.dataset.mode === (name === 'cam' ? CAM.who : S.mode)));
   if (name !== 'play') stopPlayback();
   if (name !== 'game') stopBanner();
   if (name !== 'gp') stopFrame();
   if (name !== 'story') stopStory();
   if (name !== 'photos') $$('#ph-deck video').forEach(v => v.pause());
   if (name !== 'golf') stopGolf();
-  ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, game:enterGame, golf:enterGolf, trivia:enterTrivia, photos:renderPhotos, rsvp:renderRsvp, settings:renderSettings}[name] || (()=>{}))();
+  if (name !== 'cam') stopCam();
+  ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, cam:enterCam, game:enterGame, golf:enterGolf, trivia:enterTrivia, photos:renderPhotos, rsvp:renderRsvp, settings:renderSettings}[name] || (()=>{}))();
   const sc = $('#s-' + name); if (sc) sc.scrollTop = 0;
 }
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (g) { go(g.dataset.go); return; }
   const b = e.target.closest('[data-back]'); if (b) { go(b.dataset.back); return; }
 });
-$$('#demobar button').forEach(b => b.onclick = () => { S.mode = b.dataset.mode; save(); go(S.mode); });
+$$('#demobar button').forEach(b => b.onclick = () => { S.mode = b.dataset.mode; save(); if (S.mode === 'fam') CAM.who = 'fam'; go(S.mode === 'gp' ? 'gp' : 'cam'); });
 
 /* ---------- welcome ---------- */
 $('#w-go').onclick = async () => {
@@ -614,7 +660,7 @@ $('#w-go').onclick = async () => {
   save();
   try { await addSamples(); say('Sample updates added. Try making your own!'); }
   catch(e){ say('Photo storage is off in this browser, so samples were skipped.'); }
-  go('fam');
+  go('cam');
 };
 
 /* ---------- sample content (drawn pictures, no photos needed) ---------- */
@@ -673,7 +719,13 @@ async function addSamples(){
 
 /* ---------- family side ---------- */
 async function renderFam(){
-  $('#fam-hello').textContent = `Keep ${gpName()} in the loop`;
+  $('#fam-hello').textContent = `Sent to ${gpName()}`;
+  const rp = [...(S.replies||[])].sort((a,b) => b.at - a.at);
+  if (rp.length){
+    const th = await Promise.all(rp.map(r => thumbHTML(r)));
+    $('#fam-replies').innerHTML = `<h3 style="font-size:20px;margin:6px 2px 10px">From ${esc(gpName())}</h3><div class="col" style="gap:10px">${rp.map((r,k) => `<div class="sent" style="${r.seen ? '' : 'box-shadow:0 0 0 3px var(--pink)'}"><div class="sthumb">${th[k]}</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:900">${esc(r.note || 'A hi from ' + gpName())}</div><div class="muted" style="font-size:13px;margin-top:2px">${ago(r.at)}${r.seen ? '' : ' · <b style="color:var(--red)">New</b>'}</div></div></div>`).join('')}</div>`;
+    rp.forEach(r => r.seen = true); save();
+  } else $('#fam-replies').innerHTML = '';
   const list = $('#fam-list');
   const posts = [...S.posts].sort((a,b) => b.at - a.at);
   if (!posts.length){ list.innerHTML = `<div class="panel muted" style="text-align:center">Nothing sent yet. Your first Hiello will show up here.</div>`; return; }
@@ -773,7 +825,7 @@ $('#m-send').onclick = async () => {
     Object.assign(p, { id: uid(), at: Date.now(), media:{kind:M.kind, key}, watched:false, hearts:0, rsvp:null, title: $('#m-btitle').value.trim(), when: $('#m-bwhen').value });
     S.posts.push(p); save();
     haptic();
-    go('fam');
+    go('cam');
     say(`Sent! ${gpName()} will see it on his home screen and in his next game break.`);
   } catch(err){ say('Could not save that one. Try a shorter video.'); }
   btn.disabled = false;
@@ -1027,9 +1079,146 @@ $('#p-done').onclick = () => { if (GAMES.includes(P.back)){ stopPlayback(); cons
 /* a Family Break between rounds: plays the next Hiello, then runs "after" when Grandpa taps Back to game */
 function gameBreak(back, after){ const p = nextBreakPost(); if (p) openPlayer([p], back, false, after); else after(); }
 
+
+/* =========================================================
+   CAMERA — the family side opens straight to it, like Locket.
+   Tap for a photo, hold for a video (up to 15 s). Type a note on the picture, tap send.
+   Grandpa uses the same camera from "Send a hi" to send one back.
+   ========================================================= */
+const CAM = { who:'fam', stream:null, facing:'environment', rec:null, chunks:[], t0:0, raf:0, holdT:null, shot:null };
+const ICON = {
+  list:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>',
+  gear:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>',
+  home:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+  pics:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="15" height="13" rx="2"/><path d="M7 21h12a2 2 0 0 0 2-2V8"/><circle cx="8" cy="10" r="1.6"/><path d="M18 15l-4-4-8 7"/></svg>',
+  flip:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16M20 20v-4h-4"/></svg>',
+  x:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  send:'<svg width="40" height="40" viewBox="0 0 24 24" fill="#14285A" aria-hidden="true"><path d="M3 11.5L21 3l-6.5 18-3-7.5z"/></svg>',
+  star:'<svg width="22" height="22" viewBox="0 0 24 24" fill="#F2B8C6" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8z"/></svg>'
+};
+function openCam(who){ CAM.who = who; go('cam'); }
+function enterCam(){
+  const fam = CAM.who === 'fam';
+  $('#cam-to').textContent = fam ? `To ${gpName()}` : 'To the family';
+  $('#cam-left').innerHTML = fam ? ICON.list : ICON.home; $('#cam-left').setAttribute('aria-label', fam ? 'Sent' : 'Back home');
+  $('#cam-left').onclick = () => fam ? go('fam') : go('gp');
+  $('#cam-right').innerHTML = ICON.gear; $('#cam-right').onclick = () => go('settings');
+  $('#cam-right').style.visibility = fam ? '' : 'hidden';
+  const newReplies = (S.replies||[]).filter(r => !r.seen).length;
+  $('#cam-sent').style.display = fam ? '' : 'none';
+  $('#cam-sent').innerHTML = newReplies ? `${HEART} ${esc(gpName())} sent you ${newReplies === 1 ? 'a hi' : newReplies + ' hi’s'} ›` : 'Sent ›';
+  $('#cam-sent').onclick = () => go('fam');
+  if (newReplies) $('#cam-left').insertAdjacentHTML('beforeend', `<b>${newReplies}</b>`);
+  camLive();
+}
+async function camLive(){
+  CAM.shot = null; $('#cam-shot').innerHTML = ''; $('#cam-note').hidden = true; $('#cam-note').value = '';
+  $('#cam-v').style.display = '';
+  $('#cam-a').innerHTML = ICON.pics + '<span>Photos</span>'; $('#cam-a').onclick = () => $('#cam-file').click();
+  $('#cam-b').style.visibility = '';
+  $('#cam-b').innerHTML = ICON.flip + '<span>Flip</span>'; $('#cam-b').onclick = () => { CAM.facing = CAM.facing === 'user' ? 'environment' : 'user'; startStream(); };
+  $('#cam-mid').innerHTML = `<button class="shutter" id="shutter" aria-label="Take a photo. Hold for video."><i></i><svg class="ring" viewBox="0 0 92 92"><circle cx="46" cy="46" r="43" fill="none" stroke="#9B1B1F" stroke-width="6" stroke-dasharray="270" stroke-dashoffset="270" id="ring"/></svg></button>`;
+  $('#cam-hint').textContent = 'Tap for a photo · hold for a video';
+  bindShutter();
+  if (!CAM.stream) await startStream();
+}
+async function startStream(){
+  stopTracks();
+  const off = $('#cam-off');
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('none');
+    CAM.stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:CAM.facing, width:{ideal:1280}, height:{ideal:1280} }, audio:true })
+      .catch(() => navigator.mediaDevices.getUserMedia({ video:{ facingMode:CAM.facing }, audio:false }));
+    if (current !== 'cam'){ stopTracks(); return; }
+    const v = $('#cam-v'); v.srcObject = CAM.stream; v.classList.toggle('mirror', CAM.facing === 'user'); await v.play().catch(()=>{});
+    off.hidden = true;
+  } catch(e){
+    off.hidden = false;
+    off.innerHTML = `<div>The camera is off.</div><button class="btn primary" id="cam-retry" style="background:var(--pink);color:var(--navy);width:auto;padding:0 22px">Turn on camera</button><div style="font-size:15px;font-weight:700;color:#C9CFE0">Or tap Photos to pick one you already took.</div>`;
+    $('#cam-retry').onclick = startStream;
+  }
+}
+function stopTracks(){ if (CAM.stream){ CAM.stream.getTracks().forEach(t => t.stop()); CAM.stream = null; } }
+function stopCam(){ stopTracks(); cancelAnimationFrame(CAM.raf); if (CAM.rec && CAM.rec.state === 'recording') CAM.rec.stop(); }
+function bindShutter(){
+  const b = $('#shutter');
+  b.onpointerdown = e => { e.preventDefault(); if (!CAM.stream) return; CAM.holdT = setTimeout(startRec, 350); };
+  const up = () => {
+    if (CAM.holdT){ clearTimeout(CAM.holdT); CAM.holdT = null; snap(); return; }
+    if (CAM.rec && CAM.rec.state === 'recording') CAM.rec.stop();
+  };
+  b.onpointerup = up; b.onpointerleave = up; b.onpointercancel = up;
+  b.onclick = () => { if (!CAM.stream) startStream(); };
+}
+function snap(){
+  const v = $('#cam-v'); if (!v.videoWidth) return;
+  const side = Math.min(v.videoWidth, v.videoHeight), c = document.createElement('canvas'); c.width = c.height = Math.min(side, 1280);
+  const x = c.getContext('2d');
+  if (CAM.facing === 'user'){ x.translate(c.width, 0); x.scale(-1, 1); }
+  x.drawImage(v, (v.videoWidth - side)/2, (v.videoHeight - side)/2, side, side, 0, 0, c.width, c.height);
+  haptic();
+  c.toBlob(bl => { if (bl) review(bl, 'image'); }, 'image/jpeg', 0.85);
+}
+function startRec(){
+  CAM.holdT = null;
+  if (!window.MediaRecorder){ say('Videos need a newer iPhone update. Tap for a photo instead.'); return; }
+  const type = ['video/mp4','video/webm;codecs=vp9','video/webm'].find(t => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || '';
+  try { CAM.rec = new MediaRecorder(CAM.stream, type ? { mimeType:type } : undefined); } catch(e){ say("Couldn't start a video. Tap for a photo instead."); return; }
+  CAM.chunks = [];
+  CAM.rec.ondataavailable = e => { if (e.data && e.data.size) CAM.chunks.push(e.data); };
+  CAM.rec.onstop = () => { cancelAnimationFrame(CAM.raf); $('#shutter')?.classList.remove('rec'); const bl = new Blob(CAM.chunks, { type: CAM.rec.mimeType || 'video/mp4' }); if (bl.size) review(bl, 'video'); };
+  CAM.rec.start(); CAM.t0 = performance.now(); $('#shutter').classList.add('rec'); haptic();
+  $('#cam-hint').textContent = 'Recording… let go to stop';
+  const ring = $('#ring');
+  const tick = () => { const f = (performance.now() - CAM.t0) / 15000; ring.setAttribute('stroke-dashoffset', 270 * (1 - Math.min(1, f))); if (f >= 1){ CAM.rec.stop(); return; } CAM.raf = requestAnimationFrame(tick); };
+  CAM.raf = requestAnimationFrame(tick);
+}
+function review(blob, kind){
+  CAM.shot = { blob, kind, url: URL.createObjectURL(blob) };
+  $('#cam-v').style.display = 'none'; $('#cam-off').hidden = true;
+  $('#cam-shot').innerHTML = kind === 'video' ? `<video src="${CAM.shot.url}" playsinline autoplay loop></video>` : `<img src="${CAM.shot.url}" alt="">`;
+  const note = $('#cam-note'); note.hidden = false; note.placeholder = CAM.who === 'fam' ? `Add a note for ${gpName()}…` : 'Add a note…';
+  $('#cam-a').innerHTML = ICON.x + '<span>Retake</span>'; $('#cam-a').onclick = () => { URL.revokeObjectURL(CAM.shot.url); camLive(); };
+  if (CAM.who === 'fam'){ $('#cam-b').innerHTML = ICON.star + '<span>More</span>'; $('#cam-b').onclick = camMore; $('#cam-b').style.visibility = ''; }
+  else $('#cam-b').style.visibility = 'hidden';
+  $('#cam-mid').innerHTML = `<button class="sendbtn" id="cam-send" aria-label="Send">${ICON.send}</button>`;
+  $('#cam-send').onclick = camSend;
+  $('#cam-hint').textContent = CAM.who === 'fam' ? `Tap send and ${gpName()} sees it right away` : 'Tap send and the family sees it right away';
+}
+$('#cam-file').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  if (f.type.startsWith('video/')){ if (f.size > 60*1024*1024){ say('That video is too big. Try one under a minute.'); return; } review(f, 'video'); }
+  else { const bl = await shrinkImage(f); if (!bl){ say("Couldn't open that photo. Try another."); return; } review(bl, 'image'); }
+};
+async function camSend(){
+  const sh = CAM.shot; if (!sh) return;
+  const btn = $('#cam-send'); btn.disabled = true;
+  try {
+    const key = 'm_' + uid(); await putMedia(key, sh.blob);
+    const note = $('#cam-note').value.trim();
+    if (CAM.who === 'fam'){
+      S.posts.push({ id: uid(), at: Date.now(), from: meName(), note, caption:'', tpl:'polaroid', sx:50, sy:80, type:'everyday', title:'', when:'', media:{kind:sh.kind, key}, watched:false, hearts:0, rsvp:null });
+      save(); haptic(); say(`Sent! ${gpName()} will see it right away.`); hearts();
+      URL.revokeObjectURL(sh.url); camLive();
+    } else {
+      (S.replies = S.replies || []).push({ id: uid(), at: Date.now(), from: gpName(), note, media:{kind:sh.kind, key}, seen:false });
+      save(); haptic(); hearts(); URL.revokeObjectURL(sh.url); go('gp'); say('Sent to the family! They’ll love it.');
+    }
+  } catch(err){ say('Could not save that one. Try a shorter video.'); btn.disabled = false; }
+}
+function camMore(){
+  const sh = CAM.shot, note = $('#cam-note').value.trim(); CAM.shot = null;
+  go('make');
+  M.blob = sh.blob; M.kind = sh.kind; M.url = sh.url;
+  if (note) $('#m-note').value = note;
+  $('#m-pick').style.display = 'none'; $('#makePreview').style.display = ''; $('#m-hint').style.display = '';
+  drawPreview();
+}
+$('#gp-cam').onclick = () => openCam('gp');
+
 /* ---------- settings ---------- */
 function renderSettings(){ $('#set-gp').value = S.gp; $('#set-me').value = S.me; }
-$('#set-back').onclick = () => { S.gp = $('#set-gp').value.trim() || 'Grandpa'; S.me = $('#set-me').value.trim() || 'Family'; save(); go(prevForSettings === 'settings' ? S.mode : prevForSettings); };
+$('#set-back').onclick = () => { S.gp = $('#set-gp').value.trim() || 'Grandpa'; S.me = $('#set-me').value.trim() || 'Family'; save(); go(prevForSettings === 'settings' ? (S.mode === 'gp' ? 'gp' : 'cam') : prevForSettings); };
 $('#set-samples').onclick = async () => { await addSamples(); say('Sample updates added.'); };
 $('#set-reset').onclick = async () => {
   if (!confirmTwice()) return;
@@ -1379,7 +1568,7 @@ function stopBanner(){ clearInterval(bannerT); bannerT = null; }
 window.__reshuffle = reshuffle; window.__hi = { S:()=>S, G, isFree, findPair, go, addSamples, openPlayer, GF, TV, LAYOUT };
 
 /* ---------- start ---------- */
-if (!S.setup) go('welcome'); else go(S.mode === 'gp' ? 'gp' : 'fam');
+if (!S.setup) go('welcome'); else go(S.mode === 'gp' ? 'gp' : 'cam');
 </script>
 </body>
 </html>
