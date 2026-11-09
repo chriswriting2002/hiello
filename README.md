@@ -5,7 +5,7 @@ Family photo and video "commercials" for grandparents. Family members make a Hie
 This is the **one-phone demo**: everything is saved on the phone itself. Use the switch at the bottom of the screen to flip between the **Family side** and **Grandpa's phone**.
 
 ## What's in it
-- `www/index.html`: the whole app (layout, styles and code in one file), plus `www/fonts/` (Fraunces and Nunito, SIL Open Font License).
+- `www/index.html`: the whole app (layout, styles and code in one file). Fonts are the iPhone's own Baskerville and Helvetica Neue.
 - `resources/`: app icon and launch screen.
 - `capacitor.config.json`: app name and ID (`com.hiello.app`).
 - `codemagic.yaml`: builds the iPhone app on Codemagic's Macs and sends it to TestFlight.
