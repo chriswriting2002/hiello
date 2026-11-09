@@ -5,7 +5,7 @@
   "description": "Hiello: family photo and video 'commercials' for grandparents, shown between rounds of a simple mahjong game.",
   "scripts": {
     "ios:prepare": "cap add ios || true",
-    "ios:assets": "capacitor-assets generate --ios --iconBackgroundColor '#1B2A4A' --splashBackgroundColor '#F3F3F5'",
+    "ios:assets": "capacitor-assets generate --ios --iconBackgroundColor '#23463A' --splashBackgroundColor '#F7F5F0'",
     "ios:sync": "cap sync ios"
   },
   "dependencies": {

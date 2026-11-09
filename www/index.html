@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#1B2A4A">
+<meta name="theme-color" content="#23463A">
 <title>Hiello</title>
 <style>
 :root{
-  --navy:#1B2A4A;--navy2:#2A3B5E;--cream:#F3F3F5;--paper:#FFFFFF;--line:#E1E1E6;
-  --clay:#2470B3;--gold:#E3D5B8;--green:#23463A;--ok:#2E6B3F;--muted:#4A5068;--ph:#CBBD9F;
+  --navy:#1B2A4A;--navy2:#2A3B5E;--cream:#F7F5F0;--paper:#FFFFFF;--line:#E1E1E6;
+  --clay:#1B2A4A;--gold:#E3D5B8;--green:#23463A;--ok:#2E6B3F;--muted:#4A5068;--ph:#CBBD9F;
   --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -139,7 +139,7 @@ textarea.field{resize:none;line-height:1.35}
 .sent .sthumb{width:64px;height:64px;border-radius:12px;overflow:hidden;flex:none;background:var(--ph)}
 .sent .sthumb img,.sent .sthumb video{width:100%;height:100%;object-fit:cover}
 .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:13px;font-weight:900}
-.pill.ok{background:#E3EFE6;color:#1E4D2B}.pill.wait{background:#F6E7DA;color:#1A5A94}.pill.love{background:#FBE3E3;color:#9C2C2C}.pill.star{background:#FFF1C9;color:#6B4E00}
+.pill.ok{background:#E3EFE6;color:#1E4D2B}.pill.wait{background:#F6E7DA;color:#1B2A4A}.pill.love{background:#FBE3E3;color:#9C2C2C}.pill.star{background:#FFF1C9;color:#6B4E00}
 /* player */
 #playCard{width:100%;max-width:440px;align-self:center}
 .fade-in{animation:fin .35s ease}
@@ -149,6 +149,11 @@ textarea.field{resize:none;line-height:1.35}
 @keyframes up{to{transform:translateY(-110vh) rotate(20deg);opacity:0}}
 .progress{height:6px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden}
 .progress i{display:block;height:100%;width:0;background:var(--gold)}
+.dark .btn.primary,.felt .btn.primary,.bigone .btn.primary{background:var(--gold);color:var(--navy)}
+.kicker{color:var(--green)}
+.tile.s-r{color:#A51D2A}
+.hearts span{color:#F2B8C6!important;-webkit-text-stroke:2px #A51D2A}
+.pill.love{background:#FBE6EC;color:#8E2F52}
 </style>
 </head>
 <body>
@@ -156,7 +161,7 @@ textarea.field{resize:none;line-height:1.35}
 <!-- ============ WELCOME ============ -->
 <section class="screen light-screen" id="s-welcome">
   <div class="col" style="margin:auto 0;gap:18px">
-    <div class="row" style="gap:12px"><div style="width:64px;height:64px;border-radius:18px;background:var(--clay);color:#fff;display:flex;align-items:center;justify-content:center" class="serif"><span style="font-size:30px;font-weight:400">hi</span></div><h1 style="font-size:34px;letter-spacing:6px;text-transform:uppercase;font-weight:400">Hiello</h1></div>
+    <div class="row" style="gap:12px"><div style="width:64px;height:64px;border-radius:18px;background:var(--green);color:var(--gold);display:flex;align-items:center;justify-content:center" class="serif"><span style="font-size:30px;font-weight:400">hi</span></div><h1 style="font-size:34px;letter-spacing:6px;text-transform:uppercase;font-weight:400">Hiello</h1></div>
     <h2 style="font-size:26px;line-height:1.2">Family breaks for the people you love.</h2>
     <p class="muted" style="margin:0;font-size:17px;line-height:1.45">Send Grandpa quick photo and video "commercials." He sees them on his home screen and between rounds of his mahjong game, so he's always caught up.</p>
     <div class="col" style="gap:8px">
@@ -173,7 +178,7 @@ textarea.field{resize:none;line-height:1.35}
 </section>
 
 <!-- ============ GRANDPARENT HOME ============ -->
-<section class="screen pad-bottom" id="s-gp" style="background:#34465F;color:#fff">
+<section class="screen pad-bottom" id="s-gp" style="background:#23463A;color:#fff">
   <div class="row between" style="margin-bottom:14px">
     <div><div class="kicker" style="color:var(--gold)">Hiello</div><h1 style="font-size:30px" id="gp-hello">Hi, Grandpa</h1></div>
     <button class="icon-btn" aria-label="Settings" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
@@ -181,11 +186,11 @@ textarea.field{resize:none;line-height:1.35}
   <div style="font-size:13px;font-weight:800;opacity:.85;margin:0 4px 6px">Home screen widget (preview)</div>
   <button class="widget" id="gp-widget"></button>
   <div class="col" style="margin-top:18px;gap:12px">
-    <button class="bigtile" style="background:var(--green);color:#fff" data-go="game">
+    <button class="bigtile" style="background:var(--navy);color:#fff" data-go="game">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#E3D5B8" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>
       <span>Play Mahjong<span class="sub">Family breaks between rounds</span></span></button>
     <button class="bigtile" style="background:var(--cream);color:var(--navy)" data-go="week">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2470B3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
       <span>This week in the family<span class="sub" id="gp-weeksub">See what everyone's up to</span></span></button>
   </div>
 </section>
@@ -214,7 +219,7 @@ textarea.field{resize:none;line-height:1.35}
   <div style="font-size:18px;font-weight:700;line-height:1.4;margin:14px 2px 0" id="p-caption"></div>
   <div class="muted" style="font-size:14px;margin:6px 2px 0" id="p-meta"></div>
   <div class="row" style="margin-top:auto;padding-top:16px;gap:12px">
-    <button class="btn primary" id="p-love"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.4 4.5 6.2 4.5c2.2 0 3.6 1.2 4.3 2.4h3c.7-1.2 2.1-2.4 4.3-2.4 3.8 0 5.8 3.9 4.2 7.2C19.5 16.4 12 21 12 21z"/></svg>Send love back</button>
+    <button class="btn primary" id="p-love"><svg width="20" height="20" viewBox="0 0 24 24" fill="#F2B8C6" stroke="#A51D2A" stroke-width="2" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.4 4.5 6.2 4.5c2.2 0 3.6 1.2 4.3 2.4h3c.7-1.2 2.1-2.4 4.3-2.4 3.8 0 5.8 3.9 4.2 7.2C19.5 16.4 12 21 12 21z"/></svg>Send love back</button>
     <button class="btn ghost" id="p-done">Back to game</button>
   </div>
 </section>
@@ -351,7 +356,7 @@ function dayLabel(t){ const d = new Date(t); const days = Math.floor((startOfDay
 function startOfDay(t){ const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); }
 function ago(t){ const m = Math.round((Date.now()-t)/60000); if (m < 1) return 'just now'; if (m < 60) return m + ' min ago'; const h = Math.round(m/60); if (h < 24) return h + 'h ago'; const d = Math.round(h/24); return d + (d === 1 ? ' day ago' : ' days ago'); }
 function whenLabel(iso){ if (!iso) return ''; const d = new Date(iso); if (isNaN(d)) return ''; return d.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'}) + ' · ' + d.toLocaleTimeString(undefined,{hour:'numeric', minute:'2-digit'}); }
-const HEART = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.4 4.5 6.2 4.5c2.2 0 3.6 1.2 4.3 2.4h3c.7-1.2 2.1-2.4 4.3-2.4 3.8 0 5.8 3.9 4.2 7.2C19.5 16.4 12 21 12 21z"/></svg>';
+const HEART = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#F2B8C6" stroke="#A51D2A" stroke-width="2" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.4 4.5 6.2 4.5c2.2 0 3.6 1.2 4.3 2.4h3c.7-1.2 2.1-2.4 4.3-2.4 3.8 0 5.8 3.9 4.2 7.2C19.5 16.4 12 21 12 21z"/></svg>';
 const CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
 const PLAY = '<svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>';
 
