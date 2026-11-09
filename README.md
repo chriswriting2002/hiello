@@ -31,6 +31,9 @@ Sending between two phones (needs a server such as Supabase), the real iPhone ho
 ## Test hook
 `window.__hi` in the browser console: `S()` state, `findPair()`, `G` board, `go(name)`.
 
+## Logo (locked)
+Silver tile (matte gradient `#E6E7EA` to `#C8CACE`), lowercase serif "hi" in navy `#14285A`, pink `#F2B8C6` heart with a deep red `#9B1B1F` outline in the lower right. No ribbon, doily or leaves. File: `resources/icon-only.png`.
+
 ## Brand colors (final)
 Late-90s shopping-bag navy, the rare silver bag, ballet pink and white. Full reasoning: "Hiello final color scheme" report.
 
