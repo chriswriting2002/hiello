@@ -2,10 +2,10 @@
   "appId": "com.hiello.family",
   "appName": "Hiello",
   "webDir": "www",
-  "backgroundColor": "#F2F7F6",
+  "backgroundColor": "#F5F5F7",
   "ios": {
     "contentInset": "never",
-    "backgroundColor": "#F2F7F6",
+    "backgroundColor": "#F5F5F7",
     "allowsLinkPreview": false
   }
 }

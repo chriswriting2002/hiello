@@ -32,19 +32,19 @@ Sending between two phones (needs a server such as Supabase), the real iPhone ho
 `window.__hi` in the browser console: `S()` state, `findPair()`, `G` board, `go(name)`.
 
 ## Logo (locked)
-A symbol, not a word: two heart-topped "i" figures, one tall and one small (a grandparent and a grandkid), hearts leaning toward each other.
-One-color style with a soft drop shadow: tile deep teal `#1E7F7A`, figures light teal `#5FBDB5`, shadow `#08403C`. File: `resources/icon-only.png`.
+An Italian charm-bracelet link: a brushed-steel frame with two small pins (top and bottom), a navy enamel face (`#14285A`), and a white serif "hi" whose i is dotted with a ballet-pink heart (`#F2B8C6`) outlined in heart red (`#9B1B1F`). File: `resources/icon-only.png`.
+Chosen over the teal two-figure symbol because teal with a pink heart is the look of teen couples widget apps (noteit, Loveit); navy reads as family. The teal figures are kept for a future alternate icon or in-app mascot.
 
 ## Brand colors (final)
 | Color | Hex | Job |
 |---|---|---|
-| Deep teal | `#1E7F7A` | App icon tile |
-| Button teal | `#1A7470` | Main buttons (white text) |
-| Teal ink | `#12403D` | Text and headings |
-| Dark teal | `#134F4C` | Dark screens: Grandpa's home, mahjong, Family Break, Big One card |
-| Pale teal | `#A9D3CE` | Soft surfaces and labels on dark screens |
-| Mint white | `#F2F7F6` | Page backgrounds |
-| Ballet pink | `#F2B8C6` | Hearts, NEW tags, buttons on dark screens (teal-ink text) |
+| Navy | `#14285A` | Icon enamel, text, main buttons |
+| Steel / silver | `#C8CACE` | Icon frame, soft surfaces, labels on dark screens |
+| Ballet pink | `#F2B8C6` | Hearts, NEW tags, buttons on dark screens (navy text) |
 | Heart red | `#9B1B1F` | Heart outline only |
+| White | `#FFFFFF` | Cards, widget, photo frames |
+| Off-white | `#F5F5F7` | Page backgrounds |
+| Slate | `#4B5263` | Secondary text |
+| Midnight | `#0B1733` | Dark screens: Grandpa's home, mahjong, Family Break, Big One card |
 
-Rules: pink always carries teal-ink text or a red outline; heart red is only for hearts; no navy, orange, yellow or purple in the brand.
+Rules: pink always carries navy text or a red outline; heart red only for hearts; no teal, orange, yellow or purple in the brand.
