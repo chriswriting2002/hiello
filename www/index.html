@@ -896,7 +896,13 @@ function reshuffle(){
   const slots = LAYOUT.map((_,i) => i).filter(i => G.alive[i]);
   const counts = {}; slots.forEach(i => counts[G.face[i]] = (counts[G.face[i]]||0) + 1);
   const pf = []; Object.keys(counts).forEach(f => { for (let k=0;k<counts[f]/2;k++) pf.push(+f); });
-  const face = deal(slots, pf); if (face) G.face = face;
+  let face = deal(slots, pf);
+  if (!face){ /* stuck (e.g. a matching pair stacked on each other): lay the leftover tiles flat on the bottom layer */
+    const flat = LAYOUT.map((_,i) => i).filter(i => LAYOUT[i].z === 0).slice(0, slots.length);
+    G.alive = LAYOUT.map((_,i) => flat.includes(i));
+    face = deal(flat, pf);
+  }
+  if (face) G.face = face;
 }
 function renderBoard(){
   const b = $('#board'); const bw = Math.min(b.clientWidth || 360, 420);
@@ -1134,7 +1140,7 @@ function startBanner(){ stopBanner(); bannerT = setInterval(() => { bannerIdx++;
 function stopBanner(){ clearInterval(bannerT); bannerT = null; }
 
 /* expose a small test hook */
-window.__hi = { S:()=>S, G, isFree, findPair, go, addSamples, openPlayer, GF, TV, LAYOUT };
+window.__reshuffle = reshuffle; window.__hi = { S:()=>S, G, isFree, findPair, go, addSamples, openPlayer, GF, TV, LAYOUT };
 
 /* ---------- start ---------- */
 if (!S.setup) go('welcome'); else go(S.mode === 'gp' ? 'gp' : 'fam');
