@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#14285A">
+<meta name="theme-color" content="#134F4C">
 <title>Hiello</title>
 <style>
 :root{
-  --navy:#14285A;--navy2:#22366A;--cream:#F5F5F7;--paper:#FFFFFF;--line:#E3E4E8;
-  --clay:#14285A;--gold:#C8CACE;--green:#0B1733;--ok:#14285A;--muted:#4B5263;--ph:#DADBDF;
-  --red:#9B1B1F;--blush:#FBE3EA;--pink:#F2B8C6;--silver:#C8CACE;--slate:#4B5263;--midnight:#0B1733;
+  --navy:#12403D;--navy2:#1A5450;--cream:#F2F7F6;--paper:#FFFFFF;--line:#DCE8E6;
+  --clay:#1A7470;--gold:#A9D3CE;--green:#134F4C;--ok:#12403D;--muted:#4A5F5D;--ph:#D7E3E1;
+  --red:#9B1B1F;--blush:#FBE3EA;--pink:#F2B8C6;--silver:#A9D3CE;--slate:#4A5F5D;--midnight:#134F4C;--teal:#1A7470;
   --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -152,13 +152,13 @@ textarea.field{resize:none;line-height:1.35}
 .progress i{display:block;height:100%;width:0;background:var(--gold)}
 /* Final palette (GAP-bag navy, silver, ballet pink, white). Navy = text + main buttons; pink = hearts and pills with navy text;
    silver = surfaces and hints; midnight = dark screens; heart red = heart outline only. */
-.btn.primary{background:var(--navy);color:#fff}
+.btn.primary{background:var(--teal);color:#fff}
 .dark .btn.primary,.felt .btn.primary,.bigone .btn.primary{background:var(--pink);color:var(--navy)}
 .kicker{color:var(--slate)}
 .dark .kicker,.felt .kicker{color:var(--silver)}
 #toast{border-color:var(--silver)}
-#toast button{background:var(--navy);color:#fff}
-#demobar{background:rgba(11,23,51,.94)}
+#toast button{background:var(--teal);color:#fff}
+#demobar{background:rgba(19,79,76,.95)}
 .widget .wtag{background:var(--pink);color:var(--navy)}
 .widget .wstk,.tpl-polaroid .stk{color:var(--navy);border-color:var(--navy)}
 .tpl-polaroid .foot{color:var(--navy)}
@@ -169,7 +169,7 @@ textarea.field{resize:none;line-height:1.35}
 .tile.sel{box-shadow:0 0 0 4px var(--pink)}
 .tile.hint{box-shadow:0 0 0 4px var(--silver)}
 .banner{background:#fff}
-.banner .go{background:var(--navy);color:#fff}
+.banner .go{background:var(--teal);color:#fff}
 .check.no{background:var(--pink)}
 .check.no span{color:var(--navy)!important}
 .progress i{background:var(--pink)}
@@ -177,7 +177,7 @@ textarea.field{resize:none;line-height:1.35}
 .pill.wait{background:#F5F5F7;color:var(--slate);border:1px solid #DADBDF}
 .pill.star{background:#E9EAEE;color:var(--navy)}
 .pill.love{background:#FBE3EA;color:var(--navy)}
-.chip.on{background:var(--navy);border-color:var(--navy)}
+.chip.on{background:var(--teal);border-color:var(--teal)}
 .seg button.on{box-shadow:0 0 0 2px var(--navy)}
 .bigone{background:var(--midnight);border-color:var(--silver)}
 .dark{background:var(--midnight)}
@@ -189,7 +189,7 @@ textarea.field{resize:none;line-height:1.35}
 <!-- ============ WELCOME ============ -->
 <section class="screen light-screen" id="s-welcome">
   <div class="col" style="margin:auto 0;gap:18px">
-    <div class="row" style="gap:12px"><div style="width:64px;height:64px;border-radius:18px;background:#C8CACE;color:var(--navy);display:flex;align-items:center;justify-content:center" class="serif"><span style="font-size:30px;font-weight:400">hi</span></div><h1 style="font-size:34px;letter-spacing:6px;text-transform:uppercase;font-weight:400">Hiello</h1></div>
+    <div class="row" style="gap:12px"><svg width="64" height="64" viewBox="0 0 120 120" role="img" aria-label="Hiello logo"><defs><filter id="lsh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="3.5" stdDeviation="2.6" flood-color="#08403C" flood-opacity="0.6"/></filter><path id="lh" d="M0 -5 C-3 -12 -14 -10 -12 -1 C-11 4 -4 8 0 12 C4 8 11 4 12 -1 C14 -10 3 -12 0 -5Z"/></defs><rect width="120" height="120" rx="27" fill="#1E7F7A"/><g fill="#5FBDB5" filter="url(#lsh)" transform="translate(60 60) scale(1.12) translate(-58.5 -62)"><rect x="34" y="52" width="17" height="46" rx="8.5"/><use href="#lh" transform="translate(42.5 36) rotate(10) scale(0.82)"/><rect x="69" y="68" width="14" height="30" rx="7"/><use href="#lh" transform="translate(76 54.5) rotate(-10) scale(0.64)"/></g></svg><h1 style="font-size:34px;letter-spacing:6px;text-transform:uppercase;font-weight:400">Hiello</h1></div>
     <h2 style="font-size:26px;line-height:1.2">Family breaks for the people you love.</h2>
     <p class="muted" style="margin:0;font-size:17px;line-height:1.45">Send Grandpa quick photo and video "commercials." He sees them on his home screen and between rounds of his mahjong game, so he's always caught up.</p>
     <div class="col" style="gap:8px">
@@ -206,7 +206,7 @@ textarea.field{resize:none;line-height:1.35}
 </section>
 
 <!-- ============ GRANDPARENT HOME ============ -->
-<section class="screen pad-bottom" id="s-gp" style="background:#0B1733;color:#fff">
+<section class="screen pad-bottom" id="s-gp" style="background:#134F4C;color:#fff">
   <div class="row between" style="margin-bottom:14px">
     <div><div class="kicker" style="color:var(--gold)">Hiello</div><h1 style="font-size:30px" id="gp-hello">Hi, Grandpa</h1></div>
     <button class="icon-btn" aria-label="Settings" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
@@ -214,11 +214,11 @@ textarea.field{resize:none;line-height:1.35}
   <div style="font-size:13px;font-weight:800;opacity:.85;margin:0 4px 6px">Home screen widget (preview)</div>
   <button class="widget" id="gp-widget"></button>
   <div class="col" style="margin-top:18px;gap:12px">
-    <button class="bigtile" style="background:#C8CACE;color:var(--navy)" data-go="game">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>
+    <button class="bigtile" style="background:#A9D3CE;color:var(--navy)" data-go="game">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#12403D" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>
       <span>Play Mahjong<span class="sub">Family breaks between rounds</span></span></button>
     <button class="bigtile" style="background:#FFFFFF;color:var(--navy)" data-go="week">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1A7470" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
       <span>This week in the family<span class="sub" id="gp-weeksub">See what everyone's up to</span></span></button>
   </div>
 </section>
@@ -619,7 +619,7 @@ async function renderGP(){
   else {
     const th = await thumbHTML(p);
     w.innerHTML = `<div class="wimg">${th}<div class="wtag">${p.watched ? 'LATEST HIELLO' : 'NEW HIELLO'}</div>${p.note ? `<div class="wstk">${esc(p.note)}</div>` : ''}</div>
-      <div class="row between" style="padding:10px 4px 2px"><div><div style="font-size:18px;font-weight:900">From ${esc(p.from)}</div><div class="muted" style="font-size:14px">${ago(p.at)}</div></div><span style="background:var(--navy);color:#fff;font-size:15px;font-weight:900;padding:10px 14px;border-radius:999px">Tap to watch</span></div>`;
+      <div class="row between" style="padding:10px 4px 2px"><div><div style="font-size:18px;font-weight:900">From ${esc(p.from)}</div><div class="muted" style="font-size:14px">${ago(p.at)}</div></div><span style="background:var(--teal);color:#fff;font-size:15px;font-weight:900;padding:10px 14px;border-radius:999px">Tap to watch</span></div>`;
     w.onclick = () => openPlayer([p], 'gp');
   }
   const n = unseen().length;

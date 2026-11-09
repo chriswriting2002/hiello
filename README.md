@@ -32,20 +32,19 @@ Sending between two phones (needs a server such as Supabase), the real iPhone ho
 `window.__hi` in the browser console: `S()` state, `findPair()`, `G` board, `go(name)`.
 
 ## Logo (locked)
-Silver tile (matte gradient `#E6E7EA` to `#C8CACE`), lowercase serif "hi" in navy `#14285A`, pink `#F2B8C6` heart with a deep red `#9B1B1F` outline in the lower right. No ribbon, doily or leaves. File: `resources/icon-only.png`.
+A symbol, not a word: two heart-topped "i" figures, one tall and one small (a grandparent and a grandkid), hearts leaning toward each other.
+One-color style with a soft drop shadow: tile deep teal `#1E7F7A`, figures light teal `#5FBDB5`, shadow `#08403C`. File: `resources/icon-only.png`.
 
 ## Brand colors (final)
-Late-90s shopping-bag navy, the rare silver bag, ballet pink and white. Full reasoning: "Hiello final color scheme" report.
-
 | Color | Hex | Job |
 |---|---|---|
-| Navy | `#14285A` | All text, main buttons, the "hi" in the icon |
-| Silver | `#C8CACE` | Icon tile (matte gradient to `#E6E7EA`), surfaces, hints, labels on dark screens |
-| Ballet pink | `#F2B8C6` | Heart fill, pills, buttons on dark screens (always navy text on top) |
-| White | `#FFFFFF` | Cards, widget, photo frames |
-| Off-white | `#F5F5F7` | Page backgrounds |
-| Slate | `#4B5263` | Secondary text, small labels |
-| Midnight | `#0B1733` | Dark screens: Grandpa's home, mahjong, Family Break, Big One card |
+| Deep teal | `#1E7F7A` | App icon tile |
+| Button teal | `#1A7470` | Main buttons (white text) |
+| Teal ink | `#12403D` | Text and headings |
+| Dark teal | `#134F4C` | Dark screens: Grandpa's home, mahjong, Family Break, Big One card |
+| Pale teal | `#A9D3CE` | Soft surfaces and labels on dark screens |
+| Mint white | `#F2F7F6` | Page backgrounds |
+| Ballet pink | `#F2B8C6` | Hearts, NEW tags, buttons on dark screens (teal-ink text) |
 | Heart red | `#9B1B1F` | Heart outline only |
 
-Rules: pink never sits on white or silver without a navy label or red outline; silver is never text on light backgrounds; nothing depends on telling navy from midnight; heart red is only for the heart; no orange, yellow, green or purple in the brand.
+Rules: pink always carries teal-ink text or a red outline; heart red is only for hearts; no navy, orange, yellow or purple in the brand.
