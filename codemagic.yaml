@@ -122,6 +122,7 @@ workflows:
           sed -i '' -E "s/platform :ios, '[0-9.]+'/platform :ios, '15.0'/" ios/App/Podfile
       - name: Add the home screen widget
         script: |
+          set -e
           # the app's widget bridge, its screen, and the shared App Group
           cp native/ios/App/HielloWidgetPlugin.swift native/ios/App/HielloViewController.swift native/ios/App/App.entitlements ios/App/App/
           sed -i '' 's/customClass="CAPBridgeViewController" customModule="Capacitor"/customClass="HielloViewController" customModule="App" customModuleProvider="target"/' ios/App/App/Base.lproj/Main.storyboard
@@ -141,6 +142,7 @@ workflows:
           ruby scripts/add_widget.rb
       - name: Add photo notifications
         script: |
+          set -e
           # the piece that puts the photo inside each notification, and the token hand-off in AppDelegate
           mkdir -p ios/App/HielloNotify && cp native/ios/HielloNotify/* ios/App/HielloNotify/
           ruby scripts/add_notify.rb
