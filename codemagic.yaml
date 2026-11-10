@@ -154,7 +154,8 @@ workflows:
       - name: Build number
         script: |
           cd ios/App
-          agvtool new-version -all $((BUILD_NUMBER + 1))
+          # widget builds count from 1000 so they never collide with the plain workflow's numbers
+          agvtool new-version -all $((BUILD_NUMBER + 1000))
       - name: Build
         script: |
           xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME" || {
