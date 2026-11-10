@@ -375,6 +375,35 @@ textarea.field{resize:none;line-height:1.35}
 @keyframes ihRing{0%,38%{transform:scale(.3);opacity:0}45%{opacity:.9}80%,100%{transform:scale(1.4);opacity:0}}
 #idlehand.swipe .hand{animation:ihSwipe 2.2s ease-in-out infinite}
 @keyframes ihSwipe{0%{transform:translateX(60px);opacity:0}15%{opacity:1}70%{transform:translateX(-60px);opacity:1}90%,100%{transform:translateX(-60px);opacity:0}}
+
+/* ---- silver scroll bar (Grandpa side) ---- */
+.sbar{flex:none;user-select:none;-webkit-user-select:none}
+.sb-lab{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:900;color:#DDE2EE;margin-bottom:6px}
+.sb-lab svg{flex:none}
+.sb-track{position:relative;height:40px;touch-action:none;cursor:pointer}
+.sb-track::before{content:"";position:absolute;left:0;right:0;top:12px;height:16px;border-radius:8px;background:linear-gradient(#7E838B,#A9ADB4 45%,#C8CACE);box-shadow:inset 0 2px 4px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.25)}
+.sb-thumb{position:absolute;top:2px;height:36px;border-radius:18px;background:linear-gradient(160deg,#FFFFFF 0%,#B9BCC2 38%,#F2F3F5 62%,#8D9198 100%);border:1.5px solid #6E737B;box-shadow:0 3px 8px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;gap:4px;transition:left .25s ease}
+.sb-thumb.drag{transition:none}
+.sb-thumb b{width:3px;height:16px;border-radius:2px;background:#6E737B;box-shadow:1px 0 0 rgba(255,255,255,.8)}
+.sb-count{font-size:14px;font-weight:800;color:#9FA9C4;text-align:center;margin-top:2px}
+/* ---- the camera: a Polaroid comes out ---- */
+.cam-flash{position:absolute;inset:0;background:#fff;z-index:6;pointer-events:none;animation:camFlash .45s ease-out forwards}
+@keyframes camFlash{0%{opacity:1}100%{opacity:0}}
+.pola{position:absolute;left:9%;top:3%;width:82%;background:#FBFAF6;padding:4% 4% 0;border-radius:4px;box-shadow:0 10px 24px rgba(0,0,0,.5);transform:rotate(-2deg);animation:polaOut .8s cubic-bezier(.2,.9,.3,1.05) both;z-index:4}
+@keyframes polaOut{0%{transform:translateY(-115%) rotate(-8deg)}100%{transform:rotate(-2deg)}}
+.pola-img{position:relative;aspect-ratio:1;overflow:hidden;background:#222}
+.pola-img img,.pola-img video{width:100%;height:100%;object-fit:cover;display:block;animation:develop 1.8s ease-out both}
+@keyframes develop{0%{filter:brightness(2.4) saturate(0) blur(3px)}60%{filter:brightness(1.2) saturate(.7) blur(0)}100%{filter:none}}
+.pola-cap{min-height:18%;display:flex;align-items:center;justify-content:center;padding:6px 2px}
+.pola-cap .cam-note{position:static;transform:none;width:100%;background:transparent;color:#14285A;font-family:Baskerville,Georgia,serif;font-size:20px;font-weight:700;padding:8px 4px;border-radius:0;border-bottom:2px dashed #C8CACE;-webkit-backdrop-filter:none;backdrop-filter:none}
+.pola-cap .cam-note::placeholder{color:#8D9198}
+.pola.away{animation:polaAway .7s ease-in forwards}
+@keyframes polaAway{to{transform:translateY(-140%) rotate(8deg) scale(.6);opacity:0}}
+.cam-sentok{position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(11,23,51,.88);color:#fff;font-size:28px;font-weight:900;animation:fadeIn .25s ease-out}
+.cam-sentok .ck{width:84px;height:84px;border-radius:50%;background:#F2B8C6;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 5px #9B1B1F}
+.cam-sentok small{font-size:16px;font-weight:700;color:#DDE2EE}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.shutter:disabled{opacity:.4}
 </style>
 </head>
 <body>
@@ -407,8 +436,9 @@ textarea.field{resize:none;line-height:1.35}
     <button class="icon-btn" aria-label="Settings" data-go="settings" style="display:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
   <div class="faces" id="gp-faces"></div>
+  <div class="sbar" id="gp-bar"></div>
   <button class="frame" id="gp-frame" aria-label="Watch Hiello"></button>
-  <div class="fdots" id="gp-dots"></div>
+  <div class="fdots" id="gp-dots" style="display:none"></div>
   <div id="gp-tab"></div>
   <div id="gp-big"></div>
   <div class="gpbtns">
@@ -493,6 +523,7 @@ textarea.field{resize:none;line-height:1.35}
     <span style="font-size:16px;font-weight:800;color:#C9CFE0" id="ph-count"></span>
   </div>
   <div id="ph-status" style="margin-top:12px;font-size:16px;font-weight:800;color:#DDE2EE"></div>
+  <div class="sbar" id="ph-bar" style="margin-top:10px"></div>
   <div id="ph-deck"></div>
   <div class="st-cap" id="ph-cap" style="text-align:center"></div>
   <div style="text-align:center;font-size:14px;color:#9FA9C4;margin:6px 0 10px">Tap the picture to reply · Slide for the next one</div>
@@ -960,6 +991,22 @@ function Deck(el, o){
   return { paint, flip, get i(){ return st.i; }, set i(v){ st.i = v; } };
 }
 
+/* ---------- silver scroll bar: drag the handle to move through the pictures ---------- */
+function Scrub(el, o){
+  const AR = d => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DDE2EE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+  el.innerHTML = `<div class="sb-lab">${AR('M15 5l-7 7 7 7')}<span>${o.label || 'Slide the silver bar to see more photos'}</span>${AR('M9 5l7 7-7 7')}</div><div class="sb-track" role="slider" aria-label="${o.label || 'Photos'}"><i class="sb-thumb"><b></b><b></b><b></b></i></div>`;
+  const tr = el.querySelector('.sb-track'), th = el.querySelector('.sb-thumb'); let drag = false, last = -1;
+  const W = () => { const n = o.count(); return Math.max(18, 100 / Math.max(1, n)); };
+  function show(i){ const n = o.count(); el.style.display = n > 1 ? '' : 'none'; const w = W(); th.style.width = w + '%'; th.style.left = (n > 1 ? i / (n - 1) : 0) * (100 - w) + '%'; tr.setAttribute('aria-valuenow', i + 1); tr.setAttribute('aria-valuemax', n); }
+  function at(e){ const r = tr.getBoundingClientRect(), n = o.count(), w = W() / 100 * r.width; const f = Math.max(0, Math.min(1, (e.clientX - r.left - w/2) / Math.max(1, r.width - w))); return { f, i: Math.round(f * (n - 1)) }; }
+  tr.addEventListener('pointerdown', e => { drag = true; tr.setPointerCapture(e.pointerId); th.classList.add('drag'); move(e); });
+  function move(e){ if (!drag) return; const p = at(e), w = W(); th.style.left = p.f * (100 - w) + '%'; if (p.i !== last){ last = p.i; o.go(p.i); haptic(); } }
+  tr.addEventListener('pointermove', move);
+  const up = () => { if (!drag) return; drag = false; th.classList.remove('drag'); show(last >= 0 ? last : 0); last = -1; };
+  tr.addEventListener('pointerup', up); tr.addEventListener('pointercancel', up);
+  return { show };
+}
+
 /* ---------- Grandpa home: an Aura-style frame ---------- */
 const FR = { list:[], timer:null, deck:null, touched:0 };
 const FACE_COLORS = [['#F2B8C6','#14285A'],['#C8CACE','#14285A'],['#FFFFFF','#14285A'],['#22366A','#FFFFFF']];
@@ -973,6 +1020,8 @@ async function frameSlide(i){
     <div class="info"><div style="min-width:0"><div class="who">From ${esc(p.from)}</div><div class="when">${ago(p.at)}${p.hearts ? ' · ' + HEART + ' ' + p.hearts : ''}</div></div><span class="watch">${p.media && p.media.kind === 'video' ? PLAY.replace('fill="#fff"','fill="#14285A"').replace(/28/g,'20') + 'Play' : 'Open'}</span></div>`;
 }
 function frameDots(i){
+  if (!FR.bar) FR.bar = Scrub($('#gp-bar'), { count:() => FR.list.length, go: k => { FR.touched = Date.now(); FR.deck.i = k; FR.deck.paint(); } });
+  FR.bar.show(i);
   const n = Math.min(FR.list.length, 8);
   $('#gp-dots').innerHTML = FR.list.length > 1 ? Array.from({length:n}, (_,k) => `<i class="${k === Math.min(i, n-1) ? 'on' : ''}"></i>`).join('') : '';
 }
@@ -1072,6 +1121,8 @@ async function renderPhotos(){
   $('#ph-status').innerHTML = n ? `${n} new Hiello${n>1?'s':''} waiting` : `<span style="color:#9FE0B2">✓</span> You're all caught up`;
 }
 function phInfo(i){
+  if (!PH.bar) PH.bar = Scrub($('#ph-bar'), { count:() => PH.list.length, go: k => { PH.deck.i = k; PH.deck.paint(); } });
+  PH.bar.show(Math.max(0, i));
   const p = PH.list[i]; if (!p){ $('#ph-count').textContent = ''; $('#ph-cap').textContent = ''; $('#ph-love').style.display = 'none'; return; }
   $('#ph-love').style.display = '';
   $('#ph-count').textContent = `${i+1} of ${PH.list.length}`;
@@ -1208,10 +1259,11 @@ function enterCam(){
   camLive();
 }
 async function camLive(){
-  CAM.shot = null; $('#cam-shot').innerHTML = ''; $('#cam-note').hidden = true; $('#cam-note').value = '';
+  $('#cam-sq').appendChild($('#cam-note'));          // the note box lives on the Polaroid while reviewing
+  CAM.shot = null; CAM.busy = false; $('#cam-shot').innerHTML = ''; $('#cam-note').hidden = true; $('#cam-note').value = '';
   $('#cam-v').style.display = '';
   $('#cam-a').innerHTML = ICON.pics + '<span>Photos</span>'; $('#cam-a').onclick = () => $('#cam-file').click();
-  $('#cam-b').style.visibility = '';
+  $('#cam-a').style.visibility = ''; $('#cam-b').style.visibility = '';
   $('#cam-b').innerHTML = ICON.flip + '<span>Flip</span>'; $('#cam-b').onclick = () => { CAM.facing = CAM.facing === 'user' ? 'environment' : 'user'; startStream(); };
   $('#cam-mid').innerHTML = `<button class="shutter" id="shutter" aria-label="Take a photo. Hold for video."><i></i><svg class="ring" viewBox="0 0 92 92"><circle cx="46" cy="46" r="43" fill="none" stroke="#9B1B1F" stroke-width="6" stroke-dasharray="270" stroke-dashoffset="270" id="ring"/></svg></button>`;
   $('#cam-hint').textContent = 'Tap for a photo · hold for a video';
@@ -1238,7 +1290,7 @@ function stopTracks(){ if (CAM.stream){ CAM.stream.getTracks().forEach(t => t.st
 function stopCam(){ stopTracks(); cancelAnimationFrame(CAM.raf); if (CAM.rec && CAM.rec.state === 'recording') CAM.rec.stop(); }
 function bindShutter(){
   const b = $('#shutter');
-  b.onpointerdown = e => { e.preventDefault(); if (!CAM.stream) return; CAM.holdT = setTimeout(startRec, 350); };
+  b.onpointerdown = e => { e.preventDefault(); if (!CAM.stream || CAM.busy) return; CAM.holdT = setTimeout(startRec, 350); };
   const up = () => {
     if (CAM.holdT){ clearTimeout(CAM.holdT); CAM.holdT = null; snap(); return; }
     if (CAM.rec && CAM.rec.state === 'recording') CAM.rec.stop();
@@ -1247,7 +1299,9 @@ function bindShutter(){
   b.onclick = () => { if (!CAM.stream) startStream(); };
 }
 function snap(){
-  const v = $('#cam-v'); if (!v.videoWidth) return;
+  const v = $('#cam-v'); if (!v.videoWidth || CAM.busy) return;
+  CAM.busy = true; $('#shutter').disabled = true;            // one picture at a time
+  const fl = document.createElement('div'); fl.className = 'cam-flash'; $('#cam-sq').appendChild(fl); setTimeout(() => fl.remove(), 500);
   const side = Math.min(v.videoWidth, v.videoHeight), c = document.createElement('canvas'); c.width = c.height = Math.min(side, 1280);
   const x = c.getContext('2d');
   if (CAM.facing === 'user'){ x.translate(c.width, 0); x.scale(-1, 1); }
@@ -1270,16 +1324,19 @@ function startRec(){
   CAM.raf = requestAnimationFrame(tick);
 }
 function review(blob, kind){
+  CAM.busy = true;
   CAM.shot = { blob, kind, url: URL.createObjectURL(blob) };
   $('#cam-v').style.display = 'none'; $('#cam-off').hidden = true;
-  $('#cam-shot').innerHTML = kind === 'video' ? `<video src="${CAM.shot.url}" playsinline autoplay loop></video>` : `<img src="${CAM.shot.url}" alt="">`;
-  const note = $('#cam-note'); note.hidden = false; note.placeholder = CAM.who === 'fam' ? `Add a note for ${gpName()}…` : 'Add a note…';
+  /* the picture slides out like a Polaroid and develops */
+  $('#cam-shot').innerHTML = `<div class="pola" id="cam-pola"><div class="pola-img">${kind === 'video' ? `<video src="${CAM.shot.url}" playsinline autoplay loop></video>` : `<img src="${CAM.shot.url}" alt="">`}</div><div class="pola-cap" id="cam-cap"></div></div>`;
+  const note = $('#cam-note'); $('#cam-cap').appendChild(note); note.hidden = false; note.placeholder = CAM.who === 'fam' ? `Write a note for ${gpName()}…` : 'Write a note…';
   $('#cam-a').innerHTML = ICON.x + '<span>Retake</span>'; $('#cam-a').onclick = () => { URL.revokeObjectURL(CAM.shot.url); camLive(); };
   if (CAM.who === 'fam'){ $('#cam-b').innerHTML = ICON.star + '<span>More</span>'; $('#cam-b').onclick = camMore; $('#cam-b').style.visibility = ''; }
   else $('#cam-b').style.visibility = 'hidden';
   $('#cam-mid').innerHTML = `<button class="sendbtn" id="cam-send" aria-label="Send">${ICON.send}</button>`;
   $('#cam-send').onclick = camSend;
-  $('#cam-hint').textContent = CAM.who === 'fam' ? `Tap send and ${gpName()} sees it right away` : 'Tap send and the family sees it right away';
+  $('#cam-hint').textContent = 'Here\u2019s your picture! Write a note, then tap send.';
+  $('#cam-send').disabled = true; setTimeout(() => { if (CAM.shot){ CAM.busy = false; const sb = $('#cam-send'); if (sb) sb.disabled = false; } }, 800);
 }
 $('#cam-file').onchange = async e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
@@ -1294,13 +1351,27 @@ async function camSend(){
     const note = $('#cam-note').value.trim();
     if (CAM.who === 'fam'){
       S.posts.push({ id: uid(), at: Date.now(), from: meName(), note, caption:'', tpl:'polaroid', sx:50, sy:80, type:'everyday', title:'', when:'', media:{kind:sh.kind, key}, watched:false, hearts:0, rsvp:null });
-      save(); haptic(); say(`Sent! ${gpName()} will see it right away.`); hearts();
+      save(); haptic();
+      await camSentShow(`Sent to ${gpName()}!`, `${gpName()} will see it right away.`);
       URL.revokeObjectURL(sh.url); camLive();
     } else {
       (S.replies = S.replies || []).push({ id: uid(), at: Date.now(), from: gpName(), note, media:{kind:sh.kind, key}, seen:false, replyTo: CAM.replyTo || null });
-      save(); haptic(); hearts(); URL.revokeObjectURL(sh.url); const who = CAM.replyTo && S.posts.find(x => x.id === CAM.replyTo); camBack(); say(who ? `Sent to ${who.from}! They\u2019ll love it.` : 'Sent to the family! They\u2019ll love it.');
+      save(); haptic(); const who = CAM.replyTo && S.posts.find(x => x.id === CAM.replyTo);
+      await camSentShow(who ? `Sent to ${who.from}!` : 'Sent to the family!', 'They\u2019ll love it.');
+      URL.revokeObjectURL(sh.url); camBack();
     }
   } catch(err){ say('Could not save that one. Try a shorter video.'); btn.disabled = false; }
+}
+/* a clear "it's sent" moment: the Polaroid flies away and a big check appears */
+async function camSentShow(title, sub){
+  CAM.busy = true; const pola = $('#cam-pola'); if (pola) pola.classList.add('away');
+  ['#cam-a','#cam-b'].forEach(q => $(q).style.visibility = 'hidden');
+  await new Promise(r => setTimeout(r, 550));
+  const ok = document.createElement('div'); ok.className = 'cam-sentok';
+  ok.innerHTML = `<div class="ck"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div><div>${esc(title)}</div><small>${esc(sub)}</small>`;
+  $('#cam-sq').appendChild(ok); hearts();
+  await new Promise(r => setTimeout(r, 1600));
+  ok.remove();
 }
 function camMore(){
   const sh = CAM.shot, note = $('#cam-note').value.trim(); CAM.shot = null;
