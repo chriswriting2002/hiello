@@ -38,6 +38,8 @@ h1,h2,h3,.serif{font-family:Baskerville,'Libre Baskerville',Georgia,serif;font-w
 .light-screen .icon-btn{background:#fff;border:2px solid var(--line)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{min-height:46px;padding:0 16px;border-radius:999px;border:2px solid var(--line);background:#fff;color:var(--navy);font-size:16px;font-weight:800}
+.sheet-in .chip{background:#5C5651;color:#FFF9F3;border-color:#6E6761}
+.sheet-in .field{background:#FFF9F3;color:#34302D}
 .chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
 .lbl{font-size:15px;font-weight:900}
 .field{min-height:52px;border-radius:14px;border:2px solid var(--line);background:#fff;padding:12px 14px;font-family:inherit;font-size:18px;font-weight:700;color:var(--navy);width:100%}
@@ -50,14 +52,14 @@ textarea.field{resize:none;line-height:1.35}
 #demobar button.on{background:#fff;color:var(--navy)}
 .pad-bottom{padding-bottom:calc(var(--sb) + 80px)}
 /* toast */
-#toast{position:fixed;left:14px;right:14px;top:calc(var(--st) + 10px);z-index:60;transform:translateY(-160%);transition:transform .35s ease;display:flex;align-items:center;gap:12px;background:#fff;color:var(--navy);border:3px solid var(--gold);border-radius:20px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#toast{position:fixed;left:14px;right:14px;top:calc(var(--st) + 10px);z-index:60;transform:translateY(-160%);transition:transform .35s ease;display:flex;align-items:center;gap:12px;background:#4A4541;color:#FFF9F3;border:2px solid #F2B8C6;border-radius:20px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
 #toast.on{transform:none}
 #toast .thumb{width:54px;height:54px;border-radius:12px;flex:none;overflow:hidden;background:var(--ph)}
 #toast .thumb img,#toast .thumb video{width:100%;height:100%;object-fit:cover}
-#toast .t1{font-size:12px;font-weight:900;letter-spacing:1px;color:var(--clay)}
+#toast .t1{font-size:12px;font-weight:900;letter-spacing:1px;color:#F2B8C6}
 #toast .t2{font-size:17px;font-weight:900;line-height:1.2}
-#toast button{border:0;border-radius:999px;background:var(--clay);color:#fff;font-weight:900;font-size:15px;min-height:44px;padding:0 14px;flex:none}
-#msg{position:fixed;left:50%;bottom:calc(var(--sb) + 76px);transform:translateX(-50%) translateY(30px);opacity:0;transition:all .3s;z-index:70;background:var(--navy);color:#fff;border-radius:16px;padding:12px 18px;font-weight:800;font-size:16px;width:max-content;max-width:88vw;text-align:center;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+#toast button{border:0;border-radius:999px;background:#F2B8C6;color:#34302D;font-weight:900;font-size:15px;min-height:44px;padding:0 14px;flex:none}
+#msg{position:fixed;left:50%;bottom:calc(var(--sb) + 76px);transform:translateX(-50%) translateY(30px);opacity:0;transition:all .3s;z-index:70;background:#FFF9F3;color:#34302D;border-radius:16px;padding:12px 18px;font-weight:800;font-size:16px;width:max-content;max-width:88vw;text-align:center;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.25)}
 #msg.on{opacity:1;transform:translateX(-50%)}
 
 /* ===== Hiello card templates ===== */
@@ -229,7 +231,7 @@ textarea.field{resize:none;line-height:1.35}
 .face{flex:0 0 auto;border:0;background:none;color:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;width:86px;padding:0}
 .face .av{position:relative;width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Baskerville,Georgia,serif;font-size:28px;font-weight:700;box-shadow:0 0 0 3px #5C5651}
 .face.new .av{box-shadow:0 0 0 4px var(--pink)}
-.face .av b{position:absolute;right:-2px;top:-2px;width:20px;height:20px;border-radius:50%;background:#9B1B1F;border:3px solid #4A4541}
+.face .av b{position:absolute;right:-2px;top:-2px;width:20px;height:20px;border-radius:50%;background:#F2B8C6;border:3px solid #34302D}
 .face .nm{font-size:14px;font-weight:800;max-width:86px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .frame{position:relative;border:0;padding:0;border-radius:28px;overflow:hidden;background:#5C5651;box-shadow:0 0 0 6px #C8CACE,0 14px 30px rgba(0,0,0,.45);color:#fff;text-align:left;touch-action:pan-y}
 .frame .ph{position:absolute;inset:0;transition:opacity .8s}
@@ -297,10 +299,10 @@ textarea.field{resize:none;line-height:1.35}
 .gpnote::before{content:"";position:absolute;left:50%;top:-7px;width:34px;height:12px;transform:translateX(-50%) rotate(-4deg);background:rgba(255,255,255,.55)}
 .sheet{position:fixed;inset:0;z-index:90;background:rgba(30,26,23,.55);display:flex;align-items:flex-end}
 .sheet[hidden]{display:none}
-.sheet-in{width:100%;background:#fff;color:var(--navy);border-radius:26px 26px 0 0;padding:18px 18px calc(var(--sb) + 18px);display:flex;flex-direction:column;gap:12px;animation:sheetUp .25s ease-out}
+.sheet-in{--muted:#D1C8BF;width:100%;background:#4A4541;color:#FFF9F3;border-radius:26px 26px 0 0;padding:18px 18px calc(var(--sb) + 18px);display:flex;flex-direction:column;gap:12px;animation:sheetUp .25s ease-out}
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
 .sheet-h{font-family:Baskerville,Georgia,serif;font-size:24px;font-weight:700;text-align:center}
-.rbtn{display:flex;align-items:center;gap:14px;min-height:68px;border:0;border-radius:18px;padding:0 18px;font-size:20px;font-weight:900;text-align:left;background:#F5F5F7;color:var(--navy)}
+.rbtn{display:flex;align-items:center;gap:14px;min-height:68px;border:0;border-radius:18px;padding:0 18px;font-size:20px;font-weight:900;text-align:left;background:#5C5651;color:#FFF9F3}
 .rbtn .ic{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
 .sheet-x{border:0;background:none;color:var(--muted);font-size:17px;font-weight:800;min-height:44px}
 .rsvp-yes,.rsvp-no{display:flex;align-items:center;gap:14px;width:100%;min-height:76px;border:0;border-radius:20px;padding:12px 18px;font-size:21px;font-weight:900;text-align:left}
@@ -378,16 +380,18 @@ textarea.field{resize:none;line-height:1.35}
 
 /* ---- silver scroll bar (Grandpa side) ---- */
 .sbar{flex:none;user-select:none;-webkit-user-select:none}
-.sb-lab{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:900;color:#E9E2DA;margin-bottom:6px}
-.sb-lab svg{flex:none}
-.sb-track{position:relative;height:40px;touch-action:none;cursor:pointer}
-.sb-track::before{content:"";position:absolute;left:0;right:0;top:12px;height:16px;border-radius:8px;background:linear-gradient(#7E838B,#A9ADB4 45%,#C8CACE);box-shadow:inset 0 2px 4px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.25)}
-.sb-thumb{position:absolute;top:2px;height:36px;border-radius:18px;background:linear-gradient(160deg,#FFFFFF 0%,#B9BCC2 38%,#F2F3F5 62%,#8D9198 100%);border:1.5px solid #6E737B;box-shadow:0 3px 8px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;gap:4px;transition:left .25s ease}
-.sb-thumb.drag{transition:none}
-.sb-num{font-size:15px;font-weight:900;color:#14285A;white-space:nowrap;text-shadow:0 1px 0 rgba(255,255,255,.7)}
-.sb-ticks{position:absolute;inset:0;pointer-events:none}
-.sb-ticks b{position:absolute;top:17px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:rgba(20,40,90,.55)}
-.sb-ticks b.on{background:#F2B8C6;box-shadow:0 0 0 2px #9B1B1F}
+.fs-lab{display:flex;align-items:baseline;justify-content:space-between;padding:0 4px;margin-bottom:6px}
+.fs-num{font-size:16px;font-weight:900;color:#FFF9F3}
+.fs-tip{font-size:14px;font-weight:700;color:#D1C8BF}
+.fs-row{display:flex;align-items:center;gap:6px}
+.fs-arr{flex:none;width:44px;height:58px;border:0;border-radius:14px;background:#4A4541;color:#FFF9F3;display:flex;align-items:center;justify-content:center}
+.fs-arr:active{background:#5C5651}
+.fs-strip{flex:1;min-width:0;display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;padding:4px 2px;scrollbar-width:none}
+.fs-strip::-webkit-scrollbar{display:none}
+.fs-t{position:relative;flex:none;width:50px;height:50px;border-radius:12px;overflow:hidden;border:0;padding:0;background:#5C5651;opacity:.62;scroll-snap-align:center;transition:transform .2s,opacity .2s}
+.fs-t img,.fs-t video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.fs-t.on{opacity:1;transform:scale(1.08);box-shadow:0 0 0 3px #F2B8C6}
+.fs-new{position:absolute;top:4px;right:4px;width:10px;height:10px;border-radius:50%;background:#F2B8C6;box-shadow:0 0 0 2px #34302D}
 .sb-thumb{transition:left .3s cubic-bezier(.25,.8,.3,1)!important}
 .sb-thumb.drag{transition:none!important}
 /* pink Post-it: how to reply */
@@ -475,22 +479,22 @@ textarea.field{resize:none;line-height:1.35}
 </section>
 
 <!-- ============ GRANDPARENT HOME ============ -->
-<section class="screen pad-bottom" id="s-gp" style="background:var(--midnight);color:var(--warmtxt)">
+<section class="screen pad-bottom" id="s-gp" style="background:var(--graphite);color:var(--warmtxt)">
   <div class="row between">
     <h1 style="font-size:25px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0" id="gp-hello">Hi, Grandpa</h1>
     <span style="flex:1"></span>
-    <button class="gp-cambtn" id="gp-cam"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg>Send a hi</button>
+    <button class="gp-cambtn" id="gp-cam" style="display:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg>Send a hi</button>
     <button class="icon-btn" aria-label="Settings" data-go="settings" style="display:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
   <div class="faces" id="gp-faces"></div>
-  <div class="sbar" id="gp-bar"></div>
   <button class="frame" id="gp-frame" aria-label="Watch Hiello"></button>
+  <div class="sbar" id="gp-bar"></div>
   <div class="fdots" id="gp-dots" style="display:none"></div>
   <div id="gp-tab"></div>
   <div id="gp-big"></div>
   <div class="gpbtns">
-    <button class="gpbtn" style="background:#F2B8C6" data-go="photos"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="15" height="13" rx="2"/><path d="M7 21h12a2 2 0 0 0 2-2V8"/><circle cx="8" cy="10" r="1.6"/><path d="M18 15l-4-4-8 7"/></svg>Photos</button>
-    <button class="gpbtn" style="background:#C8CACE" data-go="games"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>Play a game</button>
+    <button class="gpbtn" style="background:#4A4541;color:#FFF9F3" data-go="photos"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F2B8C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="15" height="13" rx="2"/><path d="M7 21h12a2 2 0 0 0 2-2V8"/><circle cx="8" cy="10" r="1.6"/><path d="M18 15l-4-4-8 7"/></svg>Photos</button>
+    <button class="gpbtn" style="background:#4A4541;color:#FFF9F3" data-go="games"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F2B8C6" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="8" width="8" height="10" rx="2"/></svg>Play a game</button>
 
   </div>
 </section>
@@ -1373,37 +1377,44 @@ function Deck(el, o){
 function postitHTML(){ return `<div>👆 Tap once to reply</div><div>👆👆 Double-tap to send a ${heartSVG(18)}</div>`; }
 function tapper(single, dbl){ let t = null; return (...a) => { if (t){ clearTimeout(t); t = null; dbl(...a); } else t = setTimeout(() => { t = null; single(...a); }, 280); }; }
 /* silver bar: each swipe (or tap on either side of the handle) moves exactly one photo; the handle says "3 of 7" */
+/* a strip of small photos under the big one: tap a picture to jump to it, or the big arrows for one step */
+const STRIP_CACHE = new Map();
 function Scrub(el, o){
-  const AR = d => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E9E2DA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
-  el.innerHTML = `<div class="sb-lab">${AR('M15 5l-7 7 7 7')}<span>Swipe for more photos</span>${AR('M9 5l7 7-7 7')}</div><div class="sb-track" role="slider" aria-label="Photos"><span class="sb-ticks"></span><i class="sb-thumb"><span class="sb-num"></span></i></div>`;
-  const tr = el.querySelector('.sb-track'), th = el.querySelector('.sb-thumb'), ticks = el.querySelector('.sb-ticks');
-  let cur = 0, x0 = null, t0 = 0, n0 = -1;
-  const TW = 84;   /* handle width in px */
-  function pos(i, n){ const w = tr.clientWidth || 300; return (n > 1 ? i / (n - 1) : 0) * (w - TW); }
+  const AR = d => `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+  el.innerHTML = `<div class="fs-lab"><span class="fs-num"></span><span class="fs-tip">Tap a picture to see it</span></div>
+    <div class="fs-row"><button class="fs-arr" data-d="-1" aria-label="Previous photo">${AR('M15 5l-7 7 7 7')}</button>
+    <div class="fs-strip" role="list"></div>
+    <button class="fs-arr" data-d="1" aria-label="Next photo">${AR('M9 5l7 7-7 7')}</button></div>`;
+  const strip = el.querySelector('.fs-strip'); let cur = 0, sig = '';
+  $$('.fs-arr', el).forEach(b => b.onclick = () => { haptic(); did('bar'); o.step(+b.dataset.d); });
+  async function build(){
+    const n = o.count(), ids = Array.from({length:n}, (_,k) => (o.post(k) || {}).id).join(',');
+    if (ids === sig) return; sig = ids;
+    const html = await Promise.all(Array.from({length:n}, async (_,k) => {
+      const p = o.post(k); if (!p) return '';
+      if (!STRIP_CACHE.has(p.id)) STRIP_CACHE.set(p.id, await thumbHTML(p));
+      return `<button class="fs-t" role="listitem" data-k="${k}" aria-label="Photo ${k+1} of ${n}">${STRIP_CACHE.get(p.id)}${p.watched ? '' : '<i class="fs-new"></i>'}</button>`;
+    }));
+    strip.innerHTML = html.join('');
+    $$('.fs-t', strip).forEach(t => t.onclick = () => { const k = +t.dataset.k; if (k !== cur){ haptic(); did('bar'); o.step(k - cur); } });
+    mark();
+  }
+  function mark(){
+    $$('.fs-t', strip).forEach((t,k) => t.classList.toggle('on', k === cur));
+    const on = strip.querySelector('.fs-t.on');
+    if (on) strip.scrollTo({ left: on.offsetLeft - strip.clientWidth/2 + on.offsetWidth/2, behavior:'smooth' });
+  }
   function show(i){
     const n = o.count(); cur = i; el.style.display = n > 1 ? '' : 'none';
-    th.style.width = TW + 'px'; th.classList.remove('drag'); th.style.left = pos(i, n) + 'px';
-    el.querySelector('.sb-num').textContent = `${i + 1} of ${n}`;
-    if (n !== n0){ n0 = n; ticks.innerHTML = n <= 24 ? Array.from({length:n}, (_,k) => `<b style="left:${TW/2 + (n > 1 ? k/(n-1) : 0)*((tr.clientWidth||300) - TW)}px"></b>`).join('') : ''; }
-    $$('b', ticks).forEach((t,k) => t.classList.toggle('on', k === i));
-    tr.setAttribute('aria-valuenow', i + 1); tr.setAttribute('aria-valuemax', n);
+    el.querySelector('.fs-num').textContent = `${i + 1} of ${n}`;
+    build().then(mark);
   }
-  tr.addEventListener('pointerdown', e => { x0 = e.clientX; t0 = performance.now(); tr.setPointerCapture(e.pointerId); th.classList.add('drag'); });
-  tr.addEventListener('pointermove', e => { if (x0 === null) return; const dx = Math.max(-28, Math.min(28, (e.clientX - x0) * 0.5)); th.style.left = (pos(cur, o.count()) + dx) + 'px'; });
-  const up = e => {
-    if (x0 === null) return; const dx = e.clientX - x0; x0 = null; th.classList.remove('drag');
-    let d = 0;
-    if (Math.abs(dx) > 16) d = dx > 0 ? 1 : -1;                                  /* a swipe: one photo that way */
-    else { const r = th.getBoundingClientRect(); d = e.clientX < r.left ? -1 : e.clientX > r.right ? 1 : 0; }   /* a tap beside the handle */
-    if (d){ haptic(); did('bar'); o.step(d); } else show(cur);
-  };
-  tr.addEventListener('pointerup', up); tr.addEventListener('pointercancel', e => { x0 = null; show(cur); });
   return { show };
 }
 
 /* ---------- Grandpa home: an Aura-style frame ---------- */
 const FR = { list:[], timer:null, deck:null, touched:0 };
-const FACE_COLORS = [['#F2B8C6','#14285A'],['#C8CACE','#14285A'],['#FFFFFF','#14285A'],['#6E6761','#FFF9F3']];
+const FACE_COLORS = [['#5C5651','#FFF9F3'],['#5C5651','#FFF9F3'],['#5C5651','#FFF9F3'],['#5C5651','#FFF9F3']];
 function allNewestFirst(){ return [...S.posts].sort((a,b) => b.at - a.at); }
 function stopFrame(){ clearInterval(FR.timer); FR.timer = null; }
 async function frameSlide(i){
@@ -1414,7 +1425,7 @@ async function frameSlide(i){
     <div class="info"><div style="min-width:0"><div class="who">From ${esc(p.from)}</div><div class="when">${ago(p.at)}${p.hearts ? ' · ' + HEART + ' ' + p.hearts : ''}</div></div><span class="watch">${p.media && p.media.kind === 'video' ? PLAY.replace('fill="#fff"','fill="#14285A"').replace(/28/g,'20') + 'Play' : 'Open'}</span></div>`;
 }
 function frameDots(i){
-  if (!FR.bar) FR.bar = Scrub($('#gp-bar'), { count:() => FR.list.length, step: d => { FR.touched = Date.now(); FR.deck.flip(d); } });
+  if (!FR.bar) FR.bar = Scrub($('#gp-bar'), { count:() => FR.list.length, post:k => FR.list[k], step: d => { FR.touched = Date.now(); FR.deck.flip(d); } });
   FR.bar.show(i);
   const n = Math.min(FR.list.length, 8);
   $('#gp-dots').innerHTML = FR.list.length > 1 ? Array.from({length:n}, (_,k) => `<i class="${k === Math.min(i, n-1) ? 'on' : ''}"></i>`).join('') : '';
@@ -1517,7 +1528,7 @@ function applyLearned(){
   const postit = !(knows('reply', 3) && knows('heart', 2));
   $$('.postit').forEach(e => e.style.display = postit ? '' : 'none');
   const bar = !(knows('bar', 3) || knows('swipe', 5));
-  $$('.sb-lab').forEach(e => e.style.display = bar ? '' : 'none');
+  $$('.fs-tip').forEach(e => e.style.display = bar ? '' : 'none');
 }
 function sendLove(p, where){
   did('heart');
@@ -1543,7 +1554,7 @@ async function renderPhotos(){
   $('#ph-status').innerHTML = n ? '' : `<span style="color:#9FE0B2">\u2713</span> All caught up`;
 }
 function phInfo(i){
-  if (!PH.bar) PH.bar = Scrub($('#ph-bar'), { count:() => PH.list.length, step: d => PH.deck.flip(d) });
+  if (!PH.bar) PH.bar = Scrub($('#ph-bar'), { count:() => PH.list.length, post:k => PH.list[k], step: d => PH.deck.flip(d) });
   PH.bar.show(Math.max(0, i));
   const p = PH.list[i]; if (!p){ $('#ph-count').textContent = ''; $('#ph-cap').textContent = ''; $('#ph-love').style.display = 'none'; return; }
   $('#ph-love').style.display = '';
@@ -1821,9 +1832,9 @@ $('#gr-push').onclick = async () => {
 /* ---------- tap a picture to reply: a photo back, a little stuck-on note, or love ---------- */
 const RX = { p:null, ctx:null };
 const RX_ICONS = {
-  photo:'<span class="ic" style="background:#14285A"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg></span>',
+  photo:'<span class="ic" style="background:#34302D"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg></span>',
   note:'<span class="ic" style="background:#F2B8C6"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v11l-5 5H4z"/><path d="M15 20v-5h5M8 9h8M8 13h5"/></svg></span>',
-  love:'<span class="ic" style="background:#FBE3EA"><svg width="24" height="24" viewBox="-15 -14 30 28" aria-hidden="true"><path d="M0 -5 C-3 -12 -14 -10 -12 -1 C-11 4 -4 8 0 12 C4 8 11 4 12 -1 C14 -10 3 -12 0 -5Z" fill="#F2B8C6" stroke="#9B1B1F" stroke-width="2.4" stroke-linejoin="round"/></svg></span>'
+  love:'<span class="ic" style="background:#34302D"><svg width="24" height="24" viewBox="-15 -14 30 28" aria-hidden="true"><path d="M0 -5 C-3 -12 -14 -10 -12 -1 C-11 4 -4 8 0 12 C4 8 11 4 12 -1 C14 -10 3 -12 0 -5Z" fill="#F2B8C6" stroke="#9B1B1F" stroke-width="2.4" stroke-linejoin="round"/></svg></span>'
 };
 function openReact(p, ctx){
   did('reply');
