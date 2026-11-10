@@ -905,7 +905,7 @@ function cloudRepliesSeen(){ if (S.cloud) rpc('hi_replies_seen', { ...famArgs(),
 let syncing = false, syncT = null, syncSoonT = null, lastSig = '';
 function feedSig(){ return JSON.stringify([S.gp, S.posts.map(p => [p.id, p.watched, p.hearts, p.rsvp, p.gpNote && p.gpNote.text]), (S.replies||[]).map(r => [r.id, r.seen]), (S.members||[]).length]); }
 async function syncNow(){
-  if (!S.cloud || !CLOUD() || syncing) return; syncing = true;
+  if (!S.cloud || !CLOUD()) return; if (syncing) return syncing; let done; syncing = new Promise(r => done = r);
   try {
     const f = await rpc('hi_feed', { ...famArgs(), p_member: S.cloud.mid });
     const oldPosts = new Map(S.posts.map(p => [p.id, p])), oldReplies = new Set((S.replies||[]).map(r => r.id));
@@ -932,7 +932,7 @@ async function syncNow(){
     }
     if (changed){ refreshCurrent(); widgetPush(); }
   } catch(e){ /* offline: keep showing what we have */ }
-  syncing = false;
+  done(); syncing = false;
 }
 function syncSoon(){ clearTimeout(syncSoonT); syncSoonT = setTimeout(syncNow, 600); }
 function refreshCurrent(){
@@ -982,13 +982,14 @@ async function widgetJpeg(p){
 function blobToB64(b){ return new Promise(res => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.readAsDataURL(b); }); }
 
 /* ---------- tapping the widget opens that Hiello ---------- */
-function openLink(url){
+async function openLink(url){
   const m = /hiello:\/\/(post|reply|home|camera)\/?([\w-]*)/.exec(url || ''); if (!m) return;
   if (m[1] === 'camera') return go('cam');
   if (m[1] === 'reply') return go('fam');
-  const p = S.posts.find(x => String(x.id) === m[2]);
+  let p = S.posts.find(x => String(x.id) === m[2]);
+  if (!p && S.cloud){ await syncNow(); p = S.posts.find(x => String(x.id) === m[2]); }
   if (!p){ go(S.mode === 'gp' ? 'gp' : 'cam'); return; }
-  if (S.mode === 'gp'){ if (!p.watched) openStory([p, ...unseen().filter(x => x !== p)]); else openPhotos(p); }
+  if (S.mode === 'gp') openPhotos(p, { reply:true });
   else go('fam');
 }
 (() => { const C = window.Capacitor, A = C && C.Plugins && C.Plugins.App; if (!A) return;
@@ -1409,7 +1410,7 @@ async function renderGP(){
   renderFaces();
   const cur = FR.list[FR.deck?.i];
   FR.list = allNewestFirst();
-  if (!FR.deck) FR.deck = Deck($('#gp-frame'), { count:() => FR.list.length, render:frameSlide, change:frameDots, touch:() => FR.touched = Date.now(), tap:i => { const p = FR.list[i]; if (p) openPhotos(p); } });
+  if (!FR.deck) FR.deck = Deck($('#gp-frame'), { count:() => FR.list.length, render:frameSlide, change:frameDots, touch:() => FR.touched = Date.now(), tap:i => { const p = FR.list[i]; if (p) openPhotos(p, { reply:true }); } });
   FR.deck.i = Math.max(0, FR.list.indexOf(cur));
   await FR.deck.paint(); startFrame();
   renderNewTab();
@@ -1464,7 +1465,7 @@ function sendLove(p, where){
 
 /* ---------- photos: flip through every Hiello like a picture frame; tap one to send love ---------- */
 const PH = { list:[], deck:null };
-function openPhotos(start){ PH.start = start || null; go('photos'); }
+function openPhotos(start, opt = {}){ PH.start = start || null; PH.reply = !!opt.reply; go('photos'); }
 async function renderPhotos(){
   PH.list = allNewestFirst();
   if (!PH.deck) PH.deck = Deck($('#ph-deck'), { count:() => PH.list.length, playVideo:true,
@@ -1473,8 +1474,9 @@ async function renderPhotos(){
     tap: tapper(i => { const p = PH.list[i]; if (!p) return; const v = $('#ph-deck .sw-s:nth-child(2) video'); if (v && v.paused){ v.muted = false; v.play().catch(()=>{}); return; } openReact(p, 'photos'); },
                 i => { const p = PH.list[i]; if (!p) return; sendLove(p, $('#ph-deck')); phInfo(i); }) });
   $('#ph-postit').innerHTML = postitHTML();
-  PH.deck.i = PH.start ? Math.max(0, PH.list.indexOf(PH.start)) : 0; PH.start = null;
+  const sid = PH.start && PH.start.id; PH.deck.i = sid ? Math.max(0, PH.list.findIndex(x => x.id === sid)) : 0; PH.start = null;
   await PH.deck.paint();
+  if (PH.reply){ PH.reply = false; const cur = PH.list[PH.deck.i]; if (cur) openReact(cur, 'photos'); }
   const n = unseen().length;
   $('#ph-status').innerHTML = n ? `${n} new Hiello${n>1?'s':''} waiting` : `<span style="color:#9FE0B2">✓</span> You're all caught up`;
 }
@@ -1772,7 +1774,7 @@ function closeReact(refresh){
   else if (ctx === 'photos' && refresh) PH.deck.paint();
 }
 function noteSheet(){
-  const p = RX.p, chips = ['Love it!','So proud of you!','Miss you!','Ha! Great one','Beautiful!','Can’t wait to see you'];
+  const p = RX.p, chips = ['Hi!','Made my day!','Love it!','So proud of you!','Miss you!','Ha! Great one','Beautiful!','Can’t wait to see you'];
   $('#react-in').innerHTML = `<div class="sheet-h">A note for ${esc(p.from)}</div>
     <div style="text-align:center;font-size:15px;color:var(--muted);font-weight:700;margin-top:-6px">It sticks right on the picture, like a little Post-it.</div>
     <input class="field" id="rx-text" maxlength="40" placeholder="Type a short note…" value="${p.gpNote ? esc(p.gpNote.text) : ''}" style="font-size:19px;min-height:58px">
