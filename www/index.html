@@ -814,7 +814,7 @@ const PLAY = '<svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-h
    CLOUD — Hiellos travel between phones (Supabase). Fill in HIELLO_CLOUD to turn it on.
    Without it the app runs as the one-phone demo.
    ========================================================= */
-const HIELLO_CLOUD = { url: '', key: '' };   /* Supabase > Project Settings > API: Project URL and the publishable/anon key */
+const HIELLO_CLOUD = { url: 'https://zhscyfqolceqnlyhffoc.supabase.co', key: 'sb_publishable_kf-sl3MRFUAtYkkN5m99xg_jFtDW7hv' };   /* Supabase > Project Settings > API: Project URL and the publishable/anon key */
 const CLOUD = () => !!(HIELLO_CLOUD.url && HIELLO_CLOUD.key);
 function chdr(h = {}){ h.apikey = HIELLO_CLOUD.key; if (HIELLO_CLOUD.key.startsWith('eyJ')) h.Authorization = 'Bearer ' + HIELLO_CLOUD.key; return h; }
 async function rpc(fn, args){
