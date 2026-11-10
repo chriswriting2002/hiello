@@ -48,3 +48,13 @@ Chosen over the teal two-figure symbol because teal with a pink heart is the loo
 | Midnight | `#0B1733` | Dark screens: Grandpa's home, mahjong, Family Break, Big One card |
 
 Rules: pink always carries navy text or a red outline; heart red only for hearts; no teal, orange, yellow or purple in the brand.
+
+## Family sharing (Supabase) and the home screen widget
+
+**Backend:** `backend/schema.sql` sets up everything in a Supabase project (paste it into SQL Editor and run). There are no passwords: each family has a long random secret, and a phone only gets it by typing a 6-digit family code (good for 7 days, 10 wrong tries locks that connection out for 15 minutes). Tables are locked; all reads and writes go through `hi_*` functions that check the secret. Photos are in a private storage bucket. To switch it on, put the Project URL and publishable (anon) key into `HIELLO_CLOUD` at the top of the cloud section in `www/index.html`. Without them the app runs as the one-phone demo.
+
+**Widget:** `native/ios/HielloWidget/` (SwiftUI WidgetKit extension, iOS 17+) plus the app-side bridge in `native/ios/App/`. The Codemagic workflow **Hiello for iPhone + Widget** copies them in and runs `scripts/add_widget.rb` to add the extension target. The widget fetches new Hiellos by itself (so it updates with the app closed), and also uses the newest pictures the app leaves in the shared App Group.
+
+What it does beyond Locket: heart a photo straight from the home screen, a "3 NEW" count, Aura-style rotation through recent photos when nothing's new, one widget per grandkid (Edit Widget > Show photos from), Lock Screen widgets, StandBy nightstand photo frame, and a parent version that shows "Grandpa watched ✓ ♥2" and Grandpa's replies.
+
+**Apple setup the widget needs:** App Group `group.com.hiello.family` on App ID `com.hiello.family`, a new App ID `com.hiello.family.widget` with the same App Group, and App Store profiles for both fetched into Codemagic.

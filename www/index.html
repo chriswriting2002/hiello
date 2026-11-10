@@ -414,6 +414,18 @@ textarea.field{resize:none;line-height:1.35}
 .cam-sentok small{font-size:16px;font-weight:700;color:#DDE2EE}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .shutter:disabled{opacity:.4}
+
+.wchoice{flex-direction:column;align-items:flex-start;min-height:76px;gap:2px;text-align:left;padding:12px 18px}
+.wchoice span{font-size:20px;font-weight:900}
+.wchoice small{font-size:14px;font-weight:700;opacity:.8}
+.linkbtn{border:0;background:none;color:var(--muted);font-size:16px;font-weight:800;text-decoration:underline;min-height:44px}
+.codefield{font-size:30px;font-weight:900;letter-spacing:6px;text-align:center}
+.bigcode{font-size:40px;font-weight:900;letter-spacing:8px;color:var(--navy);background:#fff;border:3px dashed #C8CACE;border-radius:16px;text-align:center;padding:10px 6px;margin-top:8px;font-variant-numeric:tabular-nums}
+.bigcode.small{font-size:30px;margin-top:0}
+.steps{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:12px;font-size:17px;line-height:1.4}
+.steps.light{color:#fff;font-size:16px}
+.steps li::marker{font-weight:900}
+.ck-big{width:96px;height:96px;border-radius:50%;background:#F2B8C6;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px #9B1B1F}
 </style>
 </head>
 <body>
@@ -423,8 +435,29 @@ textarea.field{resize:none;line-height:1.35}
   <div class="col" style="margin:auto 0;gap:18px">
     <div class="row" style="gap:12px"><svg width="64" height="64" viewBox="0 0 120 120" role="img" aria-label="Hiello logo"><defs><linearGradient id="lsv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".35" stop-color="#B9BCC2"/><stop offset=".6" stop-color="#F2F3F5"/><stop offset="1" stop-color="#8D9198"/></linearGradient><path id="lh" d="M0 -5 C-3 -12 -14 -10 -12 -1 C-11 4 -4 8 0 12 C4 8 11 4 12 -1 C14 -10 3 -12 0 -5Z"/></defs><rect width="120" height="120" rx="27" fill="url(#lsv)"/><rect x="11" y="11" width="98" height="98" rx="18" fill="#14285A" stroke="#6E737B" stroke-width="1.2"/><circle cx="60" cy="5.5" r="1.6" fill="#6E737B"/><circle cx="60" cy="114.5" r="1.6" fill="#6E737B"/><g transform="translate(66.3 62) scale(0.84) translate(-60 -64)"><text x="40" y="92" font-family="Georgia,serif" font-size="80" font-weight="700" fill="#F4F5F7" text-anchor="middle">h</text><rect x="68" y="56" width="15" height="36" rx="2" fill="#F4F5F7"/><rect x="63" y="88" width="25" height="4" rx="1" fill="#F4F5F7"/><rect x="64" y="56" width="10" height="4" rx="1" fill="#F4F5F7"/><use href="#lh" transform="translate(76 40) scale(0.85)" fill="#F2B8C6" stroke="#9B1B1F" stroke-width="2.6" stroke-linejoin="round"/></g></svg><h1 style="font-size:34px;letter-spacing:6px;text-transform:uppercase;font-weight:400">Hiello</h1></div>
     <h2 style="font-size:26px;line-height:1.2">Family breaks for the people you love.</h2>
+    <div class="col" id="w-choices" style="gap:12px;display:none">
+      <button class="btn primary wchoice" id="w-start"><span>Start our family</span><small>I'm sending photos to my mom or dad</small></button>
+      <button class="btn light wchoice" id="w-join"><span>I have a code</span><small>Setting up Grandpa's phone, or joining your family</small></button>
+      <button class="linkbtn" id="w-demo">Just look around first (demo on this phone)</button>
+    </div>
+    <div class="col" id="w-start-form" style="gap:8px;display:none">
+      <label class="lbl" for="ws-gp">What do the kids call your mom or dad?</label>
+      <input class="field" id="ws-gp" value="Grandpa" maxlength="20">
+      <label class="lbl" for="ws-me">Your first name</label>
+      <input class="field" id="ws-me" placeholder="e.g. Chris" maxlength="20">
+      <button class="btn primary" id="ws-go" style="margin-top:8px">Create our family</button>
+      <button class="linkbtn" data-wback>Back</button>
+    </div>
+    <div class="col" id="w-join-form" style="gap:8px;display:none">
+      <label class="lbl" for="wj-code">Type the 6-number code</label>
+      <input class="field codefield" id="wj-code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="123 456">
+      <label class="lbl" for="wj-me">Your first name <span class="muted" style="font-weight:600">(leave blank on Grandpa's phone)</span></label>
+      <input class="field" id="wj-me" maxlength="20">
+      <button class="btn primary" id="wj-go" style="margin-top:8px">Join</button>
+      <button class="linkbtn" data-wback>Back</button>
+    </div>
     <p class="muted" style="margin:0;font-size:17px;line-height:1.45">Send Grandpa quick photo and video "commercials." He sees them on his home screen and between rounds of his mahjong game, so he's always caught up.</p>
-    <div class="col" style="gap:8px">
+    <div class="col" id="w-demo-form" style="gap:8px">
       <label class="lbl" for="w-gp">What do the kids call your parent?</label>
       <input class="field" id="w-gp" value="Grandpa" maxlength="20">
       <label class="lbl" for="w-me">Your first name</label>
@@ -433,7 +466,7 @@ textarea.field{resize:none;line-height:1.35}
       <input class="field" id="w-kid" value="" placeholder="e.g. Emma" maxlength="20">
     </div>
     <button class="btn primary" id="w-go">Start the demo</button>
-    <p class="muted" style="margin:0;font-size:14px;text-align:center">Test version: everything stays on this phone. Use the switch at the bottom to flip between the family side and Grandpa's side.</p>
+    <p class="muted" id="w-demo-note" style="margin:0;font-size:14px;text-align:center">Demo: everything stays on this phone. Use the switch at the bottom to flip between the family side and Grandpa's side.</p>
   </div>
 </section>
 
@@ -549,6 +582,48 @@ textarea.field{resize:none;line-height:1.35}
   <div id="rv-body" class="col" style="gap:14px"></div>
 </section>
 
+<!-- ============ FAMILY CODES: set up Grandpa's phone, invite the family ============ -->
+<section class="screen light-screen pad-bottom" id="s-codes">
+  <div class="row between" style="margin-bottom:6px">
+    <button class="icon-btn" aria-label="Back" data-back="cam"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <span class="kicker">Your family</span><span style="width:52px"></span>
+  </div>
+  <h1 style="font-size:28px;margin:4px 0 4px">Now set up <span class="cd-gp">Grandpa</span>'s phone</h1>
+  <p class="muted" style="margin:0 0 14px;font-size:16px">It takes about two minutes. Do it together next time you visit, or walk them through it on the phone.</p>
+  <ol class="steps">
+    <li>On <span class="cd-gp">Grandpa</span>'s iPhone, install <b>Hiello Family</b>.</li>
+    <li>Open it and tap <b>I have a code</b>.</li>
+    <li>Type this code:<div class="bigcode" id="cd-gpcode">—</div></li>
+    <li>Put the Hiello widget on the home screen: press and hold an empty spot, tap <b>+</b> (or <b>Edit › Add Widget</b>), search <b>Hiello</b>, pick the big size and tap <b>Add Widget</b>.</li>
+  </ol>
+  <div class="panel col" style="gap:8px;margin-top:6px">
+    <div class="serif" style="font-size:20px">Invite the rest of the family</div>
+    <div class="muted" style="font-size:15px">Brothers, sisters, aunts and uncles can send to <span class="cd-gp">Grandpa</span> too. Their code:</div>
+    <div class="bigcode small" id="cd-famcode">—</div>
+    <button class="btn light" id="cd-share">Send the invite</button>
+  </div>
+  <p class="muted" style="font-size:13px;margin:10px 2px 14px">Codes work for 7 days. You can get new ones anytime in Settings.</p>
+  <button class="btn primary" data-go="cam">Done, take a picture</button>
+</section>
+
+<!-- ============ GRANDPA'S PHONE IS CONNECTED ============ -->
+<section class="screen dark pad-bottom" id="s-gpready">
+  <div class="col" style="margin:auto 0;gap:16px;text-align:center;align-items:center">
+    <div class="ck-big"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div>
+    <h1 style="font-size:30px">You're connected!</h1>
+    <p style="font-size:18px;line-height:1.45;margin:0;color:#DDE2EE">New photos from the family will pop up right on this phone's home screen.</p>
+    <div class="panel" style="text-align:left;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff">
+      <div class="serif" style="font-size:20px;margin-bottom:8px">Last step: add the widget</div>
+      <ol class="steps light">
+        <li>Go to the home screen. Press and hold an empty spot until the apps wiggle.</li>
+        <li>Tap <b>+</b> (or <b>Edit › Add Widget</b>) at the top.</li>
+        <li>Search <b>Hiello</b>, choose the big size, tap <b>Add Widget</b>.</li>
+      </ol>
+    </div>
+    <button class="btn primary" data-go="gp" style="background:var(--pink);color:var(--navy);width:100%">I did it, let's go</button>
+  </div>
+</section>
+
 <!-- ============ FAMILY BREAK / PLAYER ============ -->
 <section class="screen dark" id="s-play">
   <div class="row between" style="margin-bottom:12px">
@@ -652,14 +727,20 @@ textarea.field{resize:none;line-height:1.35}
     <label class="lbl" for="set-gp">Grandparent's name</label><input class="field" id="set-gp" maxlength="20">
     <label class="lbl" for="set-me">Your name</label><input class="field" id="set-me" maxlength="20">
   </div>
-  <div class="panel col" style="margin-top:16px;gap:10px">
+  <div class="panel col" id="set-family" style="margin-top:16px;gap:10px;display:none">
+    <div class="serif" style="font-size:19px">Your family</div>
+    <div id="set-members" style="font-size:16px;line-height:1.5"></div>
+    <button class="btn light" data-go="codes">Add a phone or invite family</button>
+    <button class="btn light" id="set-leave" style="color:#9C2C2C">Leave this family on this phone</button>
+  </div>
+  <div class="panel col" id="set-demo" style="margin-top:16px;gap:10px">
     <div class="serif" style="font-size:19px">Demo tools</div>
     <button class="btn light" id="set-sim">Send a surprise Hiello in 10 seconds</button>
     <div class="muted" style="font-size:14px">Then go play mahjong on Grandpa's side to see it arrive live.</div>
     <button class="btn light" id="set-samples">Add sample family updates</button>
     <button class="btn light" id="set-reset" style="color:#9C2C2C">Erase everything and start over</button>
   </div>
-  <p class="muted" style="font-size:14px;margin-top:16px;line-height:1.45">Hiello test build. In this version everything is saved only on this phone. Sending between two phones, the real home screen widget and notifications come next.</p>
+  <p class="muted" id="set-note" style="font-size:14px;margin-top:16px;line-height:1.45"></p>
 </section>
 
 <div id="demobar"><button data-mode="fam">Family side</button><button data-mode="gp">Grandpa's phone</button></div>
@@ -702,13 +783,14 @@ async function putMedia(key, blob){ const d = await db(); return new Promise((re
 async function getMedia(key){ const d = await db(); return new Promise((res) => { const q = d.transaction('media').objectStore('media').get(key); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); }); }
 async function clearMedia(){ const d = await db(); return new Promise(res => { const t = d.transaction('media','readwrite'); t.objectStore('media').clear(); t.oncomplete = res; }); }
 const urlCache = {};
-async function mediaURL(post){
-  if (!post.media) return null;
-  if (urlCache[post.media.key]) return urlCache[post.media.key];
-  const b = await getMedia(post.media.key);
+async function keyURL(k){
+  if (urlCache[k]) return urlCache[k];
+  let b = await getMedia(k);
+  if (!b && k.startsWith('r:') && CLOUD()){ try { b = await download(k.slice(2)); await putMedia(k, b); } catch(e){ return null; } }
   if (!b) return null;
-  return (urlCache[post.media.key] = URL.createObjectURL(b));
+  return (urlCache[k] = URL.createObjectURL(b));
 }
+async function mediaURL(post){ return post.media ? keyURL(post.media.key) : null; }
 
 /* ---------- small UI helpers ---------- */
 let msgT;
@@ -728,8 +810,241 @@ const HEART = heartSVG(16);
 const CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
 const PLAY = '<svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>';
 
+/* =========================================================
+   CLOUD — Hiellos travel between phones (Supabase). Fill in HIELLO_CLOUD to turn it on.
+   Without it the app runs as the one-phone demo.
+   ========================================================= */
+const HIELLO_CLOUD = { url: '', key: '' };   /* Supabase > Project Settings > API: Project URL and the publishable/anon key */
+const CLOUD = () => !!(HIELLO_CLOUD.url && HIELLO_CLOUD.key);
+function chdr(h = {}){ h.apikey = HIELLO_CLOUD.key; if (HIELLO_CLOUD.key.startsWith('eyJ')) h.Authorization = 'Bearer ' + HIELLO_CLOUD.key; return h; }
+async function rpc(fn, args){
+  const r = await fetch(`${HIELLO_CLOUD.url}/rest/v1/rpc/${fn}`, { method:'POST', headers: chdr({'Content-Type':'application/json'}), body: JSON.stringify(args || {}) });
+  const t = await r.text(); let j = null; try { j = t ? JSON.parse(t) : null; } catch(e){ j = t; }
+  if (!r.ok) throw new Error((j && (j.message || j.hint)) || ('Server error ' + r.status));
+  if (j && j.error) throw new Error(j.error);
+  return j;
+}
+const famArgs = () => ({ p_fid: S.cloud.fid, p_sec: S.cloud.sec });
+const newId = () => (crypto.randomUUID ? crypto.randomUUID() : uid() + uid() + uid());
+async function upload(blob, ext){
+  const path = `${S.cloud.sec}/${newId()}.${ext}`;
+  const r = await fetch(`${HIELLO_CLOUD.url}/storage/v1/object/media/${path}`, { method:'POST', headers: chdr({'Content-Type': blob.type || 'application/octet-stream', 'cache-control':'31536000'}), body: blob });
+  if (!r.ok) throw new Error('Upload failed (' + r.status + ')');
+  return path;
+}
+const inflight = {};
+function download(path){
+  if (!inflight[path]) inflight[path] = fetch(`${HIELLO_CLOUD.url}/storage/v1/object/authenticated/media/${path}`, { headers: chdr() })
+    .then(r => { if (!r.ok) throw new Error('Download failed'); return r.blob(); })
+    .finally(() => setTimeout(() => delete inflight[path], 0));
+  return inflight[path];
+}
+function rowToPost(r){
+  return { id:r.id, at:Date.parse(r.created_at), from:r.from_name, mid:r.member_id, note:r.note, caption:r.caption, tpl:r.tpl, sx:r.sx, sy:r.sy,
+    type:r.kind, title:r.title, when:r.when_at,
+    media: r.media_path ? { kind:r.media_kind, key:'r:' + r.media_path, thumb: r.thumb_path ? 'r:' + r.thumb_path : null } : null,
+    watched: !!r.watched_at, watchedAt: r.watched_at ? Date.parse(r.watched_at) : null, hearts: r.hearts || 0, rsvp: r.rsvp,
+    gpNote: r.gp_note ? { text:r.gp_note, at:Date.parse(r.gp_note_at) } : null, cloud:true };
+}
+function rowToReply(r){
+  return { id:r.id, at:Date.parse(r.created_at), from:r.from_name, mid:r.member_id, note:r.note,
+    media: r.media_path ? { kind:r.media_kind, key:'r:' + r.media_path, thumb: r.thumb_path ? 'r:' + r.thumb_path : null } : null,
+    replyTo: r.reply_to, seen: (r.seen_by || []).includes(S.cloud.mid) || r.member_id === S.cloud.mid, cloud:true };
+}
+/* small square-ish preview used by lists, the NEW tab and the home screen widget */
+function makeThumb(blob, kind){
+  return new Promise(res => {
+    const done = (src, w, h) => { const sc = Math.min(1, 640 / Math.max(w, h)), c = document.createElement('canvas'); c.width = Math.round(w*sc); c.height = Math.round(h*sc); c.getContext('2d').drawImage(src, 0, 0, c.width, c.height); c.toBlob(b => res(b), 'image/jpeg', 0.8); };
+    const u = URL.createObjectURL(blob);
+    if (kind === 'video'){
+      const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = u;
+      const t = setTimeout(() => { URL.revokeObjectURL(u); res(null); }, 6000);
+      v.onloadeddata = () => { try { v.currentTime = Math.min(0.3, (v.duration || 1) / 2); } catch(e){} };
+      v.onseeked = () => { clearTimeout(t); done(v, v.videoWidth, v.videoHeight); URL.revokeObjectURL(u); };
+      v.onerror = () => { clearTimeout(t); URL.revokeObjectURL(u); res(null); };
+    } else {
+      const img = new Image(); img.onload = () => { done(img, img.naturalWidth, img.naturalHeight); URL.revokeObjectURL(u); }; img.onerror = () => { URL.revokeObjectURL(u); res(null); }; img.src = u;
+    }
+  });
+}
+function extFor(blob, kind){ if (kind !== 'video') return 'jpg'; const t = blob.type || ''; return t.includes('mp4') ? 'mp4' : t.includes('quicktime') ? 'mov' : t.includes('webm') ? 'webm' : 'mp4'; }
+
+/* send a Hiello: to the family's cloud when connected, otherwise just this phone */
+async function publishPost(d, blob, kind){
+  if (S.cloud){
+    const path = await upload(blob, extFor(blob, kind));
+    const tb = await makeThumb(blob, kind); const tpath = tb ? await upload(tb, 'jpg') : null;
+    const row = await rpc('hi_add_post', { ...famArgs(), p_member: S.cloud.mid, p: { note:d.note || '', caption:d.caption || '', tpl:d.tpl || 'polaroid', sx:d.sx ?? 50, sy:d.sy ?? 80, kind:d.type || 'everyday', title:d.title || '', when_at:d.when || '', media_kind:kind, media_path:path, thumb_path:tpath } });
+    const np = rowToPost(row); await putMedia(np.media.key, blob); if (tb) await putMedia(np.media.thumb, tb);
+    S.posts.unshift(np); save(); syncSoon(); return np;
+  }
+  const key = 'm_' + uid(); await putMedia(key, blob);
+  const np = { ...d, id: uid(), at: Date.now(), from: d.from || meName(), media:{ kind, key }, watched:false, hearts:0, rsvp:null };
+  S.posts.push(np); save(); return np;
+}
+async function publishReply(note, blob, kind, replyTo){
+  if (S.cloud){
+    const path = await upload(blob, extFor(blob, kind));
+    const tb = await makeThumb(blob, kind); const tpath = tb ? await upload(tb, 'jpg') : null;
+    const row = await rpc('hi_add_reply', { ...famArgs(), p_member: S.cloud.mid, p: { note, media_kind:kind, media_path:path, thumb_path:tpath, reply_to: replyTo || '' } });
+    const nr = rowToReply(row); await putMedia(nr.media.key, blob);
+    (S.replies = S.replies || []).unshift(nr); save(); syncSoon(); return nr;
+  }
+  const key = 'm_' + uid(); await putMedia(key, blob);
+  const nr = { id: uid(), at: Date.now(), from: gpName(), note, media:{ kind, key }, seen:false, replyTo: replyTo || null };
+  (S.replies = S.replies || []).push(nr); save(); return nr;
+}
+/* the small things Grandpa does, sent along quietly */
+function markWatched(p){ if (p.watched) return; p.watched = true; p.watchedAt = Date.now(); save(); if (S.cloud && S.cloud.role === 'gp') rpc('hi_watched', { ...famArgs(), p_post:p.id }).catch(() => {}); }
+function cloudHeart(p){ if (S.cloud) rpc('hi_heart', { ...famArgs(), p_post:p.id }).catch(() => {}); }
+function cloudNote(p){ if (S.cloud) rpc('hi_note', { ...famArgs(), p_post:p.id, p_text: p.gpNote ? p.gpNote.text : '' }).catch(() => {}); }
+function cloudRsvp(p){ if (S.cloud) rpc('hi_rsvp', { ...famArgs(), p_post:p.id, p_ans: p.rsvp || '' }).catch(() => {}); }
+function cloudRepliesSeen(){ if (S.cloud) rpc('hi_replies_seen', { ...famArgs(), p_member:S.cloud.mid }).catch(() => {}); }
+
+/* keep this phone up to date: every 15 seconds while open, and the moment it comes back on screen */
+let syncing = false, syncT = null, syncSoonT = null, lastSig = '';
+function feedSig(){ return JSON.stringify([S.gp, S.posts.map(p => [p.id, p.watched, p.hearts, p.rsvp, p.gpNote && p.gpNote.text]), (S.replies||[]).map(r => [r.id, r.seen]), (S.members||[]).length]); }
+async function syncNow(){
+  if (!S.cloud || !CLOUD() || syncing) return; syncing = true;
+  try {
+    const f = await rpc('hi_feed', { ...famArgs(), p_member: S.cloud.mid });
+    const oldPosts = new Map(S.posts.map(p => [p.id, p])), oldReplies = new Set((S.replies||[]).map(r => r.id));
+    const first = !S.cloud.synced;
+    S.gp = f.gp_name || S.gp;
+    S.members = f.members || [];
+    S.posts = (f.posts || []).map(rowToPost);
+    S.posts.forEach(p => { const o = oldPosts.get(p.id); if (o && o.watched && !p.watched && S.cloud.role === 'gp') p.watched = true; });
+    S.replies = (f.replies || []).map(rowToReply);
+    S.cloud.synced = true; save();
+    const sig = feedSig(); const changed = sig !== lastSig; lastSig = sig;
+    if (!first){
+      if (S.cloud.role === 'gp'){
+        S.posts.filter(p => !oldPosts.has(p.id) && !p.watched).forEach(p => arrived(p));
+      } else {
+        /* the parent's payoff: Grandpa saw it, loved it, wrote back */
+        S.posts.forEach(p => { const o = oldPosts.get(p.id); if (!o || p.mid !== S.cloud.mid) return;
+          if (p.watched && !o.watched) say(`${gpName()} just watched your Hiello ✓`);
+          else if (p.hearts > (o.hearts || 0)) say(`${gpName()} ♥ your Hiello`);
+          else if (p.gpNote && !o.gpNote) say(`${gpName()} wrote: “${p.gpNote.text}”`); });
+        const nr = S.replies.filter(r => !oldReplies.has(r.id) && r.mid !== S.cloud.mid);
+        if (nr.length) say(`${nr[0].from} sent you a hi! ♥`);
+      }
+    }
+    if (changed){ refreshCurrent(); widgetPush(); }
+  } catch(e){ /* offline: keep showing what we have */ }
+  syncing = false;
+}
+function syncSoon(){ clearTimeout(syncSoonT); syncSoonT = setTimeout(syncNow, 600); }
+function refreshCurrent(){
+  if (current === 'gp') renderGP();
+  else if (current === 'fam') renderFam();
+  else if (current === 'cam' && typeof camSentLabel === 'function') camSentLabel();
+  else if (current === 'game') renderBanner();
+}
+function startSync(){ clearInterval(syncT); if (!S.cloud || !CLOUD()) return; syncNow(); syncT = setInterval(() => { if (!document.hidden) syncNow(); }, 15000); }
+document.addEventListener('visibilitychange', () => { if (!document.hidden) syncNow(); });
+
+/* ---------- the home screen widget: hand it what it needs (it fetches photos itself) ---------- */
+function nativeWidget(){
+  const C = window.Capacitor; if (!C || !C.isNativePlatform || !C.isNativePlatform()) return null;
+  return (C.Plugins && C.Plugins.HielloWidget) || (C.registerPlugin ? C.registerPlugin('HielloWidget') : null);
+}
+let lastWidget = '';
+async function widgetPush(force){
+  const W = nativeWidget(); if (!W) return;
+  try {
+    const cfg = S.cloud && CLOUD()
+      ? { url: HIELLO_CLOUD.url, key: HIELLO_CLOUD.key, fid: S.cloud.fid, sec: S.cloud.sec, mid: S.cloud.mid, role: S.cloud.role, me: S.me, gp: gpName(),
+          people: [...new Set(S.posts.map(p => p.from).filter(Boolean))] }
+      : { demo: true, role: S.mode === 'gp' ? 'gp' : 'family', me: S.me, gp: gpName(), people: [...new Set(S.posts.map(p => p.from).filter(Boolean))] };
+    /* also leave the newest few pictures on the phone, so the widget can show them instantly (and in the demo) */
+    const latest = [...S.posts].sort((a,b) => b.at - a.at).slice(0, 6);
+    const sig = JSON.stringify(cfg) + latest.map(p => p.id + (p.watched ? 1 : 0) + (p.hearts || 0) + (p.gpNote ? p.gpNote.text : '')).join();
+    if (!force && sig === lastWidget) return; lastWidget = sig;
+    const items = [];
+    for (const p of latest){
+      const file = 'p_' + String(p.id).replace(/[^\w-]/g, '') + '.jpg';
+      const b = await widgetJpeg(p); if (!b) continue;
+      await W.saveFile({ name: file, base64: await blobToB64(b) });
+      items.push({ id: String(p.id), from: p.from || '', note: p.note || '', at: p.at, watched: !!p.watched, hearts: p.hearts || 0, file, video: p.media && p.media.kind === 'video' });
+    }
+    cfg.items = items;
+    await W.save({ json: JSON.stringify(cfg) });
+  } catch(e){}
+}
+async function widgetJpeg(p){
+  if (!p.media) return null;
+  let b = p.media.thumb ? await getMedia(p.media.thumb) : null;
+  if (!b && p.media.thumb && S.cloud){ try { b = await download(p.media.thumb.slice(2)); await putMedia(p.media.thumb, b); } catch(e){} }
+  if (!b){ const full = await getMedia(p.media.key); if (full) b = await makeThumb(full, p.media.kind); }
+  return b;
+}
+function blobToB64(b){ return new Promise(res => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.readAsDataURL(b); }); }
+
+/* ---------- tapping the widget opens that Hiello ---------- */
+function openLink(url){
+  const m = /hiello:\/\/(post|reply|home|camera)\/?([\w-]*)/.exec(url || ''); if (!m) return;
+  if (m[1] === 'camera') return go('cam');
+  if (m[1] === 'reply') return go('fam');
+  const p = S.posts.find(x => String(x.id) === m[2]);
+  if (!p){ go(S.mode === 'gp' ? 'gp' : 'cam'); return; }
+  if (S.mode === 'gp'){ if (!p.watched) openStory([p, ...unseen().filter(x => x !== p)]); else openPhotos(p); }
+  else go('fam');
+}
+(() => { const C = window.Capacitor, A = C && C.Plugins && C.Plugins.App; if (!A) return;
+  try { A.addListener('appUrlOpen', e => openLink(e.url)); A.getLaunchUrl && A.getLaunchUrl().then(r => r && r.url && setTimeout(() => openLink(r.url), 400)).catch(() => {}); } catch(e){}
+})();
+
+/* ---------- starting / joining a family ---------- */
+function joinedAs(j){
+  S.cloud = { fid: j.family_id, sec: j.secret, mid: j.member_id, role: j.role, codes: { gp: j.gp_code || null, family: j.family_code || null, at: Date.now() } };
+  S.gp = j.gp_name || S.gp; S.setup = true; S.mode = j.role === 'gp' ? 'gp' : 'fam'; S.posts = []; S.replies = [];
+  if (j.role === 'gp') S.me = j.name || S.gp;
+  save(); startSync(); widgetPush(true);
+}
+async function createFamily(){
+  const gp = $('#ws-gp').value.trim() || 'Grandpa', me = $('#ws-me').value.trim();
+  if (!me){ say('Type your first name.'); $('#ws-me').focus(); return; }
+  const b = $('#ws-go'); b.disabled = true; b.textContent = 'Setting up…';
+  try { const j = await rpc('hi_create_family', { p_gp_name: gp, p_my_name: me }); S.me = me; joinedAs(j); go('codes'); }
+  catch(e){ say('Couldn’t reach Hiello. Check your internet and try again.'); }
+  b.disabled = false; b.textContent = 'Create our family';
+}
+async function joinFamily(){
+  const code = $('#wj-code').value.replace(/\D/g, ''), name = $('#wj-me').value.trim();
+  if (code.length !== 6){ say('The code has 6 numbers.'); $('#wj-code').focus(); return; }
+  const b = $('#wj-go'); b.disabled = true; b.textContent = 'Joining…';
+  try {
+    const j = await rpc('hi_join_family', { p_code: code, p_name: name });
+    if (name && j.role !== 'gp') S.me = name;
+    joinedAs(j);
+    if (j.role === 'gp') go('gpready'); else { go('cam'); say(`You're in! Say hi to ${gpName()}.`); }
+  } catch(e){ say(e.message || 'That code didn’t work.'); }
+  b.disabled = false; b.textContent = 'Join';
+}
+async function renderCodes(){
+  const c = S.cloud; if (!c) return go('welcome');
+  $$('.cd-gp').forEach(e => e.textContent = gpName());
+  const fresh = c.codes && c.codes.at && Date.now() - c.codes.at < 6 * DAY;
+  if (!fresh || !c.codes.gp || !c.codes.family){
+    try {
+      const [g, f] = await Promise.all([rpc('hi_make_code', { ...famArgs(), p_role:'gp' }), rpc('hi_make_code', { ...famArgs(), p_role:'family' })]);
+      c.codes = { gp: g, family: f, at: Date.now() }; save();
+    } catch(e){ say('Couldn’t get codes right now. Check your internet.'); }
+  }
+  const fmt = s => s ? s.slice(0,3) + ' ' + s.slice(3) : '—';
+  $('#cd-gpcode').textContent = fmt(c.codes && c.codes.gp);
+  $('#cd-famcode').textContent = fmt(c.codes && c.codes.family);
+}
+async function shareInvite(){
+  const code = S.cloud && S.cloud.codes && S.cloud.codes.family; if (!code) return;
+  const text = `Join our family on Hiello so we can send ${gpName()} photos together. Open Hiello, tap “I have a code” and type ${code.slice(0,3)} ${code.slice(3)}.`;
+  try { if (navigator.share) await navigator.share({ text }); else { await navigator.clipboard.writeText(text); say('Invite copied. Paste it in a text to your family.'); } } catch(e){}
+}
+
 /* thumbnail <img>/<video> element html for a post */
 async function thumbHTML(post){
+  if (post.media && post.media.thumb){ const t = await keyURL(post.media.thumb); if (t) return `<img src="${t}" alt="">`; }
   const u = await mediaURL(post);
   if (!u) return '';
   return post.media.kind === 'video' ? `<video src="${u}#t=0.1" muted playsinline preload="metadata"></video>` : `<img src="${u}" alt="">`;
@@ -761,7 +1076,7 @@ function go(name){
   if (name === 'settings') prevForSettings = current || 'fam';
   $$('.screen').forEach(s => s.classList.toggle('on', s.id === 's-' + name));
   current = name;
-  const showBar = S.setup && ['gp','cam'].includes(name);
+  const showBar = S.setup && !S.cloud && ['gp','cam'].includes(name);
   $('#demobar').classList.toggle('on', showBar);
   $$('#demobar button').forEach(b => b.classList.toggle('on', b.dataset.mode === (name === 'cam' ? CAM.who : S.mode)));
   if (name !== 'play') stopPlayback();
@@ -772,7 +1087,7 @@ function go(name){
   if (name !== 'golf') stopGolf();
   if (name !== 'cam') stopCam();
   const rx = document.getElementById('react'); if (rx) rx.hidden = true;
-  ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, cam:enterCam, game:enterGame, golf:enterGolf, trivia:enterTrivia, photos:renderPhotos, rsvp:renderRsvp, story:showStory, settings:renderSettings}[name] || (()=>{}))();
+  ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, cam:enterCam, codes:renderCodes, game:enterGame, golf:enterGolf, trivia:enterTrivia, photos:renderPhotos, rsvp:renderRsvp, story:showStory, settings:renderSettings}[name] || (()=>{}))();
   const sc = $('#s-' + name); if (sc) sc.scrollTop = 0;
 }
 document.addEventListener('click', e => {
@@ -792,6 +1107,22 @@ $('#w-go').onclick = async () => {
   catch(e){ say('Photo storage is off in this browser, so samples were skipped.'); }
   go('cam');
 };
+
+/* welcome: when family sharing is on, offer Start / I have a code / demo */
+function welcomeView(v){
+  const cloud = CLOUD();
+  const show = { 'w-choices': cloud && v === 'choices', 'w-start-form': v === 'start', 'w-join-form': v === 'join', 'w-demo-form': !cloud || v === 'demo' };
+  Object.entries(show).forEach(([id, on]) => $('#' + id).style.display = on ? 'flex' : 'none');
+  $('#w-go').style.display = $('#w-demo-note').style.display = (!cloud || v === 'demo') ? '' : 'none';
+}
+welcomeView('choices');
+$('#w-start').onclick = () => welcomeView('start');
+$('#w-join').onclick = () => { welcomeView('join'); setTimeout(() => $('#wj-code').focus(), 50); };
+$('#w-demo').onclick = () => welcomeView('demo');
+$$('[data-wback]').forEach(b => b.onclick = () => welcomeView('choices'));
+$('#ws-go').onclick = createFamily;
+$('#wj-go').onclick = joinFamily;
+$('#wj-code').oninput = e => { const d = e.target.value.replace(/\D/g, '').slice(0, 6); e.target.value = d.length > 3 ? d.slice(0,3) + ' ' + d.slice(3) : d; };
 
 /* ---------- sample content (drawn pictures, no photos needed) ---------- */
 function drawScene(kind){
@@ -850,11 +1181,11 @@ async function addSamples(){
 /* ---------- family side ---------- */
 async function renderFam(){
   $('#fam-hello').textContent = `Sent to ${gpName()}`;
-  const rp = [...(S.replies||[])].sort((a,b) => b.at - a.at);
+  const rp = [...(S.replies||[])].filter(r => !S.cloud || r.mid !== S.cloud.mid).sort((a,b) => b.at - a.at);
   if (rp.length){
     const th = await Promise.all(rp.map(r => thumbHTML(r)));
     $('#fam-replies').innerHTML = `<h3 style="font-size:20px;margin:6px 2px 10px">From ${esc(gpName())}</h3><div class="col" style="gap:10px">${rp.map((r,k) => `<div class="sent" style="${r.seen ? '' : 'box-shadow:0 0 0 3px var(--pink)'}"><div class="sthumb">${th[k]}</div><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:900">${esc(r.note || 'A hi from ' + gpName())}</div>${r.replyTo ? (q => q ? `<div class="muted" style="font-size:13px">Reply to: ${esc(q.caption || q.note || 'your Hiello')}</div>` : '')(S.posts.find(x => x.id === r.replyTo)) : ''}<div class="muted" style="font-size:13px;margin-top:2px">${ago(r.at)}${r.seen ? '' : ' · <b style="color:var(--red)">New</b>'}</div></div></div>`).join('')}</div>`;
-    rp.forEach(r => r.seen = true); save();
+    if (rp.some(r => !r.seen)) cloudRepliesSeen(); rp.forEach(r => r.seen = true); save();
   } else $('#fam-replies').innerHTML = '';
   const list = $('#fam-list');
   const posts = [...S.posts].sort((a,b) => b.at - a.at);
@@ -950,11 +1281,9 @@ $('#m-send').onclick = async () => {
   if (M.type === 'big' && !$('#m-btitle').value.trim()){ say('Give the big moment a name, like "Championship game".'); $('#m-btitle').focus(); return; }
   const btn = $('#m-send'); btn.disabled = true;
   try {
-    const key = 'm_' + uid();
-    await putMedia(key, M.blob);
     const p = draftPost();
-    Object.assign(p, { id: uid(), at: Date.now(), media:{kind:M.kind, key}, watched:false, hearts:0, rsvp:null, title: $('#m-btitle').value.trim(), when: $('#m-bwhen').value });
-    S.posts.push(p); save();
+    Object.assign(p, { title: $('#m-btitle').value.trim(), when: $('#m-bwhen').value });
+    await publishPost(p, M.blob, M.kind);
     haptic();
     go('cam');
     say(`Sent! ${gpName()} will see it on his home screen and in his next game break.`);
@@ -1106,7 +1435,7 @@ async function showStory(){
   $('#st-cap').textContent = p.caption || '';
   $('#st-next').textContent = STY.i < STY.q.length - 1 ? 'Next ›' : 'Done ✓';
   loveLabel($('#st-love'), p);
-  if (!p.watched){ p.watched = true; p.watchedAt = Date.now(); save(); }
+  markWatched(p);
   $('#st-prev-z').onclick = () => { if (STY.i > 0){ STY.i--; showStory(); } };
   $('#st-body .card').onclick = tapper(e => { if (e.target.closest('video')) return; openReact(p, 'story'); },
                                        () => { sendLove(p, $('#st-body')); loveLabel($('#st-love'), p); STY.t0 = performance.now(); });
@@ -1129,7 +1458,7 @@ $('#st-next').onclick = nextStory;
 $('#st-love').onclick = () => { const p = STY.q[STY.i]; sendLove(p, $('#st-body')); loveLabel($('#st-love'), p); STY.t0 = performance.now(); };
 function loveLabel(btn, p){ btn.innerHTML = heartSVG(26) + (p.hearts ? ` Loved ×${p.hearts}` : ' Send love'); }
 function sendLove(p, where){
-  p.hearts = (p.hearts||0) + 1; save(); haptic(); hearts();
+  p.hearts = (p.hearts||0) + 1; save(); haptic(); hearts(); cloudHeart(p);
   if (where){ const h = document.createElement('div'); h.className = 'pop'; h.innerHTML = heartSVG(130, 1.6); where.appendChild(h); setTimeout(() => h.remove(), 950); }
 }
 
@@ -1157,7 +1486,7 @@ function phInfo(i){
   $('#ph-count').textContent = `${i+1} of ${PH.list.length}`;
   $('#ph-cap').textContent = (p.caption || p.note || '') + ` (${p.from}, ${ago(p.at)})`;
   loveLabel($('#ph-love'), p);
-  if (!p.watched){ p.watched = true; p.watchedAt = Date.now(); save(); }
+  markWatched(p);
 }
 $('#ph-love').onclick = () => { const p = PH.list[PH.deck.i]; if (p){ sendLove(p, $('#ph-deck')); phInfo(PH.deck.i); } };
 
@@ -1179,9 +1508,9 @@ async function renderRsvp(){
     $('#rv-body').innerHTML = head + `<div class="panel" style="background:${p.rsvp==='yes' ? '#DDF0E2' : '#FBE3EA'};border:0;font-size:20px;font-weight:900;color:var(--navy);padding:18px">${p.rsvp === 'yes' ? `You're going! We told ${esc(p.from)}.` : `No problem. ${esc(p.from)} will send you the video.`}</div>
       <button class="btn primary" data-back="gp">Back home</button>
       <button style="border:0;background:none;color:var(--muted);font-size:16px;font-weight:800;text-decoration:underline" id="rv-change">Change my answer</button>`;
-    $('#rv-change').onclick = () => { p.rsvp = null; save(); renderRsvp(); };
+    $('#rv-change').onclick = () => { p.rsvp = null; save(); cloudRsvp(p); renderRsvp(); };
   }
-  $$('#rv-body [data-ans]').forEach(b => b.onclick = () => { p.rsvp = b.dataset.ans; save(); haptic(); if (p.rsvp === 'yes') hearts(); renderRsvp(); });
+  $$('#rv-body [data-ans]').forEach(b => b.onclick = () => { p.rsvp = b.dataset.ans; save(); cloudRsvp(p); haptic(); if (p.rsvp === 'yes') hearts(); renderRsvp(); });
 }
 
 /* ---------- week ---------- */
@@ -1209,8 +1538,8 @@ async function renderWeek(){
 }
 $('#wk-big').onclick = e => {
   const b = e.target.closest('[data-rsvp]'); const u = e.target.closest('[data-rsvp-undo]');
-  if (b){ const p = S.posts.find(x => x.id === b.dataset.pid); p.rsvp = b.dataset.rsvp; save(); haptic(); if (p.rsvp === 'yes') hearts(); renderWeek(); say(p.rsvp === 'yes' ? 'They\'ll be so happy!' : 'Got it, recap coming.'); }
-  if (u){ const p = S.posts.find(x => x.id === u.dataset.rsvpUndo); p.rsvp = null; save(); renderWeek(); }
+  if (b){ const p = S.posts.find(x => x.id === b.dataset.pid); p.rsvp = b.dataset.rsvp; save(); cloudRsvp(p); haptic(); if (p.rsvp === 'yes') hearts(); renderWeek(); say(p.rsvp === 'yes' ? 'They\'ll be so happy!' : 'Got it, recap coming.'); }
+  if (u){ const p = S.posts.find(x => x.id === u.dataset.rsvpUndo); p.rsvp = null; save(); cloudRsvp(p); renderWeek(); }
 };
 
 /* ---------- player / family break ---------- */
@@ -1234,7 +1563,7 @@ async function showSlide(){
   $('#p-done').textContent = GAMES.includes(P.back) ? 'Back to game' : (P.i < P.queue.length - 1 ? 'Next' : 'Done');
   loveLabel($('#p-love'), p);
   $('#p-home').style.display = P.back === 'gp' ? 'none' : '';
-  if (!p.watched){ p.watched = true; p.watchedAt = Date.now(); save(); }
+  markWatched(p);
   const prog = $('#p-prog');
   prog.style.display = P.recap ? '' : 'none';
   const vid = $('#playCard video');
@@ -1272,6 +1601,14 @@ const ICON = {
   send:'<svg width="40" height="40" viewBox="0 0 24 24" fill="#14285A" aria-hidden="true"><path d="M3 11.5L21 3l-6.5 18-3-7.5z"/></svg>',
   star:'<svg width="22" height="22" viewBox="0 0 24 24" fill="#F2B8C6" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8z"/></svg>'
 };
+function camSentLabel(){
+  if (CAM.who !== 'fam') return;
+  const newReplies = (S.replies||[]).filter(r => !r.seen && (!S.cloud || r.mid !== S.cloud.mid)).length;
+  $('#cam-sent').innerHTML = newReplies ? `${HEART} ${esc(gpName())} sent you ${newReplies === 1 ? 'a hi' : newReplies + ' hi\u2019s'} \u203a` : 'Sent \u203a';
+  $('#cam-sent').onclick = () => go('fam');
+  $('#cam-left').querySelector('b')?.remove();
+  if (newReplies) $('#cam-left').insertAdjacentHTML('beforeend', `<b>${newReplies}</b>`);
+}
 function openCam(who, opt = {}){ CAM.who = who; CAM.replyTo = opt.replyTo || null; CAM.back = opt.back || (who === 'gp' ? 'gp' : 'cam'); go('cam'); }
 function camBack(){ const b = CAM.back || 'gp'; CAM.replyTo = null; CAM.back = null; go(b); }
 function enterCam(){
@@ -1282,11 +1619,8 @@ function enterCam(){
   $('#cam-left').onclick = () => fam ? go('fam') : camBack();
   $('#cam-right').innerHTML = ICON.gear; $('#cam-right').onclick = () => go('settings');
   $('#cam-right').style.visibility = fam ? '' : 'hidden';
-  const newReplies = (S.replies||[]).filter(r => !r.seen).length;
   $('#cam-sent').style.display = fam ? '' : 'none';
-  $('#cam-sent').innerHTML = newReplies ? `${HEART} ${esc(gpName())} sent you ${newReplies === 1 ? 'a hi' : newReplies + ' hi’s'} ›` : 'Sent ›';
-  $('#cam-sent').onclick = () => go('fam');
-  if (newReplies) $('#cam-left').insertAdjacentHTML('beforeend', `<b>${newReplies}</b>`);
+  camSentLabel();
   camLive();
 }
 async function camLive(){
@@ -1378,20 +1712,19 @@ async function camSend(){
   const sh = CAM.shot; if (!sh) return;
   const btn = $('#cam-send'); btn.disabled = true;
   try {
-    const key = 'm_' + uid(); await putMedia(key, sh.blob);
     const note = $('#cam-note').value.trim();
     if (CAM.who === 'fam'){
-      S.posts.push({ id: uid(), at: Date.now(), from: meName(), note, caption:'', tpl:'polaroid', sx:50, sy:80, type:'everyday', title:'', when:'', media:{kind:sh.kind, key}, watched:false, hearts:0, rsvp:null });
-      save(); haptic();
+      await publishPost({ from: meName(), note, caption:'', tpl:'polaroid', sx:50, sy:80, type:'everyday', title:'', when:'' }, sh.blob, sh.kind);
+      haptic();
       await camSentShow(`Sent to ${gpName()}!`, `${gpName()} will see it right away.`);
       URL.revokeObjectURL(sh.url); camLive();
     } else {
-      (S.replies = S.replies || []).push({ id: uid(), at: Date.now(), from: gpName(), note, media:{kind:sh.kind, key}, seen:false, replyTo: CAM.replyTo || null });
-      save(); haptic(); const who = CAM.replyTo && S.posts.find(x => x.id === CAM.replyTo);
+      await publishReply(note, sh.blob, sh.kind, CAM.replyTo || null);
+      haptic(); const who = CAM.replyTo && S.posts.find(x => x.id === CAM.replyTo);
       await camSentShow(who ? `Sent to ${who.from}!` : 'Sent to the family!', 'They\u2019ll love it.');
       URL.revokeObjectURL(sh.url); camBack();
     }
-  } catch(err){ say('Could not save that one. Try a shorter video.'); btn.disabled = false; }
+  } catch(err){ say(S.cloud ? 'Couldn\u2019t send that one. Check your internet and try again.' : 'Could not save that one. Try a shorter video.'); btn.disabled = false; CAM.busy = false; }
 }
 /* a clear "it's sent" moment: the Polaroid flies away and a big check appears */
 async function camSentShow(title, sub){
@@ -1449,7 +1782,7 @@ function noteSheet(){
   $('#rx-chips').onclick = e => { const b = e.target.closest('[data-c]'); if (b) $('#rx-text').value = b.dataset.c; };
   $('#rx-stick').onclick = () => {
     const t = $('#rx-text').value.trim(); if (!t){ $('#rx-text').focus(); return; }
-    p.gpNote = { text:t, at:Date.now() }; save(); haptic(); closeReact(true); say(`Your note is on it! ${p.from} will see it.`);
+    p.gpNote = { text:t, at:Date.now() }; save(); cloudNote(p); haptic(); closeReact(true); say(`Your note is on it! ${p.from} will see it.`);
   };
 }
 $('#react').onclick = e => {
@@ -1468,14 +1801,27 @@ $('#react').onclick = e => {
 };
 
 
+$('#cd-share').onclick = shareInvite;
+
 /* ---------- settings ---------- */
-function renderSettings(){ $('#set-gp').value = S.gp; $('#set-me').value = S.me; }
-$('#set-back').onclick = () => { S.gp = $('#set-gp').value.trim() || 'Grandpa'; S.me = $('#set-me').value.trim() || 'Family'; save(); go(prevForSettings === 'settings' ? (S.mode === 'gp' ? 'gp' : 'cam') : prevForSettings); };
+function renderSettings(){
+  $('#set-gp').value = S.gp; $('#set-me').value = S.me;
+  $('#set-family').style.display = S.cloud ? '' : 'none'; $('#set-demo').style.display = S.cloud ? 'none' : '';
+  $('#set-note').textContent = S.cloud ? `Connected. Hiellos travel between your family's phones.` : 'Demo: everything is saved only on this phone.';
+  if (S.cloud) $('#set-members').innerHTML = (S.members || []).map(m => `<div>${m.role === 'gp' ? heartSVG(14) : '\u2022'} <b>${esc(m.name)}</b>${m.role === 'gp' ? ' (grandparent)' : ''}${m.id === S.cloud.mid ? ' \u2014 this phone' : ''}</div>`).join('') || '<div class="muted">Loading\u2026</div>';
+}
+$('#set-leave').onclick = async () => {
+  if (!confirmTwice()) return;
+  try { await rpc('hi_leave', { ...famArgs(), p_member: S.cloud.mid }); } catch(e){}
+  try { localStorage.removeItem(KEY); } catch(e){}
+  await clearMedia(); S = blank(); clearInterval(syncT); widgetPush(true); welcomeView('choices'); go('welcome');
+};
+$('#set-back').onclick = () => { const ng = $('#set-gp').value.trim() || 'Grandpa'; if (S.cloud && ng !== S.gp) rpc('hi_set_gp_name', { ...famArgs(), p_name: ng }).catch(() => {}); S.gp = ng; S.me = $('#set-me').value.trim() || 'Family'; save(); go(prevForSettings === 'settings' ? (S.mode === 'gp' ? 'gp' : 'cam') : prevForSettings); };
 $('#set-samples').onclick = async () => { await addSamples(); say('Sample updates added.'); };
 $('#set-reset').onclick = async () => {
   if (!confirmTwice()) return;
   try { localStorage.removeItem(KEY); } catch(e){}
-  await clearMedia(); S = blank(); go('welcome');
+  await clearMedia(); S = blank(); clearInterval(syncT); widgetPush(true); welcomeView('choices'); go('welcome');
 };
 let resetArm = 0;
 function confirmTwice(){ const now = Date.now(); if (now - resetArm < 4000) return true; resetArm = now; say('Tap again to erase everything.'); return false; }
@@ -1491,6 +1837,7 @@ $('#set-sim').onclick = () => {
   go('gp');
 };
 async function arrived(p){
+  widgetPush();
   if (current === 'gp'){ haptic(); renderGP(); return; }
   const t = $('#toast');
   t.querySelector('.thumb').innerHTML = await thumbHTML(p);
@@ -1977,6 +2324,7 @@ window.__mj = { mjStep, newBoard, reshuffle, freeTiles }; window.__hi = { S:()=>
 
 /* ---------- start ---------- */
 if (!S.setup) go('welcome'); else go(S.mode === 'gp' ? 'gp' : 'cam');
+startSync(); setTimeout(() => widgetPush(true), 1500);
 </script>
 </body>
 </html>
