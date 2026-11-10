@@ -248,7 +248,7 @@ textarea.field{resize:none;line-height:1.35}
 .gpbtn{border:0;border-radius:24px;min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:21px;font-weight:900;color:var(--navy);position:relative}
 .gpbtn .cnt{position:absolute;right:10px;top:10px;background:#9B1B1F;color:#fff;font-size:14px;font-weight:900;border-radius:999px;padding:3px 9px}
 @media (max-height:720px){#s-gp{gap:9px}#s-gp>.frame{min-height:180px}#s-gp h1{font-size:24px}.face .av{width:54px;height:54px;font-size:24px}.gpbtn{min-height:92px;font-size:19px;gap:4px}.gpbtn svg{width:32px;height:32px}.bigstrip{font-size:15px;padding:10px 12px}}
-.bigstrip{border:0;border-radius:18px;background:#22366A;color:#fff;display:flex;align-items:center;gap:10px;padding:12px 14px;font-size:16px;font-weight:800;text-align:left}
+.bigstrip{border:0;border-radius:999px;background:#22366A;color:#fff;display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:15px;white-space:nowrap;overflow:hidden;font-weight:800;text-align:left}
 
 /* ---- swipe deck: slides follow the finger ---- */
 .sw{position:relative;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}
@@ -563,7 +563,7 @@ textarea.field{resize:none;line-height:1.35}
 <section class="screen pad-bottom" id="s-photos">
   <div class="row between">
     <button class="homebtn" data-back="gp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Home</button>
-    <span style="font-size:16px;font-weight:800;color:#C9CFE0" id="ph-count"></span>
+    <span id="ph-count" style="display:none"></span>
   </div>
   <div id="ph-status" style="margin-top:12px;font-size:16px;font-weight:800;color:#DDE2EE"></div>
   <div class="sbar" id="ph-bar" style="margin-top:10px"></div>
@@ -1309,7 +1309,8 @@ function Deck(el, o){
     sl.forEach((d,k) => d.querySelectorAll('video').forEach(v => { if (k === 1 && o.playVideo) v.play().catch(()=>{}); else v.pause(); }));
     o.change && o.change(st.i);
   }
-  function flip(d){
+  function flip(d, auto){
+    if (d && !auto) did('swipe');
     if (N() < 2 || st.busy) return; st.busy = true; set(`${-d*100}%`, true);
     setTimeout(async () => { st.i = idx(st.i + d); await paint(); st.busy = false; }, 430);
   }
@@ -1337,7 +1338,7 @@ function tapper(single, dbl){ let t = null; return (...a) => { if (t){ clearTime
 /* silver bar: each swipe (or tap on either side of the handle) moves exactly one photo; the handle says "3 of 7" */
 function Scrub(el, o){
   const AR = d => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DDE2EE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
-  el.innerHTML = `<div class="sb-lab">${AR('M15 5l-7 7 7 7')}<span>Swipe the silver bar for the next photo</span>${AR('M9 5l7 7-7 7')}</div><div class="sb-track" role="slider" aria-label="Photos"><span class="sb-ticks"></span><i class="sb-thumb"><span class="sb-num"></span></i></div>`;
+  el.innerHTML = `<div class="sb-lab">${AR('M15 5l-7 7 7 7')}<span>Swipe for more photos</span>${AR('M9 5l7 7-7 7')}</div><div class="sb-track" role="slider" aria-label="Photos"><span class="sb-ticks"></span><i class="sb-thumb"><span class="sb-num"></span></i></div>`;
   const tr = el.querySelector('.sb-track'), th = el.querySelector('.sb-thumb'), ticks = el.querySelector('.sb-ticks');
   let cur = 0, x0 = null, t0 = 0, n0 = -1;
   const TW = 84;   /* handle width in px */
@@ -1357,7 +1358,7 @@ function Scrub(el, o){
     let d = 0;
     if (Math.abs(dx) > 16) d = dx > 0 ? 1 : -1;                                  /* a swipe: one photo that way */
     else { const r = th.getBoundingClientRect(); d = e.clientX < r.left ? -1 : e.clientX > r.right ? 1 : 0; }   /* a tap beside the handle */
-    if (d){ haptic(); o.step(d); } else show(cur);
+    if (d){ haptic(); did('bar'); o.step(d); } else show(cur);
   };
   tr.addEventListener('pointerup', up); tr.addEventListener('pointercancel', e => { x0 = null; show(cur); });
   return { show };
@@ -1381,7 +1382,7 @@ function frameDots(i){
   const n = Math.min(FR.list.length, 8);
   $('#gp-dots').innerHTML = FR.list.length > 1 ? Array.from({length:n}, (_,k) => `<i class="${k === Math.min(i, n-1) ? 'on' : ''}"></i>`).join('') : '';
 }
-function startFrame(){ stopFrame(); FR.timer = setInterval(() => { if (Date.now() - FR.touched > 6000 && FR.list.length > 1) FR.deck.flip(1); }, 8000); }
+function startFrame(){ stopFrame(); FR.timer = setInterval(() => { if (Date.now() - FR.touched > 6000 && FR.list.length > 1) FR.deck.flip(1, true); }, 8000); }
 function renderFaces(){
   const people = [];
   allNewestFirst().forEach(p => { if (!people.find(x => x.name === p.from)) people.push({ name:p.from }); });
@@ -1402,7 +1403,7 @@ async function renderNewTab(){
   if (!fresh.length){ $('#gp-tab').innerHTML = ''; return; }
   const th = await Promise.all(fresh.slice(-3).reverse().map(p => thumbHTML(p)));
   $('#gp-tab').innerHTML = `<button class="newtab" id="newtab" aria-label="${fresh.length} new Hiellos. Tap to watch."><span class="lab">NEW</span><span class="thumbs">${th.map(t => `<span>${t}</span>`).join('')}</span><span class="go">${fresh.length} ›</span></button>`;
-  $('#newtab').onclick = () => openStory(unseen());
+  $('#newtab').onclick = () => { did('tapnew'); openStory(unseen()); };
   requestAnimationFrame(() => { const f = $('#gp-frame').getBoundingClientRect(), t = $('#newtab'); if (t) t.style.setProperty('--tabtop', Math.max(f.top, f.top + f.height/2 - t.offsetHeight/2) + 'px'); });
 }
 async function renderGP(){
@@ -1411,14 +1412,14 @@ async function renderGP(){
   const cur = FR.list[FR.deck?.i];
   FR.list = allNewestFirst();
   if (!FR.deck) FR.deck = Deck($('#gp-frame'), { count:() => FR.list.length, render:frameSlide, change:frameDots, touch:() => FR.touched = Date.now(), tap:i => { const p = FR.list[i]; if (p) openPhotos(p, { reply:true }); } });
-  FR.deck.i = Math.max(0, FR.list.indexOf(cur));
+  FR.deck.i = Math.max(0, cur ? FR.list.findIndex(x => x.id === cur.id) : 0);
   await FR.deck.paint(); startFrame();
   renderNewTab();
   const big = S.posts.filter(p => p.type === 'big' && (!p.when || new Date(p.when).getTime() > Date.now())).sort((a,b) => (a.when||'').localeCompare(b.when||''))[0];
   const day = big && big.when ? esc(new Date(big.when).toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'})) : '';
   $('#gp-big').innerHTML = !big ? '' : big.rsvp
     ? `<button class="bigstrip" data-rsvp-open="${big.id}" style="width:100%"><span style="font-size:20px;display:flex">${big.rsvp === 'yes' ? '✓' : heartSVG(20)}</span><span style="flex:1;min-width:0">${big.rsvp === 'yes' ? "You're going to" : 'Video coming of'} the ${esc(big.title || 'big moment')}${day ? ' · ' + day : ''}</span></button>`
-    : `<button class="bigstrip" data-rsvp-open="${big.id}" style="width:100%;box-shadow:0 0 0 3px var(--pink)"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F2B8C6" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8z"/></svg><span style="flex:1;min-width:0">Can you come to the ${esc(big.title || 'big moment')}?${day ? `<span style="display:block;font-size:.9em;color:#C9CFE0">${day}</span>` : ''}</span><span style="color:var(--pink);flex:none">Answer ›</span></button>`;
+    : `<button class="bigstrip" data-rsvp-open="${big.id}" style="width:100%;box-shadow:0 0 0 3px var(--pink)"><svg width="22" height="22" viewBox="0 0 24 24" fill="#F2B8C6" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8z"/></svg><span style="flex:1;min-width:0"><span style=\"overflow:hidden;text-overflow:ellipsis;display:block\">${esc(big.title || 'Big moment')}${day ? ' \u00b7 ' + day : ''}</span></span><span style=\"color:var(--pink);flex:none\">Coming? \u203a</span></button>`;
   const o = $('#gp-big [data-rsvp-open]'); if (o) o.onclick = () => openRsvp(o.dataset.rsvpOpen);
 }
 
@@ -1458,7 +1459,17 @@ $('#st-close').onclick = () => closeStory();
 $('#st-next').onclick = nextStory;
 $('#st-love').onclick = () => { const p = STY.q[STY.i]; sendLove(p, $('#st-body')); loveLabel($('#st-love'), p); STY.t0 = performance.now(); };
 function loveLabel(btn, p){ btn.innerHTML = heartSVG(26) + (p.hearts ? ` Loved ×${p.hearts}` : ' Send love'); }
+/* hints step aside once Grandpa has done the thing a few times */
+function did(k){ S.learn = S.learn || {}; S.learn[k] = (S.learn[k] || 0) + 1; save(); applyLearned(); }
+function knows(k, n){ return ((S.learn || {})[k] || 0) >= n; }
+function applyLearned(){
+  const postit = !(knows('reply', 3) && knows('heart', 2));
+  $$('.postit').forEach(e => e.style.display = postit ? '' : 'none');
+  const bar = !(knows('bar', 3) || knows('swipe', 5));
+  $$('.sb-lab').forEach(e => e.style.display = bar ? '' : 'none');
+}
 function sendLove(p, where){
+  did('heart');
   p.hearts = (p.hearts||0) + 1; save(); haptic(); hearts(); cloudHeart(p);
   if (where){ const h = document.createElement('div'); h.className = 'pop'; h.innerHTML = heartSVG(130, 1.6); where.appendChild(h); setTimeout(() => h.remove(), 950); }
 }
@@ -1473,12 +1484,12 @@ async function renderPhotos(){
     change: i => phInfo(i),
     tap: tapper(i => { const p = PH.list[i]; if (!p) return; const v = $('#ph-deck .sw-s:nth-child(2) video'); if (v && v.paused){ v.muted = false; v.play().catch(()=>{}); return; } openReact(p, 'photos'); },
                 i => { const p = PH.list[i]; if (!p) return; sendLove(p, $('#ph-deck')); phInfo(i); }) });
-  $('#ph-postit').innerHTML = postitHTML();
+  $('#ph-postit').innerHTML = postitHTML(); applyLearned();
   const sid = PH.start && PH.start.id; PH.deck.i = sid ? Math.max(0, PH.list.findIndex(x => x.id === sid)) : 0; PH.start = null;
   await PH.deck.paint();
   if (PH.reply){ PH.reply = false; const cur = PH.list[PH.deck.i]; if (cur) openReact(cur, 'photos'); }
   const n = unseen().length;
-  $('#ph-status').innerHTML = n ? `${n} new Hiello${n>1?'s':''} waiting` : `<span style="color:#9FE0B2">✓</span> You're all caught up`;
+  $('#ph-status').innerHTML = n ? '' : `<span style="color:#9FE0B2">\u2713</span> All caught up`;
 }
 function phInfo(i){
   if (!PH.bar) PH.bar = Scrub($('#ph-bar'), { count:() => PH.list.length, step: d => PH.deck.flip(d) });
@@ -1486,7 +1497,7 @@ function phInfo(i){
   const p = PH.list[i]; if (!p){ $('#ph-count').textContent = ''; $('#ph-cap').textContent = ''; $('#ph-love').style.display = 'none'; return; }
   $('#ph-love').style.display = '';
   $('#ph-count').textContent = `${i+1} of ${PH.list.length}`;
-  $('#ph-cap').textContent = (p.caption || p.note || '') + ` (${p.from}, ${ago(p.at)})`;
+  $('#ph-cap').textContent = `${p.from} \u00b7 ${ago(p.at)}`;
   loveLabel($('#ph-love'), p);
   markWatched(p);
 }
@@ -1581,7 +1592,7 @@ $('#p-love').onclick = () => { const p = P.queue[P.i]; sendLove(p, $('#playCard'
 $('#p-home').onclick = () => { stopPlayback(); P.after = null; go('gp'); };
 $('#playCard').onclick = tapper(e => { if (e.target.closest('video')) return; const p = P.queue[P.i]; if (p) openReact(p, 'play'); },
                                  () => { const p = P.queue[P.i]; if (!p) return; sendLove(p, $('#playCard')); loveLabel($('#p-love'), p); });
-$('#p-postit').innerHTML = postitHTML();
+$('#p-postit').innerHTML = postitHTML(); applyLearned();
 $('#p-done').onclick = () => { if (GAMES.includes(P.back)){ stopPlayback(); const a = P.after; P.after = null; go(P.back); if (a) a(); return; } advance(); };
 /* a Family Break between rounds: plays the next Hiello, then runs "after" when Grandpa taps Back to game */
 function gameBreak(back, after){ const p = nextBreakPost(); if (p) openPlayer([p], back, false, after); else after(); }
@@ -1757,6 +1768,7 @@ const RX_ICONS = {
   love:'<span class="ic" style="background:#FBE3EA"><svg width="24" height="24" viewBox="-15 -14 30 28" aria-hidden="true"><path d="M0 -5 C-3 -12 -14 -10 -12 -1 C-11 4 -4 8 0 12 C4 8 11 4 12 -1 C14 -10 3 -12 0 -5Z" fill="#F2B8C6" stroke="#9B1B1F" stroke-width="2.4" stroke-linejoin="round"/></svg></span>'
 };
 function openReact(p, ctx){
+  did('reply');
   RX.p = p; RX.ctx = ctx;
   if (ctx === 'story') stopStory();
   if (ctx === 'play') clearTimeout(P.timer);
@@ -2291,10 +2303,13 @@ function idleTarget(){
   IDLE.n++;
   if (!$('#react').hidden) return null;
   if (current === 'gp'){
-    const tab = $('#newtab'); if (tab) return { ...centerOf(tab, .55), kind:'tap', lab:'Tap to see new' };
-    return IDLE.n % 2 ? { ...centerOf($('#gp-frame'), .5), kind:'swipe', lab:'Swipe for more' } : { ...centerOf($('#gp-frame'), .5), kind:'tap', lab:'Tap to open' };
+    const tab = $('#newtab'); if (tab && !knows('tapnew', 3)) return { ...centerOf(tab, .55), kind:'tap', lab:'Tap to see new' };
+    if (knows('swipe', 4) && knows('reply', 3)) return null;
+    return IDLE.n % 2 && !knows('swipe', 4) ? { ...centerOf($('#gp-frame'), .5), kind:'swipe', lab:'Swipe for more' } : { ...centerOf($('#gp-frame'), .5), kind:'tap', lab:'Tap to open' };
   }
-  if (current === 'photos') return IDLE.n % 2 ? { ...centerOf($('#ph-deck'), .5), kind:'swipe', lab:'Swipe for the next one' } : { ...centerOf($('#ph-deck'), .5), kind:'tap', lab:'Tap to reply' };
+  if (current === 'photos' && knows('swipe', 4) && knows('reply', 3)) return null;
+  if (current === 'photos') return IDLE.n % 2 && !knows('swipe', 4) ? { ...centerOf($('#ph-deck'), .5), kind:'swipe', lab:'Swipe for the next one' } : { ...centerOf($('#ph-deck'), .5), kind:'tap', lab:'Tap to reply' };
+  if (current === 'play' && knows('reply', 3)) return null;
   if (current === 'play') return { ...centerOf($('#playCard'), .5), kind:'tap', lab:'Tap to reply' };
   if (current === 'story') return { ...centerOf($('#st-next-z'), .5), kind:'tap', lab:'Tap for the next one' };
   if (current === 'games') return { ...centerOf($('#s-games [data-go="golf"]'), .5), kind:'tap', lab:'Tap a game' };
