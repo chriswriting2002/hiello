@@ -384,7 +384,17 @@ textarea.field{resize:none;line-height:1.35}
 .sb-track::before{content:"";position:absolute;left:0;right:0;top:12px;height:16px;border-radius:8px;background:linear-gradient(#7E838B,#A9ADB4 45%,#C8CACE);box-shadow:inset 0 2px 4px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.25)}
 .sb-thumb{position:absolute;top:2px;height:36px;border-radius:18px;background:linear-gradient(160deg,#FFFFFF 0%,#B9BCC2 38%,#F2F3F5 62%,#8D9198 100%);border:1.5px solid #6E737B;box-shadow:0 3px 8px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;gap:4px;transition:left .25s ease}
 .sb-thumb.drag{transition:none}
-.sb-thumb b{width:3px;height:16px;border-radius:2px;background:#6E737B;box-shadow:1px 0 0 rgba(255,255,255,.8)}
+.sb-num{font-size:15px;font-weight:900;color:#14285A;white-space:nowrap;text-shadow:0 1px 0 rgba(255,255,255,.7)}
+.sb-ticks{position:absolute;inset:0;pointer-events:none}
+.sb-ticks b{position:absolute;top:17px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:rgba(20,40,90,.55)}
+.sb-ticks b.on{background:#F2B8C6;box-shadow:0 0 0 2px #9B1B1F}
+.sb-thumb{transition:left .3s cubic-bezier(.25,.8,.3,1)!important}
+.sb-thumb.drag{transition:none!important}
+/* pink Post-it: how to reply */
+.postit{align-self:center;position:relative;background:#F2B8C6;color:#14285A;padding:11px 16px 9px;margin:8px auto 4px;transform:rotate(-1.5deg);box-shadow:0 5px 12px rgba(0,0,0,.35);font-size:16px;font-weight:900;line-height:1.35;text-align:left;border-radius:2px;width:max-content;max-width:92%}
+.postit::before{content:"";position:absolute;left:50%;top:-8px;width:44px;height:14px;transform:translateX(-50%) rotate(3deg);background:rgba(255,255,255,.55)}
+.postit div{display:flex;align-items:center;gap:6px}
+.postit svg{flex:none}
 .sb-count{font-size:14px;font-weight:800;color:#9FA9C4;text-align:center;margin-top:2px}
 /* ---- the camera: a Polaroid comes out ---- */
 .cam-flash{position:absolute;inset:0;background:#fff;z-index:6;pointer-events:none;animation:camFlash .45s ease-out forwards}
@@ -526,7 +536,7 @@ textarea.field{resize:none;line-height:1.35}
   <div class="sbar" id="ph-bar" style="margin-top:10px"></div>
   <div id="ph-deck"></div>
   <div class="st-cap" id="ph-cap" style="text-align:center"></div>
-  <div style="text-align:center;font-size:14px;color:#9FA9C4;margin:6px 0 10px">Tap the picture to reply · Slide for the next one</div>
+  <div class="postit" id="ph-postit"></div>
   <button class="lovebtn" id="ph-love"></button>
 </section>
 
@@ -549,7 +559,7 @@ textarea.field{resize:none;line-height:1.35}
   <div id="playCard"></div>
   <div style="font-size:18px;font-weight:700;line-height:1.4;margin:14px 2px 0" id="p-caption"></div>
   <div class="muted" style="font-size:14px;margin:6px 2px 0" id="p-meta"></div>
-  <div class="tapreply">Tap the picture to reply</div>
+  <div class="postit" id="p-postit"></div>
   <div class="row" style="margin-top:auto;padding-top:14px;gap:12px">
     <button class="btn ghost" id="p-home" style="flex:0 0 38%"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Home</button>
     <button class="btn primary" id="p-done" style="flex:1;background:#fff;color:var(--navy)">Back to game</button>
@@ -992,18 +1002,34 @@ function Deck(el, o){
 }
 
 /* ---------- silver scroll bar: drag the handle to move through the pictures ---------- */
+function postitHTML(){ return `<div>👆 Tap once to reply</div><div>👆👆 Double-tap to send a ${heartSVG(18)}</div>`; }
+function tapper(single, dbl){ let t = null; return (...a) => { if (t){ clearTimeout(t); t = null; dbl(...a); } else t = setTimeout(() => { t = null; single(...a); }, 280); }; }
+/* silver bar: each swipe (or tap on either side of the handle) moves exactly one photo; the handle says "3 of 7" */
 function Scrub(el, o){
   const AR = d => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DDE2EE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
-  el.innerHTML = `<div class="sb-lab">${AR('M15 5l-7 7 7 7')}<span>${o.label || 'Slide the silver bar to see more photos'}</span>${AR('M9 5l7 7-7 7')}</div><div class="sb-track" role="slider" aria-label="${o.label || 'Photos'}"><i class="sb-thumb"><b></b><b></b><b></b></i></div>`;
-  const tr = el.querySelector('.sb-track'), th = el.querySelector('.sb-thumb'); let drag = false, last = -1;
-  const W = () => { const n = o.count(); return Math.max(18, 100 / Math.max(1, n)); };
-  function show(i){ const n = o.count(); el.style.display = n > 1 ? '' : 'none'; const w = W(); th.style.width = w + '%'; th.style.left = (n > 1 ? i / (n - 1) : 0) * (100 - w) + '%'; tr.setAttribute('aria-valuenow', i + 1); tr.setAttribute('aria-valuemax', n); }
-  function at(e){ const r = tr.getBoundingClientRect(), n = o.count(), w = W() / 100 * r.width; const f = Math.max(0, Math.min(1, (e.clientX - r.left - w/2) / Math.max(1, r.width - w))); return { f, i: Math.round(f * (n - 1)) }; }
-  tr.addEventListener('pointerdown', e => { drag = true; tr.setPointerCapture(e.pointerId); th.classList.add('drag'); move(e); });
-  function move(e){ if (!drag) return; const p = at(e), w = W(); th.style.left = p.f * (100 - w) + '%'; if (p.i !== last){ last = p.i; o.go(p.i); haptic(); } }
-  tr.addEventListener('pointermove', move);
-  const up = () => { if (!drag) return; drag = false; th.classList.remove('drag'); show(last >= 0 ? last : 0); last = -1; };
-  tr.addEventListener('pointerup', up); tr.addEventListener('pointercancel', up);
+  el.innerHTML = `<div class="sb-lab">${AR('M15 5l-7 7 7 7')}<span>Swipe the silver bar for the next photo</span>${AR('M9 5l7 7-7 7')}</div><div class="sb-track" role="slider" aria-label="Photos"><span class="sb-ticks"></span><i class="sb-thumb"><span class="sb-num"></span></i></div>`;
+  const tr = el.querySelector('.sb-track'), th = el.querySelector('.sb-thumb'), ticks = el.querySelector('.sb-ticks');
+  let cur = 0, x0 = null, t0 = 0, n0 = -1;
+  const TW = 84;   /* handle width in px */
+  function pos(i, n){ const w = tr.clientWidth || 300; return (n > 1 ? i / (n - 1) : 0) * (w - TW); }
+  function show(i){
+    const n = o.count(); cur = i; el.style.display = n > 1 ? '' : 'none';
+    th.style.width = TW + 'px'; th.classList.remove('drag'); th.style.left = pos(i, n) + 'px';
+    el.querySelector('.sb-num').textContent = `${i + 1} of ${n}`;
+    if (n !== n0){ n0 = n; ticks.innerHTML = n <= 24 ? Array.from({length:n}, (_,k) => `<b style="left:${TW/2 + (n > 1 ? k/(n-1) : 0)*((tr.clientWidth||300) - TW)}px"></b>`).join('') : ''; }
+    $$('b', ticks).forEach((t,k) => t.classList.toggle('on', k === i));
+    tr.setAttribute('aria-valuenow', i + 1); tr.setAttribute('aria-valuemax', n);
+  }
+  tr.addEventListener('pointerdown', e => { x0 = e.clientX; t0 = performance.now(); tr.setPointerCapture(e.pointerId); th.classList.add('drag'); });
+  tr.addEventListener('pointermove', e => { if (x0 === null) return; const dx = Math.max(-28, Math.min(28, (e.clientX - x0) * 0.5)); th.style.left = (pos(cur, o.count()) + dx) + 'px'; });
+  const up = e => {
+    if (x0 === null) return; const dx = e.clientX - x0; x0 = null; th.classList.remove('drag');
+    let d = 0;
+    if (Math.abs(dx) > 16) d = dx > 0 ? 1 : -1;                                  /* a swipe: one photo that way */
+    else { const r = th.getBoundingClientRect(); d = e.clientX < r.left ? -1 : e.clientX > r.right ? 1 : 0; }   /* a tap beside the handle */
+    if (d){ haptic(); o.step(d); } else show(cur);
+  };
+  tr.addEventListener('pointerup', up); tr.addEventListener('pointercancel', e => { x0 = null; show(cur); });
   return { show };
 }
 
@@ -1020,7 +1046,7 @@ async function frameSlide(i){
     <div class="info"><div style="min-width:0"><div class="who">From ${esc(p.from)}</div><div class="when">${ago(p.at)}${p.hearts ? ' · ' + HEART + ' ' + p.hearts : ''}</div></div><span class="watch">${p.media && p.media.kind === 'video' ? PLAY.replace('fill="#fff"','fill="#14285A"').replace(/28/g,'20') + 'Play' : 'Open'}</span></div>`;
 }
 function frameDots(i){
-  if (!FR.bar) FR.bar = Scrub($('#gp-bar'), { count:() => FR.list.length, go: k => { FR.touched = Date.now(); FR.deck.i = k; FR.deck.paint(); } });
+  if (!FR.bar) FR.bar = Scrub($('#gp-bar'), { count:() => FR.list.length, step: d => { FR.touched = Date.now(); FR.deck.flip(d); } });
   FR.bar.show(i);
   const n = Math.min(FR.list.length, 8);
   $('#gp-dots').innerHTML = FR.list.length > 1 ? Array.from({length:n}, (_,k) => `<i class="${k === Math.min(i, n-1) ? 'on' : ''}"></i>`).join('') : '';
@@ -1082,7 +1108,8 @@ async function showStory(){
   loveLabel($('#st-love'), p);
   if (!p.watched){ p.watched = true; p.watchedAt = Date.now(); save(); }
   $('#st-prev-z').onclick = () => { if (STY.i > 0){ STY.i--; showStory(); } };
-  $('#st-body .card').onclick = e => { if (e.target.closest('video')) return; openReact(p, 'story'); };
+  $('#st-body .card').onclick = tapper(e => { if (e.target.closest('video')) return; openReact(p, 'story'); },
+                                       () => { sendLove(p, $('#st-body')); loveLabel($('#st-love'), p); STY.t0 = performance.now(); });
   $('#st-next-z').onclick = nextStory;
   const bar = $('#st-bars i:nth-child(' + (STY.i+1) + ') b'), vid = $('#st-body video');
   STY.t0 = performance.now();
@@ -1114,14 +1141,16 @@ async function renderPhotos(){
   if (!PH.deck) PH.deck = Deck($('#ph-deck'), { count:() => PH.list.length, playVideo:true,
     render: async i => { const p = PH.list[i]; return p ? await cardHTML(p, {live:false}) : '<div style="font-size:19px;font-weight:800;text-align:center;padding:30px">No photos yet. They’ll show up here as family sends them.</div>'; },
     change: i => phInfo(i),
-    tap: i => { const p = PH.list[i]; if (!p) return; const v = $('#ph-deck .sw-s:nth-child(2) video'); if (v && v.paused){ v.muted = false; v.play().catch(()=>{}); return; } openReact(p, 'photos'); } });
+    tap: tapper(i => { const p = PH.list[i]; if (!p) return; const v = $('#ph-deck .sw-s:nth-child(2) video'); if (v && v.paused){ v.muted = false; v.play().catch(()=>{}); return; } openReact(p, 'photos'); },
+                i => { const p = PH.list[i]; if (!p) return; sendLove(p, $('#ph-deck')); phInfo(i); }) });
+  $('#ph-postit').innerHTML = postitHTML();
   PH.deck.i = PH.start ? Math.max(0, PH.list.indexOf(PH.start)) : 0; PH.start = null;
   await PH.deck.paint();
   const n = unseen().length;
   $('#ph-status').innerHTML = n ? `${n} new Hiello${n>1?'s':''} waiting` : `<span style="color:#9FE0B2">✓</span> You're all caught up`;
 }
 function phInfo(i){
-  if (!PH.bar) PH.bar = Scrub($('#ph-bar'), { count:() => PH.list.length, go: k => { PH.deck.i = k; PH.deck.paint(); } });
+  if (!PH.bar) PH.bar = Scrub($('#ph-bar'), { count:() => PH.list.length, step: d => PH.deck.flip(d) });
   PH.bar.show(Math.max(0, i));
   const p = PH.list[i]; if (!p){ $('#ph-count').textContent = ''; $('#ph-cap').textContent = ''; $('#ph-love').style.display = 'none'; return; }
   $('#ph-love').style.display = '';
@@ -1219,7 +1248,9 @@ async function showSlide(){
 function advance(){ if (P.i < P.queue.length - 1){ P.i++; showSlide(); } else { stopPlayback(); if (P.recap) say("That's the week! You're all caught up."); go(P.back); } }
 $('#p-love').onclick = () => { const p = P.queue[P.i]; sendLove(p, $('#playCard')); loveLabel($('#p-love'), p); };
 $('#p-home').onclick = () => { stopPlayback(); P.after = null; go('gp'); };
-$('#playCard').onclick = e => { if (e.target.closest('video')) return; const p = P.queue[P.i]; if (p) openReact(p, 'play'); };
+$('#playCard').onclick = tapper(e => { if (e.target.closest('video')) return; const p = P.queue[P.i]; if (p) openReact(p, 'play'); },
+                                 () => { const p = P.queue[P.i]; if (!p) return; sendLove(p, $('#playCard')); loveLabel($('#p-love'), p); });
+$('#p-postit').innerHTML = postitHTML();
 $('#p-done').onclick = () => { if (GAMES.includes(P.back)){ stopPlayback(); const a = P.after; P.after = null; go(P.back); if (a) a(); return; } advance(); };
 /* a Family Break between rounds: plays the next Hiello, then runs "after" when Grandpa taps Back to game */
 function gameBreak(back, after){ const p = nextBreakPost(); if (p) openPlayer([p], back, false, after); else after(); }
