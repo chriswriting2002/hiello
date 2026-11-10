@@ -7,9 +7,9 @@
 <title>Hiello</title>
 <style>
 :root{
-  --navy:#14285A;--navy2:#22366A;--cream:#F5F5F7;--paper:#FFFFFF;--line:#E3E4E8;
-  --clay:#14285A;--gold:#C8CACE;--green:#0B1733;--ok:#14285A;--muted:#4B5263;--ph:#DADBDF;
-  --red:#9B1B1F;--blush:#FBE3EA;--pink:#F2B8C6;--silver:#C8CACE;--slate:#4B5263;--midnight:#0B1733;--teal:#14285A;
+  --navy:#14285A;--navy2:#5C5651;--cream:#F6F2ED;--paper:#FFFFFF;--line:#E3E4E8;
+  --clay:#14285A;--gold:#C8CACE;--green:#34302D;--ok:#14285A;--muted:#4B5263;--ph:#DADBDF;
+  --red:#9B1B1F;--blush:#FBE3EA;--pink:#F2B8C6;--silver:#C8CACE;--slate:#4B5263;--midnight:#4A4541;--graphite:#34302D;--warm1:#5C5651;--warm2:#6E6761;--warmtxt:#FFF9F3;--warmmut:#D1C8BF;--teal:#14285A;
   --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -25,7 +25,7 @@ h1,h2,h3,.serif{font-family:Baskerville,'Libre Baskerville',Georgia,serif;font-w
 .between{justify-content:space-between}
 .col{display:flex;flex-direction:column;gap:12px}
 .muted{color:var(--muted)}
-.dark .muted,.felt .muted{color:#CFD6E6}
+.dark .muted,.felt .muted{color:#D9D1C8}
 .kicker{font-size:12px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--clay)}
 .dark .kicker{color:var(--gold)}
 .btn{min-height:56px;border:0;border-radius:18px;padding:0 20px;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
@@ -46,7 +46,7 @@ textarea.field{resize:none;line-height:1.35}
 /* demo switch */
 #demobar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--sb) + 4px);z-index:50;background:rgba(20,26,44,.92);border-radius:999px;padding:5px;display:none;gap:4px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
 #demobar.on{display:flex}
-#demobar button{border:0;border-radius:999px;min-height:30px;padding:0 12px;font-size:12px;white-space:nowrap;font-weight:900;background:transparent;color:#C9CFE0}
+#demobar button{border:0;border-radius:999px;min-height:30px;padding:0 12px;font-size:12px;white-space:nowrap;font-weight:900;background:transparent;color:#D1C8BF}
 #demobar button.on{background:#fff;color:var(--navy)}
 .pad-bottom{padding-bottom:calc(var(--sb) + 80px)}
 /* toast */
@@ -119,7 +119,7 @@ textarea.field{resize:none;line-height:1.35}
 .gf-ctl.hint .gfm-l{animation:pulse 1.4s ease-in-out infinite}
 .gfm{align-self:center;width:min(100%,420px);background:rgba(255,255,255,.08);border-radius:18px;padding:12px 16px;text-align:center}
 .gfm-l{font-size:17px;font-weight:900;margin-bottom:8px}
-.gfm-bar{height:18px;border-radius:9px;background:#2B3B66;overflow:hidden}
+.gfm-bar{height:18px;border-radius:9px;background:#5C5651;overflow:hidden}
 .gfm-bar i{display:block;height:100%;width:0;border-radius:9px;background:#7FD39A;transition:width .05s}
 .gfm.hint .gfm-l{animation:pulse 1.4s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.45}}
@@ -187,13 +187,13 @@ textarea.field{resize:none;line-height:1.35}
 .progress i{display:block;height:100%;width:0;background:var(--gold)}
 /* Final palette (GAP-bag navy, silver, ballet pink, white). Navy = text + main buttons; pink = hearts and pills with navy text;
    silver = surfaces and hints; midnight = dark screens; heart red = heart outline only. */
-.btn.primary{background:var(--teal);color:#fff}
+.btn.primary{background:var(--graphite);color:#FFF9F3}
 .dark .btn.primary,.felt .btn.primary,.bigone .btn.primary{background:var(--pink);color:var(--navy)}
 .kicker{color:var(--slate)}
 .dark .kicker,.felt .kicker{color:var(--silver)}
 #toast{border-color:var(--silver)}
 #toast button{background:var(--teal);color:#fff}
-#demobar{background:rgba(11,23,51,.94)}
+#demobar{background:rgba(43,38,34,.94)}
 .widget .wtag{background:var(--pink);color:var(--navy)}
 .widget .wstk,.tpl-polaroid .stk{color:var(--navy);border-color:var(--navy)}
 .tpl-polaroid .foot{color:var(--navy)}
@@ -227,28 +227,28 @@ textarea.field{resize:none;line-height:1.35}
 .faces{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 2px;scrollbar-width:none}
 .faces::-webkit-scrollbar{display:none}
 .face{flex:0 0 auto;border:0;background:none;color:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;width:86px;padding:0}
-.face .av{position:relative;width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Baskerville,Georgia,serif;font-size:28px;font-weight:700;box-shadow:0 0 0 3px #22366A}
+.face .av{position:relative;width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Baskerville,Georgia,serif;font-size:28px;font-weight:700;box-shadow:0 0 0 3px #5C5651}
 .face.new .av{box-shadow:0 0 0 4px var(--pink)}
-.face .av b{position:absolute;right:-2px;top:-2px;width:20px;height:20px;border-radius:50%;background:#9B1B1F;border:3px solid #0B1733}
+.face .av b{position:absolute;right:-2px;top:-2px;width:20px;height:20px;border-radius:50%;background:#9B1B1F;border:3px solid #4A4541}
 .face .nm{font-size:14px;font-weight:800;max-width:86px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.frame{position:relative;border:0;padding:0;border-radius:28px;overflow:hidden;background:#22366A;box-shadow:0 0 0 6px #C8CACE,0 14px 30px rgba(0,0,0,.45);color:#fff;text-align:left;touch-action:pan-y}
+.frame{position:relative;border:0;padding:0;border-radius:28px;overflow:hidden;background:#5C5651;box-shadow:0 0 0 6px #C8CACE,0 14px 30px rgba(0,0,0,.45);color:#fff;text-align:left;touch-action:pan-y}
 .frame .ph{position:absolute;inset:0;transition:opacity .8s}
 .frame .ph img,.frame .ph video{width:100%;height:100%;object-fit:cover;display:block}
-.frame .shade{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(transparent,rgba(5,12,30,.85))}
+.frame .shade{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(transparent,rgba(30,26,23,.85))}
 .frame .tag{position:absolute;left:14px;top:14px;background:var(--pink);color:var(--navy);font-size:14px;font-weight:900;letter-spacing:1px;padding:7px 12px;border-radius:999px}
 .frame .stk{position:absolute;right:14px;top:56px;transform:rotate(-5deg);background:#fff;border:3px solid var(--navy);color:var(--navy);border-radius:14px;padding:7px 11px;font-family:Baskerville,Georgia,serif;font-weight:800;font-size:19px;line-height:1.1;max-width:62%;box-shadow:0 4px 10px rgba(0,0,0,.25)}
 .frame .info{position:absolute;left:16px;right:16px;bottom:16px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
 .frame .who{font-size:22px;font-weight:900;line-height:1.15}
-.frame .when{font-size:15px;color:#DDE2EE;font-weight:700;margin-top:2px}
+.frame .when{font-size:15px;color:#E9E2DA;font-weight:700;margin-top:2px}
 .frame .watch{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#fff;color:var(--navy);font-size:19px;font-weight:900;padding:14px 18px;border-radius:999px}
 .frame .empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px;font-weight:800;line-height:1.35}
 .fdots{display:flex;justify-content:center;gap:7px;min-height:10px}
-.fdots i{width:9px;height:9px;border-radius:50%;background:#3A4A78}.fdots i.on{background:#fff}
+.fdots i{width:9px;height:9px;border-radius:50%;background:#6E6761}.fdots i.on{background:#fff}
 .gpbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .gpbtn{border:0;border-radius:24px;min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:21px;font-weight:900;color:var(--navy);position:relative}
 .gpbtn .cnt{position:absolute;right:10px;top:10px;background:#9B1B1F;color:#fff;font-size:14px;font-weight:900;border-radius:999px;padding:3px 9px}
 @media (max-height:720px){#s-gp{gap:9px}#s-gp>.frame{min-height:180px}#s-gp h1{font-size:24px}.face .av{width:54px;height:54px;font-size:24px}.gpbtn{min-height:92px;font-size:19px;gap:4px}.gpbtn svg{width:32px;height:32px}.bigstrip{font-size:15px;padding:10px 12px}}
-.bigstrip{border:0;border-radius:999px;background:#22366A;color:#fff;display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:15px;white-space:nowrap;overflow:hidden;font-weight:800;text-align:left}
+.bigstrip{border:0;border-radius:999px;background:#5C5651;color:#fff;display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:15px;white-space:nowrap;overflow:hidden;font-weight:800;text-align:left}
 
 /* ---- swipe deck: slides follow the finger ---- */
 .sw{position:relative;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}
@@ -267,7 +267,7 @@ textarea.field{resize:none;line-height:1.35}
 @keyframes tabIn{from{transform:translateX(110%)}to{transform:none}}
 @keyframes tabNudge{0%,88%,100%{transform:none}92%{transform:translateX(-10px)}96%{transform:translateX(0)}}
 /* ---- story viewer ---- */
-#s-story{background:#000;color:#fff;padding:calc(var(--st) + 10px) 14px calc(var(--sb) + 16px)}
+#s-story{background:#34302D;color:#fff;padding:calc(var(--st) + 10px) 14px calc(var(--sb) + 16px)}
 .st-bars{display:flex;gap:5px}
 .st-bars i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.3);overflow:hidden}
 .st-bars i b{display:block;height:100%;width:0;background:#fff}
@@ -281,7 +281,7 @@ textarea.field{resize:none;line-height:1.35}
 .st-cap{font-size:19px;font-weight:700;line-height:1.35;margin:12px 2px 0;min-height:26px}
 .st-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 /* ---- photos rolodex ---- */
-#s-photos{background:#0B1733;color:#fff}
+#s-photos{background:#34302D;color:#fff}
 #ph-deck{flex:1 1 auto;min-height:260px;margin:10px -18px 0}
 #ph-deck .sw-s{display:flex;align-items:center;justify-content:center;padding:0 22px}
 #ph-deck .card{max-width:420px}
@@ -290,12 +290,12 @@ textarea.field{resize:none;line-height:1.35}
 .lovebtn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:64px;border:0;border-radius:20px;background:var(--pink);color:var(--navy);font-size:20px;font-weight:900}
 .homebtn{display:flex;align-items:center;gap:6px;border:0;background:#fff;color:var(--navy);font-size:18px;font-weight:900;border-radius:999px;padding:12px 18px}
 /* ---- RSVP ---- */
-.tapreply{text-align:center;font-size:15px;font-weight:800;color:#C9CFE0;margin-top:10px}
+.tapreply{text-align:center;font-size:15px;font-weight:800;color:#D1C8BF;margin-top:10px}
 #playCard{cursor:pointer}
 .gpnote{position:absolute;right:5%;bottom:7%;z-index:3;max-width:48%;background:#F2B8C6;color:#14285A;font-family:Baskerville,Georgia,serif;font-weight:800;font-size:.78em;line-height:1.15;padding:9px 10px 7px;transform:rotate(3deg);box-shadow:0 4px 10px rgba(0,0,0,.3);border-radius:2px;text-align:left}
 .gpnote small{display:block;font-family:-apple-system,Helvetica,Arial,sans-serif;font-size:.72em;font-weight:800;margin-top:3px;opacity:.75}
 .gpnote::before{content:"";position:absolute;left:50%;top:-7px;width:34px;height:12px;transform:translateX(-50%) rotate(-4deg);background:rgba(255,255,255,.55)}
-.sheet{position:fixed;inset:0;z-index:90;background:rgba(5,12,30,.55);display:flex;align-items:flex-end}
+.sheet{position:fixed;inset:0;z-index:90;background:rgba(30,26,23,.55);display:flex;align-items:flex-end}
 .sheet[hidden]{display:none}
 .sheet-in{width:100%;background:#fff;color:var(--navy);border-radius:26px 26px 0 0;padding:18px 18px calc(var(--sb) + 18px);display:flex;flex-direction:column;gap:12px;animation:sheetUp .25s ease-out}
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
@@ -309,27 +309,27 @@ textarea.field{resize:none;line-height:1.35}
 .rsvp-yes small,.rsvp-no small{display:block;font-size:15px;font-weight:700;opacity:.8;margin-top:2px}
 
 /* ---- camera, Locket-style ---- */
-#s-cam{background:#0B1733;color:#fff;align-items:center;gap:16px}
+#s-cam{background:#34302D;color:#fff;align-items:center;gap:16px}
 .cam-top{width:100%;display:flex;align-items:center;justify-content:space-between}
-.cam-rb{width:52px;height:52px;border-radius:50%;border:0;background:#22366A;color:#fff;display:flex;align-items:center;justify-content:center;position:relative}
-.cam-rb b{position:absolute;right:-3px;top:-3px;min-width:22px;height:22px;border-radius:11px;background:#9B1B1F;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid #0B1733}
-.cam-to{background:#22366A;border-radius:999px;padding:10px 18px;font-size:17px;font-weight:900}
-.cam-sq{position:relative;width:min(100%,calc(100dvh - 330px),460px);aspect-ratio:1;border-radius:44px;overflow:hidden;background:#22366A;flex:none;box-shadow:0 0 0 4px #C8CACE}
+.cam-rb{width:52px;height:52px;border-radius:50%;border:0;background:#4A4541;color:#fff;display:flex;align-items:center;justify-content:center;position:relative}
+.cam-rb b{position:absolute;right:-3px;top:-3px;min-width:22px;height:22px;border-radius:11px;background:#9B1B1F;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid #34302D}
+.cam-to{background:#4A4541;border-radius:999px;padding:10px 18px;font-size:17px;font-weight:900}
+.cam-sq{position:relative;width:min(100%,calc(100dvh - 330px),460px);aspect-ratio:1;border-radius:44px;overflow:hidden;background:#4A4541;flex:none;box-shadow:0 0 0 4px #C8CACE}
 .cam-sq video,.cam-sq img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cam-sq video.mirror{transform:scaleX(-1)}
 .cam-off[hidden]{display:none}
 .cam-off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:24px;font-size:18px;font-weight:800}
-.cam-note{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:82%;border:0;border-radius:999px;background:rgba(11,23,51,.72);color:#fff;font-size:19px;font-weight:800;text-align:center;padding:14px 18px;outline:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.cam-note::placeholder{color:#C9CFE0}
+.cam-note{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:82%;border:0;border-radius:999px;background:rgba(43,38,34,.72);color:#fff;font-size:19px;font-weight:800;text-align:center;padding:14px 18px;outline:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.cam-note::placeholder{color:#D1C8BF}
 .cam-ctl{width:min(100%,460px);display:flex;align-items:center;justify-content:space-between;padding:0 10px}
-.cam-side{width:58px;height:58px;border-radius:50%;border:0;background:#22366A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-direction:column;gap:2px}
+.cam-side{width:58px;height:58px;border-radius:50%;border:0;background:#4A4541;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-direction:column;gap:2px}
 .shutter{position:relative;width:92px;height:92px;border-radius:50%;border:6px solid #F2B8C6;background:transparent;padding:6px;touch-action:none}
 .shutter i{display:block;width:100%;height:100%;border-radius:50%;background:#fff;transition:transform .15s,background .15s}
 .shutter.rec i{background:#9B1B1F;transform:scale(.6);border-radius:16px}
 .shutter svg.ring{position:absolute;inset:-6px;width:92px;height:92px;transform:rotate(-90deg);pointer-events:none}
 .sendbtn{width:92px;height:92px;border-radius:50%;border:0;background:#F2B8C6;color:#14285A;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px #9B1B1F}
-.cam-hint{font-size:15px;color:#C9CFE0;font-weight:700;text-align:center}
-.cam-sent{border:0;background:#22366A;color:#fff;border-radius:999px;padding:12px 22px;font-size:17px;font-weight:900;display:flex;align-items:center;gap:8px}
+.cam-hint{font-size:15px;color:#D1C8BF;font-weight:700;text-align:center}
+.cam-sent{border:0;background:#4A4541;color:#fff;border-radius:999px;padding:12px 22px;font-size:17px;font-weight:900;display:flex;align-items:center;gap:8px}
 .gp-cambtn{border:0;background:#F2B8C6;color:#14285A;border-radius:999px;padding:0 14px;height:52px;font-size:17px;white-space:nowrap;font-weight:900;display:flex;align-items:center;gap:8px}
 
 /* ---- Mahjong, Paper Meadow style: Forest glow felt, cream tiles, 4-space tray ---- */
@@ -367,7 +367,7 @@ textarea.field{resize:none;line-height:1.35}
 #idlehand{position:fixed;z-index:85;pointer-events:none;opacity:0;transition:opacity .6s;display:flex;flex-direction:column;align-items:center;gap:2px}
 #idlehand.on{opacity:.92}
 #idlehand .hand{font-size:42px;line-height:1;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));display:inline-block}
-#idlehand .lab{position:absolute;top:50px;left:50%;transform:translateX(-50%);font-size:13px;font-weight:900;color:#fff;background:rgba(11,23,51,.78);padding:4px 10px;border-radius:999px;white-space:nowrap}
+#idlehand .lab{position:absolute;top:50px;left:50%;transform:translateX(-50%);font-size:13px;font-weight:900;color:#fff;background:rgba(43,38,34,.78);padding:4px 10px;border-radius:999px;white-space:nowrap}
 #idlehand .ring{position:absolute;left:50%;top:0;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:3px solid rgba(255,255,255,.85);opacity:0}
 #idlehand.tap .hand{animation:ihTap 1.8s ease-in-out infinite}
 #idlehand.tap .ring{animation:ihRing 1.8s ease-out infinite}
@@ -378,7 +378,7 @@ textarea.field{resize:none;line-height:1.35}
 
 /* ---- silver scroll bar (Grandpa side) ---- */
 .sbar{flex:none;user-select:none;-webkit-user-select:none}
-.sb-lab{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:900;color:#DDE2EE;margin-bottom:6px}
+.sb-lab{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:900;color:#E9E2DA;margin-bottom:6px}
 .sb-lab svg{flex:none}
 .sb-track{position:relative;height:40px;touch-action:none;cursor:pointer}
 .sb-track::before{content:"";position:absolute;left:0;right:0;top:12px;height:16px;border-radius:8px;background:linear-gradient(#7E838B,#A9ADB4 45%,#C8CACE);box-shadow:inset 0 2px 4px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.25)}
@@ -395,7 +395,7 @@ textarea.field{resize:none;line-height:1.35}
 .postit::before{content:"";position:absolute;left:50%;top:-8px;width:44px;height:14px;transform:translateX(-50%) rotate(3deg);background:rgba(255,255,255,.55)}
 .postit div{display:flex;align-items:center;gap:6px}
 .postit svg{flex:none}
-.sb-count{font-size:14px;font-weight:800;color:#9FA9C4;text-align:center;margin-top:2px}
+.sb-count{font-size:14px;font-weight:800;color:#BDB4AB;text-align:center;margin-top:2px}
 /* ---- the camera: a Polaroid comes out ---- */
 .cam-flash{position:absolute;inset:0;background:#fff;z-index:6;pointer-events:none;animation:camFlash .45s ease-out forwards}
 @keyframes camFlash{0%{opacity:1}100%{opacity:0}}
@@ -409,9 +409,9 @@ textarea.field{resize:none;line-height:1.35}
 .pola-cap .cam-note::placeholder{color:#8D9198}
 .pola.away{animation:polaAway .7s ease-in forwards}
 @keyframes polaAway{to{transform:translateY(-140%) rotate(8deg) scale(.6);opacity:0}}
-.cam-sentok{position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(11,23,51,.88);color:#fff;font-size:28px;font-weight:900;animation:fadeIn .25s ease-out}
+.cam-sentok{position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(43,38,34,.88);color:#fff;font-size:28px;font-weight:900;animation:fadeIn .25s ease-out}
 .cam-sentok .ck{width:84px;height:84px;border-radius:50%;background:#F2B8C6;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 5px #9B1B1F}
-.cam-sentok small{font-size:16px;font-weight:700;color:#DDE2EE}
+.cam-sentok small{font-size:16px;font-weight:700;color:#E9E2DA}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .shutter:disabled{opacity:.4}
 
@@ -426,6 +426,10 @@ textarea.field{resize:none;line-height:1.35}
 .steps.light{color:#fff;font-size:16px}
 .steps li::marker{font-weight:900}
 .ck-big{width:96px;height:96px;border-radius:50%;background:#F2B8C6;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px #9B1B1F}
+
+.dark,#s-gp,#s-photos,#s-cam{background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(0,0,0,.025) 0 1px,transparent 1px 7px)}
+.cam-rb,.cam-side,.icon-btn,.gpbtn,.homebtn,.cam-to,.bigstrip{background-image:linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,0) 55%)}
+.gpbtn{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 6px rgba(0,0,0,.25)}
 </style>
 </head>
 <body>
@@ -471,7 +475,7 @@ textarea.field{resize:none;line-height:1.35}
 </section>
 
 <!-- ============ GRANDPARENT HOME ============ -->
-<section class="screen pad-bottom" id="s-gp" style="background:#0B1733;color:#fff">
+<section class="screen pad-bottom" id="s-gp" style="background:var(--midnight);color:var(--warmtxt)">
   <div class="row between">
     <h1 style="font-size:25px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0" id="gp-hello">Hi, Grandpa</h1>
     <span style="flex:1"></span>
@@ -529,7 +533,7 @@ textarea.field{resize:none;line-height:1.35}
 <section class="screen felt" id="s-golf">
   <div class="row between">
     <button class="icon-btn" aria-label="Back to games" data-back="games"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <div style="text-align:center"><div class="serif" style="font-size:23px">Putt-Putt Golf</div><div style="font-size:15px;font-weight:800;color:#CFD6E6" id="gf-status">Hole 1 of 6</div></div>
+    <div style="text-align:center"><div class="serif" style="font-size:23px">Putt-Putt Golf</div><div style="font-size:15px;font-weight:800;color:#D9D1C8" id="gf-status">Hole 1 of 6</div></div>
     <button class="icon-btn" aria-label="Restart hole" id="gf-reset"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button>
   </div>
 
@@ -542,7 +546,7 @@ textarea.field{resize:none;line-height:1.35}
 <section class="screen dark pad-bottom" id="s-trivia">
   <div class="row between" style="margin-bottom:10px">
     <button class="icon-btn" aria-label="Back to games" data-back="games"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <div style="text-align:center"><div class="serif" style="font-size:23px">Trivia Time</div><div style="font-size:15px;font-weight:800;color:#CFD6E6" id="tv-status">Question 1 of 10</div></div>
+    <div style="text-align:center"><div class="serif" style="font-size:23px">Trivia Time</div><div style="font-size:15px;font-weight:800;color:#D9D1C8" id="tv-status">Question 1 of 10</div></div>
     <span style="width:52px"></span>
   </div>
   <div id="tv-body" class="col" style="gap:12px;margin-top:6px"></div>
@@ -552,7 +556,7 @@ textarea.field{resize:none;line-height:1.35}
 <!-- ============ STORIES: new Hiellos, Instagram-style ============ -->
 <section class="screen" id="s-story">
   <div class="st-bars" id="st-bars"></div>
-  <div class="st-top"><div class="st-av" id="st-av"></div><div style="min-width:0"><div style="font-size:19px;font-weight:900" id="st-from"></div><div style="font-size:15px;color:#C9CFE0" id="st-ago"></div></div>
+  <div class="st-top"><div class="st-av" id="st-av"></div><div style="min-width:0"><div style="font-size:19px;font-weight:900" id="st-from"></div><div style="font-size:15px;color:#D1C8BF" id="st-ago"></div></div>
     <button class="st-close" id="st-close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Home</button></div>
   <div class="st-body" id="st-body"></div>
   <div class="st-cap" id="st-cap"></div>
@@ -565,7 +569,7 @@ textarea.field{resize:none;line-height:1.35}
     <button class="homebtn" data-back="gp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Home</button>
     <span id="ph-count" style="display:none"></span>
   </div>
-  <div id="ph-status" style="margin-top:12px;font-size:16px;font-weight:800;color:#DDE2EE"></div>
+  <div id="ph-status" style="margin-top:12px;font-size:16px;font-weight:800;color:#E9E2DA"></div>
   <div class="sbar" id="ph-bar" style="margin-top:10px"></div>
   <div id="ph-deck"></div>
   <div class="st-cap" id="ph-cap" style="text-align:center"></div>
@@ -611,7 +615,7 @@ textarea.field{resize:none;line-height:1.35}
   <div class="col" style="margin:auto 0;gap:16px;text-align:center;align-items:center">
     <div class="ck-big"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div>
     <h1 style="font-size:30px">You're connected!</h1>
-    <p style="font-size:18px;line-height:1.45;margin:0;color:#DDE2EE">New photos from the family will pop up right on this phone's home screen.</p>
+    <p style="font-size:18px;line-height:1.45;margin:0;color:#E9E2DA">New photos from the family will pop up right on this phone's home screen.</p>
     <div class="panel" style="text-align:left;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff">
       <div class="serif" style="font-size:20px;margin-bottom:8px">Last step: add the widget</div>
       <ol class="steps light">
@@ -628,7 +632,7 @@ textarea.field{resize:none;line-height:1.35}
 <section class="screen dark" id="s-play">
   <div class="row between" style="margin-bottom:12px">
     <span class="serif" style="font-size:22px;color:var(--pink)" id="p-title">We'll be right back…</span>
-    <span style="font-size:14px;font-weight:800;color:#C9CFE0" id="p-count"></span>
+    <span style="font-size:14px;font-weight:800;color:#D1C8BF" id="p-count"></span>
   </div>
   <div class="progress" id="p-prog" style="margin-bottom:12px;display:none"><i></i></div>
   <div id="playCard"></div>
@@ -1337,7 +1341,7 @@ function postitHTML(){ return `<div>👆 Tap once to reply</div><div>👆👆 Do
 function tapper(single, dbl){ let t = null; return (...a) => { if (t){ clearTimeout(t); t = null; dbl(...a); } else t = setTimeout(() => { t = null; single(...a); }, 280); }; }
 /* silver bar: each swipe (or tap on either side of the handle) moves exactly one photo; the handle says "3 of 7" */
 function Scrub(el, o){
-  const AR = d => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DDE2EE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+  const AR = d => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E9E2DA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
   el.innerHTML = `<div class="sb-lab">${AR('M15 5l-7 7 7 7')}<span>Swipe for more photos</span>${AR('M9 5l7 7-7 7')}</div><div class="sb-track" role="slider" aria-label="Photos"><span class="sb-ticks"></span><i class="sb-thumb"><span class="sb-num"></span></i></div>`;
   const tr = el.querySelector('.sb-track'), th = el.querySelector('.sb-thumb'), ticks = el.querySelector('.sb-ticks');
   let cur = 0, x0 = null, t0 = 0, n0 = -1;
@@ -1366,12 +1370,12 @@ function Scrub(el, o){
 
 /* ---------- Grandpa home: an Aura-style frame ---------- */
 const FR = { list:[], timer:null, deck:null, touched:0 };
-const FACE_COLORS = [['#F2B8C6','#14285A'],['#C8CACE','#14285A'],['#FFFFFF','#14285A'],['#22366A','#FFFFFF']];
+const FACE_COLORS = [['#F2B8C6','#14285A'],['#C8CACE','#14285A'],['#FFFFFF','#14285A'],['#6E6761','#FFF9F3']];
 function allNewestFirst(){ return [...S.posts].sort((a,b) => b.at - a.at); }
 function stopFrame(){ clearInterval(FR.timer); FR.timer = null; }
 async function frameSlide(i){
   const p = FR.list[i];
-  if (!p) return `<div class="empty">No Hiellos yet.<br><span style="font-weight:600;font-size:17px;color:#DDE2EE;margin-top:8px;display:block">When family sends a photo or video, it shows up right here.</span></div>`;
+  if (!p) return `<div class="empty">No Hiellos yet.<br><span style="font-weight:600;font-size:17px;color:#E9E2DA;margin-top:8px;display:block">When family sends a photo or video, it shows up right here.</span></div>`;
   return `<div class="ph">${await thumbHTML(p)}</div><div class="shade"></div>
     ${p.watched ? '' : '<div class="tag">NEW</div>'}${p.note ? `<div class="stk">${esc(p.note)}</div>` : ''}
     <div class="info"><div style="min-width:0"><div class="who">From ${esc(p.from)}</div><div class="when">${ago(p.at)}${p.hearts ? ' · ' + HEART + ' ' + p.hearts : ''}</div></div><span class="watch">${p.media && p.media.kind === 'video' ? PLAY.replace('fill="#fff"','fill="#14285A"').replace(/28/g,'20') + 'Play' : 'Open'}</span></div>`;
@@ -1545,7 +1549,7 @@ async function renderWeek(){
   const bigs = S.posts.filter(p => p.type === 'big' && (!p.when || new Date(p.when).getTime() > Date.now() - DAY)).sort((a,b) => (a.when||'').localeCompare(b.when||''));
   $('#wk-big').innerHTML = bigs.map(p => `<div class="bigone"><div class="row" style="gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="#E3D5B8" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8z"/></svg><span class="kicker" style="color:var(--gold)">The big one · worth the trip</span></div>
     <div class="serif" style="font-size:22px;line-height:1.2">${esc(p.title || 'Big moment')}</div>${p.when ? `<div style="font-size:16px;font-weight:800;color:#fff">${esc(whenLabel(p.when))}</div>` : ''}
-    <div style="font-size:15px;line-height:1.4;color:#DDE2EE">${esc(p.caption || '')} Save your energy for this one.</div>
+    <div style="font-size:15px;line-height:1.4;color:#E9E2DA">${esc(p.caption || '')} Save your energy for this one.</div>
     ${p.rsvp ? `<div class="panel" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff;font-weight:800">${p.rsvp==='yes' ? "You said you'll be there. They can't wait!" : "We'll send you the recap right after."} <button data-rsvp-undo="${p.id}" style="border:0;background:none;color:var(--gold);font-weight:900;text-decoration:underline;font-size:15px">Change</button></div>`
       : `<div class="row" style="gap:10px"><button class="btn primary" data-rsvp="yes" data-pid="${p.id}" style="min-height:52px;font-size:16px">I'll be there</button><button class="btn ghost" data-rsvp="recap" data-pid="${p.id}" style="min-height:52px;font-size:16px">Send me the recap</button></div>`}</div>`).join('');
 }
@@ -1660,7 +1664,7 @@ async function startStream(){
     off.hidden = true;
   } catch(e){
     off.hidden = false;
-    off.innerHTML = `<div>The camera is off.</div><button class="btn primary" id="cam-retry" style="background:var(--pink);color:var(--navy);width:auto;padding:0 22px">Turn on camera</button><div style="font-size:15px;font-weight:700;color:#C9CFE0">Or tap Photos to pick one you already took.</div>`;
+    off.innerHTML = `<div>The camera is off.</div><button class="btn primary" id="cam-retry" style="background:var(--pink);color:var(--navy);width:auto;padding:0 22px">Turn on camera</button><div style="font-size:15px;font-weight:700;color:#D1C8BF">Or tap Photos to pick one you already took.</div>`;
     $('#cam-retry').onclick = startStream;
   }
 }
@@ -2248,7 +2252,7 @@ function answerTrivia(k){
   haptic();
   $$('#tv-body .ans').forEach(btn => { const o = t.opts[+btn.dataset.k]; btn.disabled = true; if (o === t.a[0]) btn.classList.add('right'); else if (+btn.dataset.k === k) btn.classList.add('wrong'); });
   const lastOfFive = (TV.i + 1) % 5 === 0;
-  $('#tv-fb').innerHTML = `<div class="panel" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff"><div style="font-weight:900;font-size:18px">${right ? 'That’s right!' : 'The answer: ' + esc(t.a[0])}</div><div style="font-size:16px;margin-top:4px;color:#DDE2EE">${esc(t.f)}</div></div><button class="btn primary" id="tv-next" style="margin-top:12px;background:var(--pink);color:var(--navy)">${lastOfFive ? 'Next (family break first)' : 'Next question'}</button>`;
+  $('#tv-fb').innerHTML = `<div class="panel" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff"><div style="font-weight:900;font-size:18px">${right ? 'That’s right!' : 'The answer: ' + esc(t.a[0])}</div><div style="font-size:16px;margin-top:4px;color:#E9E2DA">${esc(t.f)}</div></div><button class="btn primary" id="tv-next" style="margin-top:12px;background:var(--pink);color:var(--navy)">${lastOfFive ? 'Next (family break first)' : 'Next question'}</button>`;
   $('#tv-status').textContent = `Question ${TV.i+1} of ${TV.list.length} · Score ${TV.score}`;
   $('#tv-next').onclick = () => { TV.i++; if (lastOfFive) gameBreak('trivia', renderTrivia); else renderTrivia(); };
 }

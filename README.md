@@ -58,3 +58,12 @@ Rules: pink always carries navy text or a red outline; heart red only for hearts
 What it does beyond Locket: heart a photo straight from the home screen, a "3 NEW" count, Aura-style rotation through recent photos when nothing's new, one widget per grandkid (Edit Widget > Show photos from), Lock Screen widgets, StandBy nightstand photo frame, and a parent version that shows "Grandpa watched ✓ ♥2" and Grandpa's replies.
 
 **Apple setup the widget needs:** App Group `group.com.hiello.family` on App ID `com.hiello.family`, a new App ID `com.hiello.family.widget` with the same App Group, and App Store profiles for both fetched into Codemagic.
+
+## Look (November 2026): warm slate + pink
+Chosen with the "Jobs Treatment" plus a readability check for older eyes (WCAG contrast):
+- **Warm slate `#4A4541`**: Hiello's main background (Grandpa's home, games menu, trivia). Text `#FFF9F3` scores 9.1, pink scores 5.6.
+- **Warm graphite `#34302D`**: wherever a photo fills the screen (camera, stories, Photos) and the widget background.
+- **Warm cream `#F6F2ED`**: setup and settings screens, with warm graphite buttons.
+- **Ballet pink `#F2B8C6` + heart red `#9B1B1F`**: the only highlight color, used sparingly.
+- Ruled out: pewter `#6B655F` (pink 3.4, small text 4.6) and brushed aluminum `#BFB9B2` (pink 1.2, disappears).
+- 2000s Apple touches: a faint brushed finish on slate screens and a soft gloss on round buttons. The navy charm logo stays as the signature mark.
