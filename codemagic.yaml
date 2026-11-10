@@ -58,7 +58,14 @@ workflows:
           cd ios/App
           agvtool new-version -all $((BUILD_NUMBER + 1))
       - name: Build
-        script: xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
+        script: |
+          xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME" || {
+            echo ""
+            echo "================ THE REAL XCODE ERROR (copy from here) ================"
+            grep -h -B2 -A4 -E "error:|error \(|\*\* ARCHIVE FAILED|fatal" /tmp/xcodebuild_logs/*.log | grep -v "^--$" | head -80
+            echo "================ (to here) ================"
+            exit 1
+          }
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
@@ -147,7 +154,14 @@ workflows:
           cd ios/App
           agvtool new-version -all $((BUILD_NUMBER + 1))
       - name: Build
-        script: xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
+        script: |
+          xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME" || {
+            echo ""
+            echo "================ THE REAL XCODE ERROR (copy from here) ================"
+            grep -h -B2 -A4 -E "error:|error \(|\*\* ARCHIVE FAILED|fatal" /tmp/xcodebuild_logs/*.log | grep -v "^--$" | head -80
+            echo "================ (to here) ================"
+            exit 1
+          }
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
