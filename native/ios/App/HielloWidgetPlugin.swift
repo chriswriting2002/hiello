@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import Capacitor
 import WidgetKit
 
@@ -11,7 +12,8 @@ public class HielloWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "save", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "saveFile", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "reload", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "reload", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setIcon", returnType: CAPPluginReturnPromise)
     ]
     static let group = "group.com.hiello.family"
 
@@ -41,5 +43,17 @@ public class HielloWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func reload(_ call: CAPPluginCall) {
         WidgetCenter.shared.reloadAllTimelines()
         call.resolve()
+    }
+
+    /// Switch the home screen icon. name: "Pink", "Cream", "Classic", or empty for the standard graphite icon.
+    @objc func setIcon(_ call: CAPPluginCall) {
+        let raw = call.getString("name") ?? ""
+        let name: String? = raw.isEmpty ? nil : raw
+        DispatchQueue.main.async {
+            guard UIApplication.shared.supportsAlternateIcons else { call.reject("not supported"); return }
+            UIApplication.shared.setAlternateIconName(name) { error in
+                if let error = error { call.reject(error.localizedDescription) } else { call.resolve() }
+            }
+        }
     }
 }

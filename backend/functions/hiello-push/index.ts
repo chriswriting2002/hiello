@@ -100,6 +100,12 @@ Deno.serve(async (req) => {
       title = `${row.from_name || "Family"} sent you a ${what}`;
       body = short(row.note || row.caption || row.title) || "Tap to see it ♥";
       link = `hiello://post/${row.id}`;
+      if (row.kind === "recap") {
+        // a Sunday Recap arrives as several photos: one notification that updates, not a ding per photo
+        title = `${row.from_name || "Family"} sent you their week`;
+        body = short(row.caption) || "A Sunday Recap ♥";
+        collapse = `recap-${row.member_id}-${row.title}`;
+      }
     } else if (kind === "reply") {
       to = members.filter((m: any) => m.id !== row.member_id);
       title = `${row.from_name || gp} sent you a hi!`;

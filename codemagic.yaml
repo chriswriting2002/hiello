@@ -140,6 +140,21 @@ workflows:
           # add the widget target to the Xcode project (xcodeproj comes with CocoaPods)
           ruby -e "require 'xcodeproj'" 2>/dev/null || gem install xcodeproj --no-document
           ruby scripts/add_widget.rb
+      - name: Add the free app icon choices
+        script: |
+          set -e
+          cp native/ios/App/icons/*.png ios/App/App/
+          PLIST=ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Delete :CFBundleIcons:CFBundleAlternateIcons" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleIcons dict" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundleAlternateIcons dict" "$PLIST"
+          for N in Pink Cream Classic; do
+            /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundleAlternateIcons:$N dict" "$PLIST"
+            /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundleAlternateIcons:$N:CFBundleIconFiles array" "$PLIST"
+            /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundleAlternateIcons:$N:CFBundleIconFiles:0 string Icon$N" "$PLIST"
+            /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundleAlternateIcons:$N:UIPrerenderedIcon bool false" "$PLIST"
+          done
+          ruby scripts/add_icons.rb
       - name: Add photo notifications
         script: |
           set -e

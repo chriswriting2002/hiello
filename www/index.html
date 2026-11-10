@@ -434,6 +434,94 @@ textarea.field{resize:none;line-height:1.35}
 .dark,#s-gp,#s-photos,#s-cam{background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(0,0,0,.025) 0 1px,transparent 1px 7px)}
 .cam-rb,.cam-side,.icon-btn,.gpbtn,.homebtn,.cam-to,.bigstrip{background-image:linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,0) 55%)}
 .gpbtn{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 6px rgba(0,0,0,.25)}
+
+/* ===== family side, Locket-style: bottom bar, Memories, Chat, profile ===== */
+#fnav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--sb) + 10px);z-index:55;display:none;gap:4px;padding:6px;border-radius:999px;background:rgba(74,69,65,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+#fnav.on{display:flex}
+#demobar.on ~ #fnav{bottom:calc(var(--sb) + 60px)}
+#fnav button{position:relative;width:64px;height:50px;border:0;border-radius:999px;background:none;color:#D1C8BF;display:flex;align-items:center;justify-content:center}
+#fnav button.on{background:#6E6761;color:#FFF9F3;box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+#fnav b{position:absolute;top:3px;right:9px;min-width:19px;height:19px;border-radius:10px;background:#F2B8C6;color:#34302D;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.avbtn{font-family:Baskerville,Georgia,serif;font-size:19px;font-weight:700;color:#FFF9F3}
+#s-mem,#s-fam{background:var(--graphite);color:#FFF9F3;padding-bottom:calc(var(--sb) + 100px)}
+.ftop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.ftop h1{font-size:24px;margin:0;text-align:center;flex:1}
+.seg{display:flex;gap:4px;padding:4px;border-radius:999px;background:#4A4541;margin:0 auto 14px;width:max-content}
+.seg button{border:0;border-radius:999px;background:none;color:#D1C8BF;font-size:16px;font-weight:900;padding:9px 18px;display:flex;align-items:center;gap:6px}
+.seg button.on{background:#6E6761;color:#FFF9F3}
+.mcount{display:flex;justify-content:center;gap:0;margin:2px auto 14px;width:max-content;background:#4A4541;border-radius:999px;padding:9px 6px;font-size:16px;font-weight:900;color:#E9E2DA}
+.mcount span{padding:0 14px;display:flex;align-items:center;gap:6px}
+.mcount span+span{border-left:2px solid #6E6761}
+.month{background:#4A4541;border-radius:24px;padding:0 0 12px;margin-bottom:16px;overflow:hidden}
+.month h3{margin:0 0 10px;padding:12px 16px;background:#5C5651;font-size:18px}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:0 10px}
+.wk i{font-style:normal;text-align:center;font-size:12px;font-weight:800;color:#BDB4AB;padding-bottom:2px}
+.dcell{aspect-ratio:1;border-radius:12px;background:#5C5651;border:0;padding:0;position:relative;overflow:hidden;color:#BDB4AB;font-size:13px;font-weight:800}
+.dcell.blank{background:none}
+.dcell.future{background:rgba(92,86,81,.35)}
+.dcell img,.dcell video{width:100%;height:100%;object-fit:cover;display:block}
+.dcell .n{position:absolute;right:4px;bottom:3px;font-size:11px;font-weight:900;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.dcell.today{background:#34302D;box-shadow:inset 0 0 0 3px #F2B8C6;color:#F2B8C6;font-size:26px;font-weight:700}
+.mempty{text-align:center;padding:22px 10px 18px;color:#D1C8BF}
+.mempty b{display:block;font-size:20px;color:#FFF9F3;margin:8px 0 4px}
+.recap{background:#4A4541;border-radius:22px;padding:14px;margin-bottom:14px;border:0;width:100%;text-align:left;color:#FFF9F3}
+.recap .g{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.recap .g div{aspect-ratio:1;border-radius:12px;overflow:hidden;background:#5C5651}
+.recap .g img,.recap .g video{width:100%;height:100%;object-fit:cover;display:block}
+.stack{position:relative;width:170px;height:150px;margin:6px auto 4px}
+.stack i{position:absolute;width:104px;height:132px;border-radius:14px;background:#5C5651;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.stack i:first-child{left:10px;top:14px;transform:rotate(-8deg)}
+.stack i:last-child{right:10px;top:0;transform:rotate(7deg);background:#6E6761}
+#s-fam .sent{background:#4A4541;color:#FFF9F3;border:0}
+#s-fam .muted{color:#D1C8BF}
+#s-fam h3{color:#FFF9F3}
+#s-fam .panel{background:#4A4541;color:#D1C8BF;border:0}
+.gs{position:fixed;inset:0;z-index:92;background:rgba(20,17,15,.6);display:flex;align-items:flex-end}
+.gs[hidden]{display:none}
+.gs-in{--muted:#D1C8BF;width:100%;max-height:92dvh;overflow-y:auto;background:#34302D;color:#FFF9F3;border-radius:28px 28px 0 0;padding:10px 16px calc(var(--sb) + 22px);animation:sheetUp .25s ease-out;box-shadow:0 -10px 30px rgba(0,0,0,.35)}
+.gs-grab{width:44px;height:5px;border-radius:3px;background:#6E6761;margin:0 auto 14px}
+.gs-h{font-family:Baskerville,Georgia,serif;font-size:24px;font-weight:700;text-align:center;margin:2px 0 6px}
+.gs-sub{text-align:center;color:#D1C8BF;font-size:15px;font-weight:700;margin:0 0 14px;line-height:1.4}
+.pf-av{width:96px;height:96px;border-radius:50%;margin:4px auto 10px;background:#4A4541;box-shadow:0 0 0 4px #5C5651;display:flex;align-items:center;justify-content:center;font-family:Baskerville,Georgia,serif;font-size:38px;font-weight:700}
+.pf-name{text-align:center;font-size:24px;font-weight:900}
+.pf-fam{text-align:center;font-size:14px;font-weight:700;color:#BDB4AB;margin:2px 0 16px}
+.pf-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:18px}
+.pf-row button{border:0;background:none;color:#FFF9F3;display:flex;flex-direction:column;align-items:center;gap:7px;font-size:14px;font-weight:800}
+.pf-row button i{width:54px;height:54px;border-radius:50%;background:#4A4541;display:flex;align-items:center;justify-content:center}
+.pf-free{display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;background:#4A4541;box-shadow:inset 0 0 0 2px #F2B8C6;margin-bottom:20px}
+.pf-free .h{width:44px;height:44px;border-radius:12px;background:#34302D;display:flex;align-items:center;justify-content:center;flex:none}
+.pf-sec{display:flex;align-items:center;justify-content:space-between;font-size:17px;font-weight:900;margin:0 4px 10px}
+.pf-sec .new{color:#F2B8C6;font-size:15px}
+.wcards{display:flex;gap:10px;margin-bottom:22px;overflow-x:auto}
+.wcard{flex:none;width:136px;border-radius:22px;background:#4A4541;border:0;color:#FFF9F3;padding:14px 10px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:16px;font-weight:900}
+.wcard .c{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#5C5651;box-shadow:0 0 0 3px #F2B8C6;font-family:Baskerville,Georgia,serif;font-size:24px}
+.wcard .c.add{background:#34302D;color:#F2B8C6;font-size:34px;font-family:inherit}
+.wcard .b{width:100%;background:#5C5651;border-radius:12px;padding:8px 0;font-size:15px;color:#E9E2DA}
+.pf-list{background:#4A4541;border-radius:20px;overflow:hidden;margin-bottom:20px}
+.pf-list button{width:100%;border:0;background:none;color:#FFF9F3;display:flex;align-items:center;gap:12px;padding:15px 16px;font-size:17px;font-weight:800;text-align:left}
+.pf-list button+button{border-top:1px solid #5C5651}
+.pf-list .v{margin-left:auto;color:#BDB4AB;font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px}
+.pf-list .free{background:#F2B8C6;color:#34302D;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:900}
+.pf-list .ic{width:30px;height:30px;border-radius:9px;background:#34302D;display:flex;align-items:center;justify-content:center;flex:none;color:#F2B8C6}
+.pf-label{font-size:15px;font-weight:900;color:#BDB4AB;margin:0 6px 8px}
+.qrbox{background:#FFF9F3;border-radius:26px;padding:18px;width:min(78vw,300px);margin:0 auto 12px}
+.qrbox canvas{width:100%;height:auto;display:block;image-rendering:pixelated}
+.qrcode{text-align:center;font-size:30px;font-weight:900;letter-spacing:4px;margin-bottom:6px}
+.icgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+.icgrid button{border:0;background:#4A4541;border-radius:22px;padding:14px;color:#FFF9F3;font-size:16px;font-weight:900;display:flex;flex-direction:column;align-items:center;gap:8px}
+.icgrid button.on{box-shadow:inset 0 0 0 3px #F2B8C6}
+.icgrid img{width:96px;height:96px;border-radius:22px}
+.themesw{width:96px;height:96px;border-radius:26px;background:#5C5651}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:4px 0 12px}
+.rgrid div{aspect-ratio:1;border-radius:12px;overflow:hidden;background:#4A4541;position:relative}
+.rgrid img,.rgrid video{width:100%;height:100%;object-fit:cover;display:block}
+.sunday{border:0;border-radius:999px;background:#4A4541;color:#FFF9F3;padding:10px 16px;font-size:15px;font-weight:900;display:flex;align-items:center;gap:8px;box-shadow:inset 0 0 0 2px #F2B8C6}
+/* camera themes (free) */
+#s-cam[data-theme="pink"] .cam-sq{box-shadow:0 0 0 5px #F2B8C6}
+#s-cam[data-theme="cream"] .cam-sq{box-shadow:0 0 0 6px #FFF9F3}
+#s-cam[data-theme="polaroid"] .cam-sq{box-shadow:0 0 0 10px #FFFFFF,0 14px 0 10px #FFFFFF;border-radius:6px}
+#s-cam[data-theme="rainbow"] .cam-sq{box-shadow:0 0 0 3px #F2B8C6,0 0 0 6px #FFE7A8,0 0 0 9px #BFE3C9,0 0 0 12px #B9D3F0}
+#s-cam[data-theme="none"] .cam-sq{box-shadow:none}
 </style>
 </head>
 <body>
@@ -665,17 +753,20 @@ textarea.field{resize:none;line-height:1.35}
 </section>
 
 <!-- ============ FAMILY HOME ============ -->
-<section class="screen light-screen pad-bottom" id="s-fam">
-  <div class="row between" style="margin-bottom:12px">
-    <button class="icon-btn" aria-label="Back to camera" data-back="cam"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <div style="flex:1;text-align:center"><div class="kicker">Hiello · Family side</div><h1 style="font-size:24px" id="fam-hello">Sent to Grandpa</h1></div>
-    <button class="icon-btn" aria-label="Settings" data-go="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-  </div>
+<section class="screen pad-bottom" id="s-fam">
+  <div class="ftop"><span style="width:52px"></span><h1 id="fam-hello">Chat</h1><button class="cam-rb avbtn" data-prof aria-label="Your profile"></button></div>
   <div id="fam-replies"></div>
-  <h3 style="font-size:20px;margin:14px 2px 10px">What you've sent</h3>
+  <h3 style="font-size:20px;margin:14px 2px 10px" id="fam-sent-h">Your photos</h3>
   <div class="col" id="fam-list" style="gap:10px"></div>
 </section>
 
+
+<!-- ============ MEMORIES (family side) ============ -->
+<section class="screen pad-bottom" id="s-mem">
+  <div class="ftop"><span style="width:52px"></span><h1>Memories</h1><button class="cam-rb avbtn" data-prof aria-label="Your profile"></button></div>
+  <div class="seg" id="mem-seg"><button data-v="recaps">Recaps</button><button data-v="photos" class="on">Photos</button></div>
+  <div id="mem-body"></div>
+</section>
 
 <!-- ============ CAMERA (opens first on the family side, like Locket) ============ -->
 <section class="screen pad-bottom" id="s-cam">
@@ -684,15 +775,16 @@ textarea.field{resize:none;line-height:1.35}
     <span class="cam-to" id="cam-to">To Grandpa</span>
     <button class="cam-rb" id="cam-right" aria-label="Settings"></button>
   </div>
-  <div class="cam-sq" id="cam-sq"><video id="cam-v" playsinline muted autoplay></video><div id="cam-shot"></div><div class="cam-off" id="cam-off" hidden></div><input class="cam-note" id="cam-note" maxlength="40" hidden></div>
+  <div class="cam-sq" id="cam-sq"><video id="cam-v" playsinline muted autoplay></video><div id="cam-shot"></div><div class="cam-off" id="cam-off" hidden></div><input class="cam-note" id="cam-note" maxlength="60" hidden></div>
   <div class="cam-ctl">
     <button class="cam-side" id="cam-a"></button>
     <div id="cam-mid"></div>
     <button class="cam-side" id="cam-b"></button>
   </div>
   <div class="cam-hint" id="cam-hint">Tap for a photo · hold for a video</div>
-  <button class="cam-sent" id="cam-sent"></button>
+  <div id="cam-sunday"></div>
   <input type="file" id="cam-file" accept="image/*,video/*" style="display:none">
+  <input type="file" id="recap-file" accept="image/*,video/*" multiple style="display:none">
 </section>
 
 <!-- ============ MAKE ============ -->
@@ -754,12 +846,15 @@ textarea.field{resize:none;line-height:1.35}
 
 <div id="demobar"><button data-mode="fam">Family side</button><button data-mode="gp">Grandpa's phone</button></div>
 <svg id="pm-sprite" xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><symbol id="t-all-52" viewBox="0 0 100 136"><rect x="12" y="14" width="76" height="108" rx="7" fill="none" stroke="#1a3fb0" stroke-width="8" /><rect x="25" y="28" width="50" height="80" rx="4" fill="none" stroke="#1a3fb0" stroke-width="3.5" /></symbol><symbol id="t-all-51" viewBox="0 0 100 136"><text x="50" y="106" text-anchor="middle" font-size="100" fill="#0b6b4b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">發</text></symbol><symbol id="t-all-50" viewBox="0 0 100 136"><text x="50" y="108" text-anchor="middle" font-size="106" fill="#ec1c24" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">中</text></symbol><symbol id="t-all-49" viewBox="0 0 100 136"><text x="50" y="106" text-anchor="middle" font-size="102" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">北</text></symbol><symbol id="t-all-48" viewBox="0 0 100 136"><text x="50" y="106" text-anchor="middle" font-size="102" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">西</text></symbol><symbol id="t-all-47" viewBox="0 0 100 136"><text x="50" y="106" text-anchor="middle" font-size="102" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">南</text></symbol><symbol id="t-all-46" viewBox="0 0 100 136"><text x="50" y="106" text-anchor="middle" font-size="102" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">東</text></symbol><symbol id="t-all-45" viewBox="0 0 100 136"><text x="50" y="60" text-anchor="middle" font-size="64" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">九</text><text x="50" y="132" text-anchor="middle" font-size="78" fill="#ec1c24" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">萬</text></symbol><symbol id="t-all-44" viewBox="0 0 100 136"><text x="50" y="60" text-anchor="middle" font-size="64" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">八</text><text x="50" y="132" text-anchor="middle" font-size="78" fill="#ec1c24" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">萬</text></symbol><symbol id="t-all-43" viewBox="0 0 100 136"><text x="50" y="60" text-anchor="middle" font-size="64" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">七</text><text x="50" y="132" text-anchor="middle" font-size="78" fill="#ec1c24" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">萬</text></symbol><symbol id="t-all-42" viewBox="0 0 100 136"><text x="50" y="60" text-anchor="middle" font-size="64" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">六</text><text x="50" y="132" text-anchor="middle" font-size="78" fill="#ec1c24" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">萬</text></symbol><symbol id="t-all-41" viewBox="0 0 100 136"><text x="50" y="60" text-anchor="middle" font-size="64" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">五</text><text x="50" y="132" text-anchor="middle" font-size="78" fill="#ec1c24" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">萬</text></symbol><symbol id="t-all-40" viewBox="0 0 100 136"><text x="50" y="60" text-anchor="middle" font-size="64" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">四</text><text x="50" y="132" text-anchor="middle" font-size="78" fill="#ec1c24" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">萬</text></symbol><symbol id="t-all-39" viewBox="0 0 100 136"><text x="50" y="60" text-anchor="middle" font-size="64" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">三</text><text x="50" y="132" text-anchor="middle" font-size="78" fill="#ec1c24" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">萬</text></symbol><symbol id="t-all-38" viewBox="0 0 100 136"><text x="50" y="60" text-anchor="middle" font-size="64" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">二</text><text x="50" y="132" text-anchor="middle" font-size="78" fill="#ec1c24" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">萬</text></symbol><symbol id="t-all-37" viewBox="0 0 100 136"><text x="50" y="60" text-anchor="middle" font-size="64" fill="#0f1f6b" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">一</text><text x="50" y="132" text-anchor="middle" font-size="78" fill="#ec1c24" style="font-family:'PingFang SC','Hiragino Sans','Noto Sans CJK SC','Microsoft YaHei','SimSun',serif;font-weight:700">萬</text></symbol><symbol id="t-all-36" viewBox="0 0 100 100"><rect x="19.5" y="4.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="18.5" y="15.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="24.5" y="7.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="43.5" y="4.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="42.5" y="15.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="7.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="67.5" y="4.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="66.5" y="15.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="72.5" y="7.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="19.5" y="37.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="18.5" y="48.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="24.5" y="40.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="43.5" y="37.0" width="13" height="26" rx="6" fill="#e3171d" /><rect x="42.5" y="48.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="40.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="67.5" y="37.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="66.5" y="48.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="72.5" y="40.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="19.5" y="70.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="18.5" y="81.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="24.5" y="73.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="43.5" y="70.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="42.5" y="81.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="73.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="67.5" y="70.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="66.5" y="81.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="72.5" y="73.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /></symbol><symbol id="t-all-35" viewBox="0 0 100 100"><rect x="15.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="14.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="20.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="34.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="33.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="39.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="52.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="51.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="57.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="71.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="70.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="76.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="15.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="14.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="20.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="34.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="33.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="39.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="52.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="51.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="57.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="71.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="70.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="76.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /></symbol><symbol id="t-all-34" viewBox="0 0 100 100"><rect x="43.5" y="4.0" width="13" height="26" rx="6" fill="#e3171d" /><rect x="42.5" y="15.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="7.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="19.5" y="37.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="18.5" y="48.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="24.5" y="40.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="43.5" y="37.0" width="13" height="26" rx="6" fill="#e3171d" /><rect x="42.5" y="48.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="40.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="67.5" y="37.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="66.5" y="48.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="72.5" y="40.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="19.5" y="70.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="18.5" y="81.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="24.5" y="73.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="43.5" y="70.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="42.5" y="81.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="73.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="67.5" y="70.0" width="13" height="26" rx="6" fill="#0b6b4b" /><rect x="66.5" y="81.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="72.5" y="73.0" width="3" height="20" rx="1.5" fill="#7fc9a8" opacity=".55" /></symbol><symbol id="t-all-33" viewBox="0 0 100 100"><rect x="19.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="18.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="24.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="43.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="42.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="67.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="66.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="72.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="19.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="18.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="24.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="43.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="42.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="67.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="66.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="72.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /></symbol><symbol id="t-all-32" viewBox="0 0 100 100"><rect x="19.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="18.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="24.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="67.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="66.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="72.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="43.5" y="32.0" width="13" height="36" rx="6" fill="#e3171d" /><rect x="42.5" y="48.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="35.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="19.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="18.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="24.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="67.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="66.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="72.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /></symbol><symbol id="t-all-31" viewBox="0 0 100 100"><rect x="25.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="24.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="30.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="61.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="60.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="66.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="25.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="24.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="30.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="61.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="60.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="66.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /></symbol><symbol id="t-all-30" viewBox="0 0 100 100"><rect x="43.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="42.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="23.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="22.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="28.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="63.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="62.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="68.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /></symbol><symbol id="t-all-29" viewBox="0 0 100 100"><rect x="43.5" y="10.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="42.5" y="26.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="13.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /><rect x="43.5" y="54.0" width="13" height="36" rx="6" fill="#0b6b4b" /><rect x="42.5" y="70.5" width="15" height="3" rx="1.5" fill="#053d2a" /><rect x="48.5" y="57.0" width="3" height="30" rx="1.5" fill="#7fc9a8" opacity=".55" /></symbol><symbol id="t-all-28" viewBox="0 0 100 100"><path d="M50 88V30" stroke="#0b6b4b" stroke-width="8" stroke-linecap="round" /><path d="M50 50C34 44 26 30 30 16C42 22 50 34 50 50ZM50 62C64 56 74 44 72 28C60 34 52 46 50 62Z" fill="#14805a" /><circle cx="50" cy="24" r="10" fill="#e3171d" /><circle cx="53" cy="21" r="2.5" fill="#fff" /></symbol><symbol id="t-all-27" viewBox="0 0 100 100"><circle cx="26" cy="20" r="11" fill="#1a3fb0" /><circle cx="26" cy="20" r="6.82" fill="#fff" /><circle cx="26" cy="20" r="4.18" fill="#1a3fb0" /><circle cx="50" cy="20" r="11" fill="#0b6b4b" /><circle cx="50" cy="20" r="6.82" fill="#fff" /><circle cx="50" cy="20" r="4.18" fill="#0b6b4b" /><circle cx="74" cy="20" r="11" fill="#e3171d" /><circle cx="74" cy="20" r="6.82" fill="#fff" /><circle cx="74" cy="20" r="4.18" fill="#e3171d" /><circle cx="26" cy="50" r="11" fill="#1a3fb0" /><circle cx="26" cy="50" r="6.82" fill="#fff" /><circle cx="26" cy="50" r="4.18" fill="#1a3fb0" /><circle cx="50" cy="50" r="11" fill="#0b6b4b" /><circle cx="50" cy="50" r="6.82" fill="#fff" /><circle cx="50" cy="50" r="4.18" fill="#0b6b4b" /><circle cx="74" cy="50" r="11" fill="#e3171d" /><circle cx="74" cy="50" r="6.82" fill="#fff" /><circle cx="74" cy="50" r="4.18" fill="#e3171d" /><circle cx="26" cy="80" r="11" fill="#1a3fb0" /><circle cx="26" cy="80" r="6.82" fill="#fff" /><circle cx="26" cy="80" r="4.18" fill="#1a3fb0" /><circle cx="50" cy="80" r="11" fill="#0b6b4b" /><circle cx="50" cy="80" r="6.82" fill="#fff" /><circle cx="50" cy="80" r="4.18" fill="#0b6b4b" /><circle cx="74" cy="80" r="11" fill="#e3171d" /><circle cx="74" cy="80" r="6.82" fill="#fff" /><circle cx="74" cy="80" r="4.18" fill="#e3171d" /></symbol><symbol id="t-all-26" viewBox="0 0 100 100"><circle cx="32" cy="16" r="11" fill="#e3171d" /><circle cx="32" cy="16" r="6.82" fill="#fff" /><circle cx="32" cy="16" r="4.18" fill="#e3171d" /><circle cx="68" cy="16" r="11" fill="#1a3fb0" /><circle cx="68" cy="16" r="6.82" fill="#fff" /><circle cx="68" cy="16" r="4.18" fill="#1a3fb0" /><circle cx="32" cy="39" r="11" fill="#0b6b4b" /><circle cx="32" cy="39" r="6.82" fill="#fff" /><circle cx="32" cy="39" r="4.18" fill="#0b6b4b" /><circle cx="68" cy="39" r="11" fill="#e3171d" /><circle cx="68" cy="39" r="6.82" fill="#fff" /><circle cx="68" cy="39" r="4.18" fill="#e3171d" /><circle cx="32" cy="62" r="11" fill="#1a3fb0" /><circle cx="32" cy="62" r="6.82" fill="#fff" /><circle cx="32" cy="62" r="4.18" fill="#1a3fb0" /><circle cx="68" cy="62" r="11" fill="#0b6b4b" /><circle cx="68" cy="62" r="6.82" fill="#fff" /><circle cx="68" cy="62" r="4.18" fill="#0b6b4b" /><circle cx="32" cy="85" r="11" fill="#e3171d" /><circle cx="32" cy="85" r="6.82" fill="#fff" /><circle cx="32" cy="85" r="4.18" fill="#e3171d" /><circle cx="68" cy="85" r="11" fill="#1a3fb0" /><circle cx="68" cy="85" r="6.82" fill="#fff" /><circle cx="68" cy="85" r="4.18" fill="#1a3fb0" /></symbol><symbol id="t-all-25" viewBox="0 0 100 100"><circle cx="26" cy="20" r="11" fill="#0b6b4b" /><circle cx="26" cy="20" r="6.82" fill="#fff" /><circle cx="26" cy="20" r="4.18" fill="#0b6b4b" /><circle cx="50" cy="28" r="11" fill="#e3171d" /><circle cx="50" cy="28" r="6.82" fill="#fff" /><circle cx="50" cy="28" r="4.18" fill="#e3171d" /><circle cx="74" cy="36" r="11" fill="#1a3fb0" /><circle cx="74" cy="36" r="6.82" fill="#fff" /><circle cx="74" cy="36" r="4.18" fill="#1a3fb0" /><circle cx="34" cy="62" r="11" fill="#0b6b4b" /><circle cx="34" cy="62" r="6.82" fill="#fff" /><circle cx="34" cy="62" r="4.18" fill="#0b6b4b" /><circle cx="66" cy="62" r="11" fill="#e3171d" /><circle cx="66" cy="62" r="6.82" fill="#fff" /><circle cx="66" cy="62" r="4.18" fill="#e3171d" /><circle cx="34" cy="82" r="11" fill="#1a3fb0" /><circle cx="34" cy="82" r="6.82" fill="#fff" /><circle cx="34" cy="82" r="4.18" fill="#1a3fb0" /><circle cx="66" cy="82" r="11" fill="#0b6b4b" /><circle cx="66" cy="82" r="6.82" fill="#fff" /><circle cx="66" cy="82" r="4.18" fill="#0b6b4b" /></symbol><symbol id="t-all-24" viewBox="0 0 100 100"><circle cx="32" cy="22" r="12.5" fill="#1a3fb0" /><circle cx="32" cy="22" r="7.75" fill="#fff" /><circle cx="32" cy="22" r="4.75" fill="#1a3fb0" /><circle cx="68" cy="22" r="12.5" fill="#0b6b4b" /><circle cx="68" cy="22" r="7.75" fill="#fff" /><circle cx="68" cy="22" r="4.75" fill="#0b6b4b" /><circle cx="32" cy="50" r="12.5" fill="#e3171d" /><circle cx="32" cy="50" r="7.75" fill="#fff" /><circle cx="32" cy="50" r="4.75" fill="#e3171d" /><circle cx="68" cy="50" r="12.5" fill="#1a3fb0" /><circle cx="68" cy="50" r="7.75" fill="#fff" /><circle cx="68" cy="50" r="4.75" fill="#1a3fb0" /><circle cx="32" cy="78" r="12.5" fill="#0b6b4b" /><circle cx="32" cy="78" r="7.75" fill="#fff" /><circle cx="32" cy="78" r="4.75" fill="#0b6b4b" /><circle cx="68" cy="78" r="12.5" fill="#e3171d" /><circle cx="68" cy="78" r="7.75" fill="#fff" /><circle cx="68" cy="78" r="4.75" fill="#e3171d" /></symbol><symbol id="t-all-23" viewBox="0 0 100 100"><circle cx="30" cy="26" r="14" fill="#e3171d" /><circle cx="30" cy="26" r="8.68" fill="#fff" /><circle cx="30" cy="26" r="5.32" fill="#e3171d" /><circle cx="70" cy="26" r="14" fill="#1a3fb0" /><circle cx="70" cy="26" r="8.68" fill="#fff" /><circle cx="70" cy="26" r="5.32" fill="#1a3fb0" /><circle cx="50" cy="50" r="14" fill="#0b6b4b" /><circle cx="50" cy="50" r="8.68" fill="#fff" /><circle cx="50" cy="50" r="5.32" fill="#0b6b4b" /><circle cx="30" cy="74" r="14" fill="#e3171d" /><circle cx="30" cy="74" r="8.68" fill="#fff" /><circle cx="30" cy="74" r="5.32" fill="#e3171d" /><circle cx="70" cy="74" r="14" fill="#1a3fb0" /><circle cx="70" cy="74" r="8.68" fill="#fff" /><circle cx="70" cy="74" r="5.32" fill="#1a3fb0" /></symbol><symbol id="t-all-22" viewBox="0 0 100 100"><circle cx="32" cy="30" r="16" fill="#0b6b4b" /><circle cx="32" cy="30" r="9.92" fill="#fff" /><circle cx="32" cy="30" r="6.08" fill="#0b6b4b" /><circle cx="68" cy="30" r="16" fill="#e3171d" /><circle cx="68" cy="30" r="9.92" fill="#fff" /><circle cx="68" cy="30" r="6.08" fill="#e3171d" /><circle cx="32" cy="70" r="16" fill="#1a3fb0" /><circle cx="32" cy="70" r="9.92" fill="#fff" /><circle cx="32" cy="70" r="6.08" fill="#1a3fb0" /><circle cx="68" cy="70" r="16" fill="#0b6b4b" /><circle cx="68" cy="70" r="9.92" fill="#fff" /><circle cx="68" cy="70" r="6.08" fill="#0b6b4b" /></symbol><symbol id="t-all-21" viewBox="0 0 100 100"><circle cx="28" cy="24" r="16" fill="#1a3fb0" /><circle cx="28" cy="24" r="9.92" fill="#fff" /><circle cx="28" cy="24" r="6.08" fill="#1a3fb0" /><circle cx="50" cy="50" r="16" fill="#0b6b4b" /><circle cx="50" cy="50" r="9.92" fill="#fff" /><circle cx="50" cy="50" r="6.08" fill="#0b6b4b" /><circle cx="72" cy="76" r="16" fill="#e3171d" /><circle cx="72" cy="76" r="9.92" fill="#fff" /><circle cx="72" cy="76" r="6.08" fill="#e3171d" /></symbol><symbol id="t-all-20" viewBox="0 0 100 100"><circle cx="50" cy="28" r="16" fill="#e3171d" /><circle cx="50" cy="28" r="9.92" fill="#fff" /><circle cx="50" cy="28" r="6.08" fill="#e3171d" /><circle cx="50" cy="72" r="16" fill="#1a3fb0" /><circle cx="50" cy="72" r="9.92" fill="#fff" /><circle cx="50" cy="72" r="6.08" fill="#1a3fb0" /></symbol><symbol id="t-all-19" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="#d23b3b" /><circle cx="50" cy="50" r="21.08" fill="#fff" /><circle cx="50" cy="50" r="12.92" fill="#d23b3b" /><circle cx="50" cy="50" r="28.9" fill="none" stroke="#0b6b4b" stroke-width="3" /></symbol><symbol id="t-all-18" viewBox="3 -1 58 54"><defs><clipPath id="geppetto-face"><ellipse cx="32" cy="26.4" rx="20" ry="17" /></clipPath></defs><g class="p-tail"><path d="M41.4 58.4C49 59.4 56.4 55.6 57.8 47.2C58.8 41.4 56.4 35.6 52.4 34.8C49.6 34.2 48 36.6 49.6 38.8C51.8 41.8 52 46 49.6 49.6C47.4 52.8 44 53.8 41 53.4Z" fill="#ef9150" /></g><g class="p-body"><ellipse cx="32" cy="52.8" rx="11.4" ry="9" fill="#fffaf2" /><path d="M25.4 45.6C27.4 47.4 29.6 46.6 32 47.6C34.4 46.6 36.6 47.4 38.6 45.6L37.4 55.4C34 57.4 30 57.4 26.6 55.4Z" fill="#fffaf2" /><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffaf2" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffaf2" /></g><path d="M20.6 50C22 46 26 45.4 28.4 47.6C29 51.6 26.6 55.6 22 56.2C20.6 54.4 20.2 52 20.6 50Z" fill="#3a3238" /><path d="M36 47.8C39.6 46 43.2 48 43.4 52C43.4 55 41 57 38.4 56.4C36.6 54 35.4 50.6 36 47.8Z" fill="#ef9150" /><path d="M41.4 53.6C44.4 55 47.6 55 50 53.2C51 56.6 48.4 59 44.6 58.8C42.8 58.6 41.6 57.6 41.4 56Z" fill="#3a3238" /></g><g class="p-head"><path d="M13.6 21.8L14 8.6C14.1 7.2 15.4 6.6 16.4 7.4L28 14.2Z" fill="#ef9150" /><path d="M16.4 17.8L16.6 11.2L23.2 15Z" fill="#f7b5c4" /><g transform="translate(64 0) scale(-1 1)"><path d="M13.6 21.8L14 8.6C14.1 7.2 15.4 6.6 16.4 7.4L28 14.2Z" fill="#3a3238" /><path d="M16.4 17.8L16.6 11.2L23.2 15Z" fill="#f7b5c4" /></g><path d="M14 30C10.6 31.4 10.2 34.6 12.2 35.6C11 37.6 12.6 39.8 15 39.2C15.4 41.4 18 42.4 20 41Z" fill="#fffaf2" /><g transform="translate(64 0) scale(-1 1)"><path d="M14 30C10.6 31.4 10.2 34.6 12.2 35.6C11 37.6 12.6 39.8 15 39.2C15.4 41.4 18 42.4 20 41Z" fill="#fffaf2" /></g><ellipse cx="32" cy="26.4" rx="20" ry="17" fill="#fffaf2" /><g clip-path="url(#geppetto-face)"><path d="M8 2C18 4 26 10 28.6 19C29.6 23 27.4 27 22 27.6C16 28.2 11 26 8 22Z" fill="#ef9150" /><path d="M38 6C44 4 52 8 56 14L56 24C50 25 44 23 41 19C38.6 15.8 37 10.6 38 6Z" fill="#3a3238" /><ellipse cx="47.6" cy="40" rx="6" ry="3.6" fill="#ef9150" transform="rotate(-24 47.6 40)" /></g><ellipse cx="32" cy="37" rx="7.2" ry="5.2" fill="#fffaf2" /><circle cx="16.6" cy="34" r="2.7" fill="#ff9db5" opacity=".9" /><g transform="translate(64 0) scale(-1 1)"><circle cx="16.6" cy="34" r="2.7" fill="#ff9db5" opacity=".9" /></g><path d="M21 35.6L13.4 34.4M21.2 37.4L14 38.4" stroke="#fffdf8" stroke-width=".9" stroke-linecap="round" opacity=".9" /><g transform="translate(64 0) scale(-1 1)"><path d="M21 35.6L13.4 34.4M21.2 37.4L14 38.4" stroke="#fffdf8" stroke-width=".9" stroke-linecap="round" opacity=".9" /></g><path d="M29.8 31.6H34.2L32 34.2Z" fill="#f28aa3" stroke="#d96b86" stroke-width=".6" stroke-linejoin="round" /><g class="p-mouth"><path d="M32 34.2V35.4M32 35.4Q30.2 37.6 28.6 35.8M32 35.4Q33.8 37.6 35.4 35.8" fill="none" stroke="#6b4a3c" stroke-width="1.1" stroke-linecap="round" /></g><path class="p-tongue" display="none" d="M30.4 36.4h3.2v2a1.6 1.6 0 0 1-3.2 0z" fill="#ff8fb0" /><path class="p-shut" display="none" d="M29 35.8q1.5 2 3 0q1.5 2 3 0" fill="none" stroke="#6b4a3c" stroke-width="1.2" stroke-linecap="round" /><g class="p-eyes"><ellipse cx="22.4" cy="26.8" rx="5" ry="5.4" fill="#5cc58a" /><ellipse cx="22.4" cy="27.2" rx="2.6" ry="3.9" fill="#22252b" /><circle cx="24" cy="24.8" r="1.8" fill="#fff" /><circle cx="20.8" cy="29.4" r="0.8" fill="#fff" opacity=".8" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="22.4" cy="26.8" rx="5" ry="5.4" fill="#5cc58a" /><ellipse cx="22.4" cy="27.2" rx="2.6" ry="3.9" fill="#22252b" /><circle cx="24" cy="24.8" r="1.8" fill="#fff" /><circle cx="20.8" cy="29.4" r="0.8" fill="#fff" opacity=".8" /></g></g><path class="p-lids" display="none" d="M18.2 27.8q4.2 3 8.4 0M37.4 27.8q4.2 3 8.4 0" fill="none" stroke="#3a2a26" stroke-width="1.8" stroke-linecap="round" /><g fill="none" stroke="#c9952b" stroke-width="1.3"><circle cx="22.4" cy="27" r="6.6" /><circle cx="41.6" cy="27" r="6.6" /><path d="M29 26.2Q32 24.2 35 26.2M15.8 26L12.4 24.6M48.2 26L51.6 24.6" stroke-linecap="round" /></g></g><text class="p-z" display="none" x="52" y="9" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="11" fill="#76827a">z</text></symbol><clipPath id="geppetto-face"><ellipse cx="32" cy="26.4" rx="20" ry="17" /></clipPath><symbol id="t-all-17" viewBox="3 -1 58 54"><g class="p-tail"><path d="M41.6 52.6C45 51.4 48.4 48.4 50 45.2C51 43.4 53.4 44.2 52.8 46.4C51.6 50.4 47 54.4 42.4 55.6Z" fill="#7d4c36" /></g><g class="p-body"><ellipse cx="32" cy="52.6" rx="11.4" ry="9.2" fill="#fffdf8" /><circle cx="24.4" cy="49" r="1.1" fill="#7d4c36" /><circle cx="26.6" cy="55" r="1.1" fill="#7d4c36" /><circle cx="23.6" cy="53.4" r="1.1" fill="#7d4c36" /><circle cx="38.6" cy="50.4" r="1.1" fill="#7d4c36" /><circle cx="40.2" cy="55.2" r="1.1" fill="#7d4c36" /><circle cx="36.4" cy="57.4" r="1.1" fill="#7d4c36" /><circle cx="28.2" cy="58.6" r="1.1" fill="#7d4c36" /><circle cx="35" cy="53.6" r="1.1" fill="#7d4c36" /><circle cx="29.6" cy="51.6" r="1.1" fill="#7d4c36" /><path d="M39 44.6C43 46 44 50 43.2 53C41 51.6 38.6 48.6 39 44.6Z" fill="#7d4c36" /><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffdf8" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffdf8" /></g><path d="M21.6 43.8Q32 48.8 42.4 43.8" fill="none" stroke="#38b0ff" stroke-width="2.8" stroke-linecap="round" /><circle cx="32" cy="48.8" r="2.4" fill="#ffc93c" stroke="#e0a100" stroke-width=".7" /></g><g class="p-head"><path d="M15.6 12.6C9.4 14 6.8 22.4 8 31C8.8 37 11.6 41 15 41.4C18.4 41.6 19.6 36 19.6 29.4C19.6 23 19.4 16.8 15.6 12.6Z" fill="#633a29" /><g transform="translate(64 0) scale(-1 1)"><path d="M15.6 12.6C9.4 14 6.8 22.4 8 31C8.8 37 11.6 41 15 41.4C18.4 41.6 19.6 36 19.6 29.4C19.6 23 19.4 16.8 15.6 12.6Z" fill="#633a29" /></g><ellipse cx="32" cy="26" rx="19.2" ry="17.6" fill="#7d4c36" /><path d="M32 8.6C33.2 8.6 33.6 12 33.4 16C33.2 19.4 32.6 21.6 32 22.6C31.4 21.6 30.8 19.4 30.6 16C30.4 12 30.8 8.6 32 8.6Z" fill="#fffdf8" /><ellipse cx="32" cy="36.4" rx="9.8" ry="7.4" fill="#9a6249" /><ellipse cx="22.2" cy="20.2" rx="2.4" ry="1.4" fill="#9a6249" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="22.2" cy="20.2" rx="2.4" ry="1.4" fill="#9a6249" /></g><circle cx="17.8" cy="33.2" r="2.9" fill="#ff9db5" opacity=".85" /><g transform="translate(64 0) scale(-1 1)"><circle cx="17.8" cy="33.2" r="2.9" fill="#ff9db5" opacity=".85" /></g><ellipse cx="32" cy="32.2" rx="3.4" ry="2.5" fill="#3a2320" /><ellipse cx="31" cy="31.4" rx="1" ry="0.6" fill="#fff" opacity=".6" /><g transform="translate(0 0.6)"><g class="p-mouth"><path d="M28.8 35.2Q32 36.6 35.2 35.2Q35 39.6 32 39.6Q29 39.6 28.8 35.2Z" fill="#7d3345" /><ellipse cx="32" cy="38.4" rx="2" ry="1.3" fill="#ff8fb0" /></g><path class="p-tongue" display="none" d="M29.9 37.2h4.2v2.8a2.1 2.1 0 0 1-4.2 0z" fill="#ff8fb0" /><path class="p-shut" display="none" d="M29 35.6q1.5 2 3 0q1.5 2 3 0" fill="none" stroke="#3a2f2a" stroke-width="1.2" stroke-linecap="round" /></g><g class="p-eyes"><ellipse cx="22.4" cy="26.6" rx="3.9" ry="4.5" fill="#2a1a14" /><circle cx="23.6" cy="24.9" r="1.6" fill="#fff" /><ellipse cx="41.6" cy="26.6" rx="3.9" ry="4.5" fill="#2a1a14" /><circle cx="42.8" cy="24.9" r="1.6" fill="#fff" /></g><path class="p-lids" display="none" d="M18.8 27.2q3.6 3 7.2 0M38 27.2q3.6 3 7.2 0" fill="none" stroke="#2a1a14" stroke-width="1.8" stroke-linecap="round" /></g><text class="p-z" display="none" x="52" y="9" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="11" fill="#76827a">z</text></symbol><symbol id="t-all-16" viewBox="3 -1 58 54"><defs><clipPath id="tortie-face"><ellipse cx="32" cy="26.4" rx="20" ry="17" /></clipPath></defs><g class="p-tail"><path d="M41.4 58.4C49 59.4 56.4 55.6 57.8 47.2C58.8 41.4 56.4 35.6 52.4 34.8C49.6 34.2 48 36.6 49.6 38.8C51.8 41.8 52 46 49.6 49.6C47.4 52.8 44 53.8 41 53.4Z" fill="#262227" /></g><g class="p-body"><ellipse cx="32" cy="52.8" rx="11.4" ry="9" fill="#5a4038" /><path d="M25.4 45.6C27.4 47.4 29.6 46.6 32 47.6C34.4 46.6 36.6 47.4 38.6 45.6L37.4 55.4C34 57.4 30 57.4 26.6 55.4Z" fill="#5a4038" /><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#e3cba6" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#e3cba6" /></g><path d="M20.6 50C22 46 26 45.4 28.4 47.6C29 51.6 26.6 55.6 22 56.2C20.6 54.4 20.2 52 20.6 50Z" fill="#262227" /><path d="M36 47.8C39.6 46 43.2 48 43.4 52C43.4 55 41 57 38.4 56.4C36.6 54 35.4 50.6 36 47.8Z" fill="#e3cba6" /><path d="M41.4 53.6C44.4 55 47.6 55 50 53.2C51 56.6 48.4 59 44.6 58.8C42.8 58.6 41.6 57.6 41.4 56Z" fill="#e3cba6" /><circle cx="24.2" cy="44.6" r="1.4" fill="#fffdf8" stroke="#e4dcd0" stroke-width=".4" /><circle cx="27.4" cy="46.4" r="1.4" fill="#fffdf8" stroke="#e4dcd0" stroke-width=".4" /><circle cx="30.6" cy="47.2" r="1.4" fill="#fffdf8" stroke="#e4dcd0" stroke-width=".4" /><circle cx="33.4" cy="47.2" r="1.4" fill="#fffdf8" stroke="#e4dcd0" stroke-width=".4" /><circle cx="36.6" cy="46.4" r="1.4" fill="#fffdf8" stroke="#e4dcd0" stroke-width=".4" /><circle cx="39.8" cy="44.6" r="1.4" fill="#fffdf8" stroke="#e4dcd0" stroke-width=".4" /></g><g class="p-head"><path d="M13.6 21.8L14 8.6C14.1 7.2 15.4 6.6 16.4 7.4L28 14.2Z" fill="#262227" /><path d="M16.4 17.8L16.6 11.2L23.2 15Z" fill="#f7b5c4" /><g transform="translate(64 0) scale(-1 1)"><path d="M13.6 21.8L14 8.6C14.1 7.2 15.4 6.6 16.4 7.4L28 14.2Z" fill="#5a4038" /><path d="M16.4 17.8L16.6 11.2L23.2 15Z" fill="#f7b5c4" /></g><path d="M14 30C10.6 31.4 10.2 34.6 12.2 35.6C11 37.6 12.6 39.8 15 39.2C15.4 41.4 18 42.4 20 41Z" fill="#5a4038" /><g transform="translate(64 0) scale(-1 1)"><path d="M14 30C10.6 31.4 10.2 34.6 12.2 35.6C11 37.6 12.6 39.8 15 39.2C15.4 41.4 18 42.4 20 41Z" fill="#5a4038" /></g><ellipse cx="32" cy="26.4" rx="20" ry="17" fill="#5a4038" /><g clip-path="url(#tortie-face)"><path d="M10 2C19 5 26 11 29 20C30.4 24.6 29 30 26 34L8 36Z" fill="#262227" /><path d="M40 10C45 9 51 12 54 17L54 22C48 23 42 18 40 10Z" fill="#e3cba6" /><ellipse cx="46.6" cy="39.6" rx="6.2" ry="3.6" fill="#262227" transform="rotate(-24 46.6 39.6)" /><path d="M30.6 11C32.4 15 33.2 20 33.2 29.6H30.4C30.4 22 30.8 16 30.6 11Z" fill="#e3cba6" /></g><ellipse cx="32" cy="37" rx="7.2" ry="5.2" fill="#e3cba6" /><circle cx="16.6" cy="34" r="2.7" fill="#ff9db5" opacity=".9" /><g transform="translate(64 0) scale(-1 1)"><circle cx="16.6" cy="34" r="2.7" fill="#ff9db5" opacity=".9" /></g><path d="M21 35.6L13.4 34.4M21.2 37.4L14 38.4" stroke="#fffdf8" stroke-width=".9" stroke-linecap="round" opacity=".9" /><g transform="translate(64 0) scale(-1 1)"><path d="M21 35.6L13.4 34.4M21.2 37.4L14 38.4" stroke="#fffdf8" stroke-width=".9" stroke-linecap="round" opacity=".9" /></g><path d="M29.8 31.6H34.2L32 34.2Z" fill="#f28aa3" stroke="#d96b86" stroke-width=".6" stroke-linejoin="round" /><g class="p-mouth"><path d="M32 34.2V35.4M32 35.4Q30.2 37.6 28.6 35.8M32 35.4Q33.8 37.6 35.4 35.8" fill="none" stroke="#3a2a26" stroke-width="1.1" stroke-linecap="round" /></g><path class="p-tongue" display="none" d="M30.4 36.4h3.2v2a1.6 1.6 0 0 1-3.2 0z" fill="#ff8fb0" /><path class="p-shut" display="none" d="M29 35.8q1.5 2 3 0q1.5 2 3 0" fill="none" stroke="#3a2a26" stroke-width="1.2" stroke-linecap="round" /><g class="p-eyes"><ellipse cx="22.4" cy="26.8" rx="5" ry="5.4" fill="#b9cf4f" /><ellipse cx="22.4" cy="27.2" rx="2.6" ry="3.9" fill="#22252b" /><circle cx="24" cy="24.8" r="1.8" fill="#fff" /><circle cx="20.8" cy="29.4" r="0.8" fill="#fff" opacity=".8" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="22.4" cy="26.8" rx="5" ry="5.4" fill="#b9cf4f" /><ellipse cx="22.4" cy="27.2" rx="2.6" ry="3.9" fill="#22252b" /><circle cx="24" cy="24.8" r="1.8" fill="#fff" /><circle cx="20.8" cy="29.4" r="0.8" fill="#fff" opacity=".8" /></g></g><path class="p-lids" display="none" d="M18.2 27.8q4.2 3 8.4 0M37.4 27.8q4.2 3 8.4 0" fill="none" stroke="#120e10" stroke-width="1.8" stroke-linecap="round" /></g><text class="p-z" display="none" x="52" y="9" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="11" fill="#76827a">z</text></symbol><clipPath id="tortie-face"><ellipse cx="32" cy="26.4" rx="20" ry="17" /></clipPath><symbol id="t-all-15" viewBox="3 -1 58 54"><g class="p-tail"><ellipse cx="44.6" cy="48.6" rx="2.6" ry="4.2" transform="rotate(38 44.6 48.6)" fill="#de8f52" /></g><g class="p-body"><ellipse cx="32" cy="52.6" rx="11.4" ry="9.2" fill="#de8f52" /><path d="M27 45C29 50 29 56 32 61.4C35 56 35 50 37 45Z" fill="#fffdf8" /><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffdf8" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffdf8" /></g><path d="M22 43.8Q32 48.6 42 43.8" fill="none" stroke="#9a6bff" stroke-width="2.8" stroke-linecap="round" /><path d="M32 51.6C28.8 49.4 29.3 46.6 30.9 46.6C31.6 46.6 32 47.1 32 47.6C32 47.1 32.4 46.6 33.1 46.6C34.7 46.6 35.2 49.4 32 51.6Z" fill="#ff6fa3" /></g><g class="p-head"><path d="M14.6 9.6C10.6 13.4 10.4 20.6 13.6 25.2C17 22.4 20.6 16.4 22.4 11.6C20 9 17 8.4 14.6 9.6Z" fill="#b86a3a" /><g transform="translate(64 0) scale(-1 1)"><path d="M14.6 9.6C10.6 13.4 10.4 20.6 13.6 25.2C17 22.4 20.6 16.4 22.4 11.6C20 9 17 8.4 14.6 9.6Z" fill="#b86a3a" /></g><ellipse cx="32" cy="26.4" rx="19.4" ry="17.2" fill="#de8f52" /><path d="M32 9.4C34.2 9.4 34.8 14 34.6 18.6C34.4 22.4 36 24.6 37.6 26.4H26.4C28 24.6 29.6 22.4 29.4 18.6C29.2 14 29.8 9.4 32 9.4Z" fill="#fffdf8" /><ellipse cx="32" cy="35.8" rx="11.4" ry="8" fill="#6b4434" /><ellipse cx="23.4" cy="38.4" rx="4.6" ry="4.2" fill="#6b4434" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="23.4" cy="38.4" rx="4.6" ry="4.2" fill="#6b4434" /></g><ellipse cx="32" cy="39.4" rx="5.4" ry="3.6" fill="#fffdf8" /><circle cx="16.8" cy="32.6" r="2.7" fill="#ff9db5" /><g transform="translate(64 0) scale(-1 1)"><circle cx="16.8" cy="32.6" r="2.7" fill="#ff9db5" /></g><ellipse cx="32" cy="31.4" rx="3.4" ry="2.4" fill="#2a201c" /><ellipse cx="31" cy="30.6" rx="1.1" ry="0.6" fill="#fff" opacity=".7" /><g transform="translate(0 1.2)"><g class="p-mouth"><path d="M28.8 35.2Q32 36.6 35.2 35.2Q35 39.6 32 39.6Q29 39.6 28.8 35.2Z" fill="#7d3345" /><ellipse cx="32" cy="38.4" rx="2" ry="1.3" fill="#ff8fb0" /></g><path class="p-tongue" display="none" d="M29.9 37.2h4.2v2.8a2.1 2.1 0 0 1-4.2 0z" fill="#ff8fb0" /><path class="p-shut" display="none" d="M29 35.6q1.5 2 3 0q1.5 2 3 0" fill="none" stroke="#3a2f2a" stroke-width="1.2" stroke-linecap="round" /></g><g class="p-eyes"><ellipse cx="22.4" cy="26.6" rx="3.9" ry="4.5" fill="#3a2f2a" /><circle cx="23.6" cy="24.9" r="1.6" fill="#fff" /><ellipse cx="41.6" cy="26.6" rx="3.9" ry="4.5" fill="#3a2f2a" /><circle cx="42.8" cy="24.9" r="1.6" fill="#fff" /></g><path class="p-lids" display="none" d="M18.8 27.2q3.6 3 7.2 0M38 27.2q3.6 3 7.2 0" fill="none" stroke="#3a2f2a" stroke-width="1.8" stroke-linecap="round" /><path d="M37.4 7.8C38.8 6 41.6 6.6 41.6 8.8C41.6 10.8 39 12.2 37.4 12.8C35.8 12.2 33.2 10.8 33.2 8.8C33.2 6.6 36 6 37.4 7.8Z" transform="rotate(18 37.4 9.6)" fill="#38b0ff" /><circle cx="37.6" cy="9.6" r="1.2" fill="#ffe08a" /></g><text class="p-z" display="none" x="52" y="9" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="11" fill="#76827a">z</text></symbol><symbol id="t-all-14" viewBox="3 -1 58 54"><defs><clipPath id="spunky-face"><ellipse cx="32" cy="26.4" rx="20" ry="17" /></clipPath></defs><g class="p-tail"><path d="M41.4 58.4C49 59.4 56.4 55.6 57.8 47.2C58.8 41.4 56.4 35.6 52.4 34.8C49.6 34.2 48 36.6 49.6 38.8C51.8 41.8 52 46 49.6 49.6C47.4 52.8 44 53.8 41 53.4Z" fill="#2f2b33" /></g><g class="p-body"><ellipse cx="32" cy="52.8" rx="11.4" ry="9" fill="#2f2b33" /><path d="M25.4 45.6C27.4 47.4 29.6 46.6 32 47.6C34.4 46.6 36.6 47.4 38.6 45.6L37.4 55.4C34 57.4 30 57.4 26.6 55.4Z" fill="#fffdf8" /><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffdf8" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffdf8" /></g><path d="M22 44Q32 48.8 42 44" fill="none" stroke="#ff6fa3" stroke-width="2.6" stroke-linecap="round" /><circle cx="32" cy="48.4" r="2.2" fill="#ffc93c" stroke="#e0a100" stroke-width=".7" /><path d="M30.6 48.6H33.4" stroke="#e0a100" stroke-width=".6" /></g><g class="p-head"><path d="M13.6 21.8L14 8.6C14.1 7.2 15.4 6.6 16.4 7.4L28 14.2Z" fill="#2f2b33" /><path d="M16.4 17.8L16.6 11.2L23.2 15Z" fill="#f7b5c4" /><g transform="translate(64 0) scale(-1 1)"><path d="M13.6 21.8L14 8.6C14.1 7.2 15.4 6.6 16.4 7.4L28 14.2Z" fill="#2f2b33" /><path d="M16.4 17.8L16.6 11.2L23.2 15Z" fill="#f7b5c4" /></g><path d="M14 30C10.6 31.4 10.2 34.6 12.2 35.6C11 37.6 12.6 39.8 15 39.2C15.4 41.4 18 42.4 20 41Z" fill="#2f2b33" /><g transform="translate(64 0) scale(-1 1)"><path d="M14 30C10.6 31.4 10.2 34.6 12.2 35.6C11 37.6 12.6 39.8 15 39.2C15.4 41.4 18 42.4 20 41Z" fill="#2f2b33" /></g><ellipse cx="32" cy="26.4" rx="20" ry="17" fill="#2f2b33" /><g clip-path="url(#spunky-face)"><path d="M32 40C27 40 24.4 37 25 33.4C25.6 30.4 28.6 29.4 32 29.6C35.4 29.4 38.4 30.4 39 33.4C39.6 37 37 40 32 40Z" fill="#fffdf8" /><path d="M32 18.6L29.8 29.8H34.2Z" fill="#fffdf8" /></g><ellipse cx="32" cy="37" rx="7.2" ry="5.2" fill="#fffdf8" /><circle cx="16.6" cy="34" r="2.7" fill="#ff9db5" opacity=".9" /><g transform="translate(64 0) scale(-1 1)"><circle cx="16.6" cy="34" r="2.7" fill="#ff9db5" opacity=".9" /></g><path d="M21 35.6L13.4 34.4M21.2 37.4L14 38.4" stroke="#fffdf8" stroke-width=".9" stroke-linecap="round" opacity=".9" /><g transform="translate(64 0) scale(-1 1)"><path d="M21 35.6L13.4 34.4M21.2 37.4L14 38.4" stroke="#fffdf8" stroke-width=".9" stroke-linecap="round" opacity=".9" /></g><path d="M29.8 31.6H34.2L32 34.2Z" fill="#f28aa3" stroke="#d96b86" stroke-width=".6" stroke-linejoin="round" /><g class="p-mouth"><path d="M32 34.2V35.4M32 35.4Q30.2 37.6 28.6 35.8M32 35.4Q33.8 37.6 35.4 35.8" fill="none" stroke="#6b4a3c" stroke-width="1.1" stroke-linecap="round" /></g><path class="p-tongue" display="none" d="M30.4 36.4h3.2v2a1.6 1.6 0 0 1-3.2 0z" fill="#ff8fb0" /><path class="p-shut" display="none" d="M29 35.8q1.5 2 3 0q1.5 2 3 0" fill="none" stroke="#6b4a3c" stroke-width="1.2" stroke-linecap="round" /><g class="p-eyes"><ellipse cx="22.4" cy="26.8" rx="5" ry="5.4" fill="#f5c033" /><ellipse cx="22.4" cy="27.2" rx="2.6" ry="3.9" fill="#22252b" /><circle cx="24" cy="24.8" r="1.8" fill="#fff" /><circle cx="20.8" cy="29.4" r="0.8" fill="#fff" opacity=".8" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="22.4" cy="26.8" rx="5" ry="5.4" fill="#f5c033" /><ellipse cx="22.4" cy="27.2" rx="2.6" ry="3.9" fill="#22252b" /><circle cx="24" cy="24.8" r="1.8" fill="#fff" /><circle cx="20.8" cy="29.4" r="0.8" fill="#fff" opacity=".8" /></g></g><g transform="translate(14.4 1.6) rotate(24 32 10.4) scale(.9)"><path d="M32 10.4L25.4 7V13.8ZM32 10.4L38.6 7V13.8Z" fill="#ff6fa3" /><circle cx="32" cy="10.4" r="2.1" fill="#f0508a" /></g><path class="p-lids" display="none" d="M18.2 27.8q4.2 3 8.4 0M37.4 27.8q4.2 3 8.4 0" fill="none" stroke="#fffdf8" stroke-width="1.8" stroke-linecap="round" /></g><text class="p-z" display="none" x="52" y="9" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="11" fill="#76827a">z</text></symbol><clipPath id="spunky-face"><ellipse cx="32" cy="26.4" rx="20" ry="17" /></clipPath><symbol id="t-all-13" viewBox="3 -1 58 54"><g class="p-tail"><path d="M41.4 58.4C49 59.4 56.4 55.6 57.8 47.2C58.8 41.4 56.4 35.6 52.4 34.8C49.6 34.2 48 36.6 49.6 38.8C51.8 41.8 52 46 49.6 49.6C47.4 52.8 44 53.8 41 53.4Z" fill="#b48c72" /><path d="M52.6 37.2C55 39 56.4 43 55.8 46.8" fill="none" stroke="#8f6a54" stroke-width="1.3" stroke-linecap="round" opacity=".6" /></g><g class="p-body"><ellipse cx="32" cy="52.8" rx="11.4" ry="9" fill="#f8ead6" /><path d="M24 45.4C25.4 47.6 26.6 46 28 48.2C29.4 46.2 30.6 48.6 32 47C33.4 48.6 34.6 46.2 36 48.2C37.4 46 38.6 47.6 40 45.4L38.4 55C34 57.4 30 57.4 25.6 55Z" fill="#fffdf8" /><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffdf8" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffdf8" /></g><path d="M32 46.4L27.6 43.8V49ZM32 46.4L36.4 43.8V49Z" fill="#ffbe0b" /><circle cx="32" cy="46.4" r="1.6" fill="#f0a500" /></g><g class="p-head"><path d="M13.6 21.8L14 8.6C14.1 7.2 15.4 6.6 16.4 7.4L28 14.2Z" fill="#b48c72" /><path d="M16.4 17.8L16.6 11.2L23.2 15Z" fill="#f7b5c4" /><g transform="translate(64 0) scale(-1 1)"><path d="M13.6 21.8L14 8.6C14.1 7.2 15.4 6.6 16.4 7.4L28 14.2Z" fill="#b48c72" /><path d="M16.4 17.8L16.6 11.2L23.2 15Z" fill="#f7b5c4" /></g><path d="M14 30C10.6 31.4 10.2 34.6 12.2 35.6C11 37.6 12.6 39.8 15 39.2C15.4 41.4 18 42.4 20 41Z" fill="#f8ead6" /><g transform="translate(64 0) scale(-1 1)"><path d="M14 30C10.6 31.4 10.2 34.6 12.2 35.6C11 37.6 12.6 39.8 15 39.2C15.4 41.4 18 42.4 20 41Z" fill="#f8ead6" /></g><ellipse cx="32" cy="26.4" rx="20" ry="17" fill="#f8ead6" /><ellipse cx="32" cy="29.4" rx="14.6" ry="11.4" fill="#b48c72" opacity=".55" /><ellipse cx="32" cy="33.6" rx="8.4" ry="6.4" fill="#b48c72" opacity=".55" /><ellipse cx="32" cy="38" rx="5.4" ry="3.6" fill="#fffdf8" /><circle cx="16.6" cy="34" r="2.7" fill="#ff9db5" opacity=".9" /><g transform="translate(64 0) scale(-1 1)"><circle cx="16.6" cy="34" r="2.7" fill="#ff9db5" opacity=".9" /></g><path d="M21 35.6L13.4 34.4M21.2 37.4L14 38.4" stroke="#fffdf8" stroke-width=".9" stroke-linecap="round" opacity=".9" /><g transform="translate(64 0) scale(-1 1)"><path d="M21 35.6L13.4 34.4M21.2 37.4L14 38.4" stroke="#fffdf8" stroke-width=".9" stroke-linecap="round" opacity=".9" /></g><path d="M29.8 31.2H34.2L32 33.8Z" fill="#f28aa3" stroke="#d96b86" stroke-width=".6" stroke-linejoin="round" /><g class="p-mouth"><path d="M32 33.8V35.2M32 35.2Q30.2 37.4 28.6 35.6M32 35.2Q33.8 37.4 35.4 35.6" fill="none" stroke="#6b4a3c" stroke-width="1.1" stroke-linecap="round" /></g><path class="p-tongue" display="none" d="M30.4 36.2h3.2v2a1.6 1.6 0 0 1-3.2 0z" fill="#ff8fb0" /><path class="p-shut" display="none" d="M29 35.6q1.5 2 3 0q1.5 2 3 0" fill="none" stroke="#6b4a3c" stroke-width="1.2" stroke-linecap="round" /><g class="p-eyes"><ellipse cx="22.4" cy="26.8" rx="5" ry="5.4" fill="#4f9fe0" /><ellipse cx="22.4" cy="27.2" rx="2.8" ry="3.9" fill="#22303f" /><circle cx="24" cy="24.8" r="1.8" fill="#fff" /><circle cx="20.8" cy="29.4" r="0.8" fill="#fff" opacity=".8" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="22.4" cy="26.8" rx="5" ry="5.4" fill="#4f9fe0" /><ellipse cx="22.4" cy="27.2" rx="2.8" ry="3.9" fill="#22303f" /><circle cx="24" cy="24.8" r="1.8" fill="#fff" /><circle cx="20.8" cy="29.4" r="0.8" fill="#fff" opacity=".8" /></g></g><path class="p-lids" display="none" d="M18.2 27.8q4.2 3 8.4 0M37.4 27.8q4.2 3 8.4 0" fill="none" stroke="#5a4033" stroke-width="1.8" stroke-linecap="round" /></g><text class="p-z" display="none" x="52" y="9" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="11" fill="#76827a">z</text></symbol><symbol id="t-all-12" viewBox="3 -1 58 54"><g class="p-tail"><path d="M41.6 57C49.6 57.4 56 51.6 57.2 43.4C57.8 39.4 55.2 37.4 53.4 39.2C53.2 45.4 49 50.4 41.6 52Z" fill="#f2b45a" /><path d="M44.6 54.6C50.4 53.6 54.4 48.6 55.4 42.6" fill="none" stroke="#f9cd7f" stroke-width="1.6" stroke-linecap="round" /></g><g class="p-body"><ellipse cx="32" cy="52.6" rx="11.4" ry="9.2" fill="#f2b45a" /><ellipse cx="32" cy="54.6" rx="6" ry="7.2" fill="#ffe5b4" /><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#ffe5b4" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#ffe5b4" /></g><path d="M21.6 43.6Q32 49.6 42.4 43.6L32 53.4Z" fill="#22c97a" /><path d="M21.6 43.6Q32 49.6 42.4 43.6" fill="none" stroke="#17a863" stroke-width="1.4" stroke-linecap="round" /><circle cx="28.4" cy="47.6" r="0.9" fill="#fffdf8" /><circle cx="35.6" cy="47.6" r="0.9" fill="#fffdf8" /><circle cx="32" cy="50.8" r="0.9" fill="#fffdf8" /></g><g class="p-head"><ellipse cx="13" cy="30.4" rx="7.4" ry="13.6" transform="rotate(14 13 30.4)" fill="#d98f3a" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="13" cy="30.4" rx="7.4" ry="13.6" transform="rotate(14 13 30.4)" fill="#d98f3a" /></g><ellipse cx="32" cy="26" rx="19.6" ry="17.6" fill="#f2b45a" /><ellipse cx="32" cy="14.6" rx="9.6" ry="5" fill="#f9cd7f" /><ellipse cx="32" cy="36.2" rx="9.8" ry="7.4" fill="#ffe5b4" /><ellipse cx="22.2" cy="20" rx="2.2" ry="1.3" fill="#d98f3a" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="22.2" cy="20" rx="2.2" ry="1.3" fill="#d98f3a" /></g><circle cx="17.8" cy="33.2" r="2.9" fill="#ff9db5" /><g transform="translate(64 0) scale(-1 1)"><circle cx="17.8" cy="33.2" r="2.9" fill="#ff9db5" /></g><ellipse cx="32" cy="32.2" rx="3.3" ry="2.4" fill="#3a2f2a" /><ellipse cx="31" cy="31.4" rx="1" ry="0.6" fill="#fff" opacity=".6" /><g transform="translate(0 0.6)"><g class="p-mouth"><path d="M28.8 35.2Q32 36.6 35.2 35.2Q35 39.6 32 39.6Q29 39.6 28.8 35.2Z" fill="#7d3345" /><ellipse cx="32" cy="38.4" rx="2" ry="1.3" fill="#ff8fb0" /></g><path class="p-tongue" display="none" d="M29.9 37.2h4.2v2.8a2.1 2.1 0 0 1-4.2 0z" fill="#ff8fb0" /><path class="p-shut" display="none" d="M29 35.6q1.5 2 3 0q1.5 2 3 0" fill="none" stroke="#3a2f2a" stroke-width="1.2" stroke-linecap="round" /></g><g class="p-eyes"><ellipse cx="22.4" cy="26.6" rx="3.9" ry="4.5" fill="#3a2f2a" /><circle cx="23.6" cy="24.9" r="1.6" fill="#fff" /><ellipse cx="41.6" cy="26.6" rx="3.9" ry="4.5" fill="#3a2f2a" /><circle cx="42.8" cy="24.9" r="1.6" fill="#fff" /></g><path class="p-lids" display="none" d="M18.8 27.2q3.6 3 7.2 0M38 27.2q3.6 3 7.2 0" fill="none" stroke="#3a2f2a" stroke-width="1.8" stroke-linecap="round" /></g><text class="p-z" display="none" x="52" y="9" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="11" fill="#76827a">z</text></symbol><symbol id="t-all-11" viewBox="3 -1 58 54"><defs><clipPath id="shima-face"><ellipse cx="32" cy="26" rx="19.6" ry="17.6" /></clipPath><clipPath id="shima-tail"><path d="M41 59.6C46.6 60.6 52.6 57.8 53.6 52.6C54.2 49.6 52.8 47.4 50.8 47.2C51.2 49.2 50.4 50.6 49 51.2C48.8 53.4 46.6 54.8 43 55Z" /></clipPath></defs><g class="p-tail"><path d="M41 59.6C46.6 60.6 52.6 57.8 53.6 52.6C54.2 49.6 52.8 47.4 50.8 47.2C51.2 49.2 50.4 50.6 49 51.2C48.8 53.4 46.6 54.8 43 55Z" fill="#fffdf8" /><g clip-path="url(#shima-tail)"><circle cx="53.4" cy="48.8" r="5" fill="#e39a52" /></g></g><g class="p-body"><ellipse cx="32" cy="52.6" rx="11.4" ry="9.2" fill="#f6c481" /><ellipse cx="32" cy="54" rx="6.4" ry="8" fill="#fffdf8" /><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffdf8" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="27.4" cy="60.4" rx="3.9" ry="2.7" fill="#fffdf8" /></g></g><g class="p-head"><ellipse cx="13.6" cy="27.6" rx="7.2" ry="12.6" transform="rotate(10 13.6 27.6)" fill="#e39a52" /><g transform="translate(64 0) scale(-1 1)"><ellipse cx="13.6" cy="27.6" rx="7.2" ry="12.6" transform="rotate(10 13.6 27.6)" fill="#e39a52" /></g><ellipse cx="32" cy="26" rx="19.6" ry="17.6" fill="#f6c481" /><g clip-path="url(#shima-face)"><path d="M32 8C34.4 8 35.6 12.5 35.6 17.5C35.6 21.5 37.6 24.4 41.4 27C46.2 30.3 47.4 36.4 43.6 40.2C40.6 43.2 36.4 44 32 44C27.6 44 23.4 43.2 20.4 40.2C16.6 36.4 17.8 30.3 22.6 27C26.4 24.4 28.4 21.5 28.4 17.5C28.4 12.5 29.6 8 32 8Z" fill="#fffdf8" /></g><path d="M32 1.6C35.4 3.6 36.6 7 34.8 10.2H29.2C27.4 7 28.6 3.6 32 1.6Z" fill="#fffdf8" /><path d="M32 10.4L25.4 7V13.8ZM32 10.4L38.6 7V13.8Z" fill="#ff6fa3" /><circle cx="32" cy="10.4" r="2.1" fill="#f0508a" /><circle cx="17.8" cy="33.2" r="2.9" fill="#ff9db5" /><g transform="translate(64 0) scale(-1 1)"><circle cx="17.8" cy="33.2" r="2.9" fill="#ff9db5" /></g><ellipse cx="32" cy="31.6" rx="2.9" ry="2.1" fill="#3a2f2a" /><g class="p-mouth"><path d="M28.8 35.2Q32 36.6 35.2 35.2Q35 39.6 32 39.6Q29 39.6 28.8 35.2Z" fill="#7d3345" /><ellipse cx="32" cy="38.4" rx="2" ry="1.3" fill="#ff8fb0" /></g><path class="p-tongue" display="none" d="M29.9 37.2h4.2v2.8a2.1 2.1 0 0 1-4.2 0z" fill="#ff8fb0" /><path class="p-shut" display="none" d="M29 35.6q1.5 2 3 0q1.5 2 3 0" fill="none" stroke="#3a2f2a" stroke-width="1.2" stroke-linecap="round" /><g class="p-eyes"><ellipse cx="22.4" cy="26.6" rx="3.9" ry="4.5" fill="#3a2f2a" /><circle cx="23.6" cy="24.9" r="1.6" fill="#fff" /><ellipse cx="41.6" cy="26.6" rx="3.9" ry="4.5" fill="#3a2f2a" /><circle cx="42.8" cy="24.9" r="1.6" fill="#fff" /></g><path class="p-lids" display="none" d="M18.8 27.2q3.6 3 7.2 0M38 27.2q3.6 3 7.2 0" fill="none" stroke="#3a2f2a" stroke-width="1.8" stroke-linecap="round" /><g class="p-can" display="none"><g transform="translate(0 0.6) rotate(20 32 42)"><path d="M28.4 38.2Q32 33.8 35.6 38.2" fill="none" stroke="#17a863" stroke-width="1.5" stroke-linecap="round" /><path d="M26.6 40C22.4 39.6 22.4 45 26.6 44.6" fill="none" stroke="#17a863" stroke-width="1.6" stroke-linecap="round" /><path d="M37 44.4L43.6 39" stroke="#22c97a" stroke-width="2.6" stroke-linecap="round" /><ellipse cx="44.4" cy="38.4" rx="2.2" ry="1.4" transform="rotate(-40 44.4 38.4)" fill="#17a863" /><rect class="p-canbody" display="none" x="26.4" y="37.8" width="11.2" height="8.6" rx="2.2" fill="#ffc93c" stroke="#e0a100" stroke-width="0.9" /><path d="M32 45.2C28.4 42.8 28.9 39.7 30.7 39.7C31.5 39.7 32 40.3 32 40.9C32 40.3 32.5 39.7 33.3 39.7C35.1 39.7 35.6 42.8 32 45.2Z" fill="#ff6fa3" /></g><g class="p-drips" display="none" fill="#38b0ff"><circle cx="46.4" cy="47" r="1.2" /><circle cx="48.2" cy="48" r="1" /><circle cx="44.8" cy="48.4" r="1" /></g></g></g><text class="p-z" display="none" x="52" y="9" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="11" fill="#76827a">z</text></symbol><clipPath id="shima-tail"><path d="M41 59.6C46.6 60.6 52.6 57.8 53.6 52.6C54.2 49.6 52.8 47.4 50.8 47.2C51.2 49.2 50.4 50.6 49 51.2C48.8 53.4 46.6 54.8 43 55Z" /></clipPath><clipPath id="shima-face"><ellipse cx="32" cy="26" rx="19.6" ry="17.6" /></clipPath><symbol id="t-all-10" viewBox="2 2 44 44"><circle cx="12" cy="35" r="9" fill="#ff6fa3" /><circle cx="24" cy="24" r="9" fill="#ffbe0b" /><circle cx="36" cy="13" r="9" fill="#38b0ff" /></symbol><symbol id="t-all-9" viewBox="2 2 44 44"><rect x="5" y="5" width="38" height="38" rx="11" fill="#d3ebfb" stroke="#8fc4ea" stroke-width="3" /><path d="M24 13V35M14.5 18.5L33.5 29.5M33.5 18.5L14.5 29.5" stroke="#ffffff" stroke-width="3" stroke-linecap="round" /></symbol><symbol id="t-all-8" viewBox="2 2 44 44"><g fill="#ff6fa3"><rect x="7" y="20" width="34" height="22" rx="4" /><rect x="5" y="12" width="38" height="9" rx="3" /></g><path d="M24 12V42" stroke="#fffdf6" stroke-width="5" /><path d="M24 12C19 4 10 6 13 11C15 13.5 20 13 24 12ZM24 12C29 4 38 6 35 11C33 13.5 28 13 24 12Z" fill="#ffbe0b" /></symbol><symbol id="t-all-7" viewBox="2 2 44 44"><defs><mask id="pm-bug" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff" /><path d="M24 16L24 44" stroke="#000" stroke-width="2.2" /><circle cx="16.5" cy="24" r="3.2" /><circle cx="31.5" cy="24" r="3.2" /><circle cx="15.5" cy="34" r="3" /><circle cx="32.5" cy="34" r="3" /></mask></defs><g fill="#f25c54"><ellipse cx="24" cy="29" rx="15" ry="14.5" mask="url(#pm-bug)" /><path d="M15.5 13.6A8.6 8.6 0 0 1 32.5 13.6Z" /></g><path d="M20 7.5Q18.5 4 15.5 3.5M28 7.5Q29.5 4 32.5 3.5" fill="none" stroke="#f25c54" stroke-width="2" stroke-linecap="round" /></symbol><symbol id="t-all-6" viewBox="2 2 44 44"><defs /><g fill="#ff8a3d"><path d="M22 6C23.4 16.4 29.6 22.6 40 24C29.6 25.4 23.4 31.6 22 42C20.6 31.6 14.4 25.4 4 24C14.4 22.6 20.6 16.4 22 6Z" /><path d="M38 5C38.5 8.6 40.4 10.5 44 11C40.4 11.5 38.5 13.4 38 17C37.5 13.4 35.6 11.5 32 11C35.6 10.5 37.5 8.6 38 5Z" /><path d="M38.4 33C38.8 35.8 40.2 37.2 43 37.6C40.2 38 38.8 39.4 38.4 42.2C38 39.4 36.6 38 33.8 37.6C36.6 37.2 38 35.8 38.4 33Z" /></g></symbol><symbol id="t-all-5" viewBox="2 2 44 44"><defs /><path d="M5 35a19 19 0 0 1 38 0" fill="none" stroke="#ff6fa3" stroke-width="3.9" stroke-linecap="butt" /><path d="M8.6 35a15.4 15.4 0 0 1 30.8 0" fill="none" stroke="#ffbe0b" stroke-width="3.9" stroke-linecap="butt" /><path d="M12.2 35a11.8 11.8 0 0 1 23.6 0" fill="none" stroke="#22c97a" stroke-width="3.9" stroke-linecap="butt" /><path d="M15.8 35a8.2 8.2 0 0 1 16.4 0" fill="none" stroke="#38b0ff" stroke-width="3.9" stroke-linecap="butt" /><path d="M19.4 35a4.6 4.6 0 0 1 9.2 0" fill="none" stroke="#9a6bff" stroke-width="3.9" stroke-linecap="butt" /><g><circle cx="8" cy="38" r="5" fill="#e4e0f0" /><circle cx="12.4" cy="36.6" r="4.2" fill="#e4e0f0" /><circle cx="3.8" cy="37.6" r="3.8" fill="#e4e0f0" /><circle cx="8" cy="37.2" r="4.6" fill="#fff" /><circle cx="12.4" cy="35.8" r="3.8" fill="#fff" /><circle cx="3.8" cy="36.8" r="3.4" fill="#fff" /></g><g><circle cx="40" cy="38" r="5" fill="#e4e0f0" /><circle cx="44.4" cy="36.6" r="4.2" fill="#e4e0f0" /><circle cx="35.8" cy="37.6" r="3.8" fill="#e4e0f0" /><circle cx="40" cy="37.2" r="4.6" fill="#fff" /><circle cx="44.4" cy="35.8" r="3.8" fill="#fff" /><circle cx="35.8" cy="36.8" r="3.4" fill="#fff" /></g></symbol><symbol id="t-all-4" viewBox="2 2 44 44"><defs /><g fill="#22c97a"><path d="M24 33.4C14.6 30.6 7 24.4 3.8 15.4C9 8.4 16.4 5 22.6 5.6L24 13.4L25.4 5.6C31.6 5 39 8.4 44.2 15.4C41 24.4 33.4 30.6 24 33.4Z" /><path d="M24 31Q23.6 39 26.6 45.6" fill="none" stroke="#22c97a" stroke-width="2.8" stroke-linecap="round" /></g></symbol><symbol id="t-all-3" viewBox="2 2 44 44"><defs /><g fill="#ff6fa3"><path d="M24 33.6C14.4 33.6 9.6 26.4 10.7 16.8C11.1 12.8 12.2 9.6 13.8 7.2C14.9 5.5 16.9 4.9 18.7 5.4C20.6 5.9 22.4 6.6 24 7.6C25.6 6.6 27.4 5.9 29.3 5.4C31.1 4.9 33.1 5.5 34.2 7.2C35.8 9.6 36.9 12.8 37.3 16.8C38.4 26.4 33.6 33.6 24 33.6Z" /><rect x="22.6" y="31" width="2.8" height="14.6" rx="1.4" /><path d="M24 45.4C17.4 45 13.2 41.4 12.4 36.4C18.4 37 22.6 40.2 24 45.4Z" /><path d="M24 45.4C30.6 45 34.8 41.4 35.6 36.4C29.6 37 25.4 40.2 24 45.4Z" /></g></symbol><symbol id="t-all-2" viewBox="2 2 44 44"><defs><mask id="pm-drop" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff" /><path d="M15.4 31C15.4 26 18 21.6 20.8 17.8" fill="none" stroke="#000" stroke-width="3.2" stroke-linecap="round" /></mask></defs><path d="M24 4C24 4 39.6 21.4 39.6 30.4a15.6 15.6 0 0 1-31.2 0C8.4 21.4 24 4 24 4Z" fill="#38b0ff" mask="url(#pm-drop)" /></symbol><symbol id="t-all-1" viewBox="2 2 44 44"><defs /><g fill="#ffbe0b"><circle cx="24" cy="24" r="13.3" /><g transform="rotate(0.0 24 24)"><path d="M21.2 11.8L24 3.2L26.8 11.8Z" stroke="#ffbe0b" stroke-width="1.4" stroke-linejoin="round" /></g><g transform="rotate(45.0 24 24)"><path d="M21.2 11.8L24 3.2L26.8 11.8Z" stroke="#ffbe0b" stroke-width="1.4" stroke-linejoin="round" /></g><g transform="rotate(90.0 24 24)"><path d="M21.2 11.8L24 3.2L26.8 11.8Z" stroke="#ffbe0b" stroke-width="1.4" stroke-linejoin="round" /></g><g transform="rotate(135.0 24 24)"><path d="M21.2 11.8L24 3.2L26.8 11.8Z" stroke="#ffbe0b" stroke-width="1.4" stroke-linejoin="round" /></g><g transform="rotate(180.0 24 24)"><path d="M21.2 11.8L24 3.2L26.8 11.8Z" stroke="#ffbe0b" stroke-width="1.4" stroke-linejoin="round" /></g><g transform="rotate(225.0 24 24)"><path d="M21.2 11.8L24 3.2L26.8 11.8Z" stroke="#ffbe0b" stroke-width="1.4" stroke-linejoin="round" /></g><g transform="rotate(270.0 24 24)"><path d="M21.2 11.8L24 3.2L26.8 11.8Z" stroke="#ffbe0b" stroke-width="1.4" stroke-linejoin="round" /></g><g transform="rotate(315.0 24 24)"><path d="M21.2 11.8L24 3.2L26.8 11.8Z" stroke="#ffbe0b" stroke-width="1.4" stroke-linejoin="round" /></g></g></symbol><symbol id="t-all-0" viewBox="2 2 44 44"><defs><mask id="pm-blossom" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff" /><circle cx="24" cy="24" r="5" /></mask></defs><g mask="url(#pm-blossom)" fill="#9a6bff"><g transform="rotate(0.0 24 24)"><ellipse cx="24" cy="12.8" rx="7.7" ry="9.2" /></g><g transform="rotate(72.0 24 24)"><ellipse cx="24" cy="12.8" rx="7.7" ry="9.2" /></g><g transform="rotate(144.0 24 24)"><ellipse cx="24" cy="12.8" rx="7.7" ry="9.2" /></g><g transform="rotate(216.0 24 24)"><ellipse cx="24" cy="12.8" rx="7.7" ry="9.2" /></g><g transform="rotate(288.0 24 24)"><ellipse cx="24" cy="12.8" rx="7.7" ry="9.2" /></g></g></symbol></svg>
+<div id="fnav"><button data-tab="mem" aria-label="Memories"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="5" height="5" rx="1.5"/><rect x="9.5" y="3" width="5" height="5" rx="1.5"/><rect x="16" y="3" width="5" height="5" rx="1.5"/><rect x="3" y="9.5" width="5" height="5" rx="1.5"/><rect x="9.5" y="9.5" width="5" height="5" rx="1.5"/><rect x="16" y="9.5" width="5" height="5" rx="1.5"/><rect x="3" y="16" width="5" height="5" rx="1.5"/><rect x="9.5" y="16" width="5" height="5" rx="1.5"/></svg></button><button data-tab="cam" aria-label="Camera"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg></button><button data-tab="fam" aria-label="Chat"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C6.5 3 2.5 6.6 2.5 11c0 2.3 1.1 4.4 3 5.9-.2 1.4-.9 2.7-2 3.6 2.1.1 4-.6 5.4-1.7 1 .3 2 .4 3.1.4 5.5 0 9.5-3.6 9.5-8S17.5 3 12 3z"/></svg></button></div>
+<div class="gs" id="gs" hidden><div class="gs-in" id="gs-in"></div></div>
 <div class="sheet" id="react" hidden><div class="sheet-in" id="react-in"></div></div>
 <div id="idlehand" aria-hidden="true"><span class="ring"></span><span class="hand">👆</span><span class="lab"></span></div>
 <div id="toast"><div class="thumb"></div><div style="flex:1;min-width:0"><div class="t1">JUST ARRIVED · LIVE</div><div class="t2"></div></div><button>Watch</button></div>
 <div id="msg"></div>
 <div class="hearts" id="hearts"></div>
 
+<script src="qr.js"></script>
 <script>
 'use strict';
 /* =========================================================
@@ -992,7 +1087,12 @@ function blobToB64(b){ return new Promise(res => { const r = new FileReader(); r
 
 /* ---------- tapping the widget opens that Hiello ---------- */
 async function openLink(url){
-  const m = /hiello:\/\/(post|reply|home|camera)\/?([\w-]*)/.exec(url || ''); if (!m) return;
+  const m = /hiello:\/\/(post|reply|home|camera|join)\/?([\w-]*)/.exec(url || ''); if (!m) return;
+  if (m[1] === 'join'){
+    if (S.cloud){ say('This phone is already in a family.'); return; }
+    go('welcome'); welcomeView('join'); $('#wj-code').value = m[2].replace(/\D/g, '').slice(0, 6);
+    say('Code filled in. Tap Join!'); return;
+  }
   if (m[1] === 'camera') return go('cam');
   if (m[1] === 'reply') return go('fam');
   let p = S.posts.find(x => String(x.id) === m[2]);
@@ -1004,6 +1104,290 @@ async function openLink(url){
 (() => { const C = window.Capacitor, A = C && C.Plugins && C.Plugins.App; if (!A) return;
   try { A.addListener('appUrlOpen', e => openLink(e.url)); A.getLaunchUrl && A.getLaunchUrl().then(r => r && r.url && setTimeout(() => openLink(r.url), 400)).catch(() => {}); } catch(e){}
 })();
+
+
+/* =========================================================
+   FAMILY SIDE, LOCKET-STYLE — bottom bar, Memories, Chat, profile, QR, Sunday Recap, free extras
+   ========================================================= */
+function initials(n){ const w = String(n || 'Me').trim().split(/\s+/).filter(Boolean); return ((w[0] || 'M')[0] + (w[1] ? w[1][0] : '')).toUpperCase(); }
+function fnavBadge(n){ const b = $('#fnav [data-tab="fam"]'); if (!b) return; b.querySelector('b')?.remove(); if (n) b.insertAdjacentHTML('beforeend', `<b>${n}</b>`); }
+function gsOpen(html){ $('#gs-in').innerHTML = '<div class="gs-grab"></div>' + html; $('#gs').hidden = false; $('#gs-in').scrollTop = 0; }
+function gsClose(){ $('#gs').hidden = true; }
+$('#gs').addEventListener('click', e => { if (e.target.id === 'gs' || e.target.closest('[data-gsx]')) gsClose(); });
+(() => { let y0 = null; const el = $('#gs-in');
+  el.addEventListener('touchstart', e => { y0 = el.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive:true });
+  el.addEventListener('touchend', e => { if (y0 !== null && e.changedTouches[0].clientY - y0 > 90) gsClose(); y0 = null; });
+})();
+const SVG = (d, w=24) => `<svg width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const IC = {
+  people: SVG('<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.6c3 .2 5.5 2.2 5.5 5.4"/>'),
+  qr: SVG('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM18 18h3v3h-3zM14 20h2M20 14v2"/>'),
+  link: SVG('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>'),
+  share: SVG('<path d="M12 15V3M7.5 7.5L12 3l4.5 4.5"/><path d="M5 12v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-6"/>'),
+  app: SVG('<rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M9 9h6v6H9z"/>', 20),
+  cam: SVG('<rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/>', 20),
+  bell: SVG('<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>', 20),
+  pen: SVG('<path d="M4 20h4L19 9l-4-4L4 16z"/>', 20),
+  plus: SVG('<path d="M12 5v14M5 12h14"/>', 20),
+  help: SVG('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7M12 17h.01"/>', 20),
+  widget: SVG('<rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="18" height="8" rx="2"/>', 20),
+  plane: '<svg width="40" height="40" viewBox="0 0 24 24" fill="#6E6761" aria-hidden="true"><path d="M3 11.5L21 3l-6.5 18-3-7.5z"/></svg>',
+  chev: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>',
+  flame: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#F2B8C6" aria-hidden="true"><path d="M12 2c1 4 5 5.5 5 11a5 5 0 0 1-10 0c0-3 1.5-4.5 2.5-6 .3 2 1.2 3 2.2 3.4C11 8 11 5 12 2z"/></svg>'
+};
+
+/* ---------- Memories ---------- */
+const MEM = { tab:'photos' };
+$('#mem-seg').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; MEM.tab = b.dataset.v; renderMem(); });
+function myPosts(){ return S.posts.filter(p => !S.cloud || p.mid === S.cloud.mid || (!p.mid && p.from === meName())); }
+const dayKey = t => { const d = new Date(t); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; };
+function streakDays(posts){
+  const days = new Set(posts.map(p => dayKey(p.at))); let n = 0; const d = new Date();
+  if (!days.has(dayKey(d))) d.setDate(d.getDate() - 1);          /* today isn't over yet */
+  while (days.has(dayKey(d))){ n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+async function renderMem(){
+  $$('[data-prof]').forEach(b => b.textContent = initials(meName()));
+  $$('#mem-seg button').forEach(b => b.classList.toggle('on', b.dataset.v === MEM.tab));
+  const body = $('#mem-body');
+  if (MEM.tab === 'recaps') return renderRecaps(body);
+  const mine = myPosts().sort((a,b) => b.at - a.at);
+  const byDay = new Map(); mine.forEach(p => { const k = dayKey(p.at); if (!byDay.has(k)) byDay.set(k, []); byDay.get(k).push(p); });
+  const now = new Date(), first = mine.length ? new Date(mine[mine.length - 1].at) : now;
+  const months = []; const m = new Date(now.getFullYear(), now.getMonth(), 1);
+  while (m >= new Date(first.getFullYear(), first.getMonth(), 1) && months.length < 24){ months.push(new Date(m)); m.setMonth(m.getMonth() - 1); }
+  let html = mine.length ? '' : `<div class="mempty">${IC.plane}<b>Send your first Hiello!</b>Every photo you send lands on this calendar.</div>`;
+  html += `<div class="mcount"><span>${heartSVG(16)} ${mine.length} ${mine.length === 1 ? 'photo' : 'photos'}</span><span>${IC.flame} ${streakDays(mine)} days in a row</span></div>`;
+  for (const mo of months){
+    const y = mo.getFullYear(), mi = mo.getMonth(), days = new Date(y, mi + 1, 0).getDate(), lead = new Date(y, mi, 1).getDay();
+    let cells = '';
+    for (let k = 0; k < lead; k++) cells += '<span class="dcell blank"></span>';
+    for (let d = 1; d <= days; d++){
+      const dt = new Date(y, mi, d), k = dayKey(dt), list = byDay.get(k), isToday = k === dayKey(now);
+      if (list){
+        const th = await thumbHTML(list[0]);
+        cells += `<button class="dcell" data-day="${k}" aria-label="${list.length} on ${dt.toDateString()}">${th}${list.length > 1 ? `<span class="n">${list.length}</span>` : ''}</button>`;
+      } else if (isToday) cells += `<button class="dcell today" data-today aria-label="Take today's photo">+</button>`;
+      else cells += `<span class="dcell${dt > now ? ' future' : ''}"></span>`;
+    }
+    html += `<div class="month"><h3>${mo.toLocaleString(undefined, { month:'long', year:'numeric' })}</h3><div class="wk">${['S','M','T','W','T','F','S'].map(x => `<i>${x}</i>`).join('')}${cells}</div></div>`;
+  }
+  body.innerHTML = html;
+  body.onclick = e => {
+    if (e.target.closest('[data-today]')){ CAM.who = 'fam'; go('cam'); return; }
+    const c = e.target.closest('[data-day]'); if (c){ const list = byDay.get(c.dataset.day); if (list) openPlayer([...list].reverse(), 'mem'); }
+  };
+}
+function recapGroups(){
+  const g = new Map();
+  S.posts.filter(p => p.type === 'recap').sort((a,b) => a.at - b.at).forEach(p => { const k = (p.title || 'Sunday Recap') + '|' + (p.from || ''); if (!g.has(k)) g.set(k, []); g.get(k).push(p); });
+  return [...g.values()].sort((a,b) => b[0].at - a[0].at);
+}
+async function renderRecaps(body){
+  const groups = recapGroups();
+  let html = `<button class="btn primary" id="mem-recap" style="width:100%;background:#F2B8C6;color:#34302D;margin-bottom:14px">${ICON.recap} Send this week’s recap</button>`;
+  if (!groups.length) html = `<div class="mempty"><div class="stack"><i></i><i></i></div><b>Your Sunday Recaps</b>Look back on your weekly photo dumps<br>by sending your first one!</div>` + html;
+  for (const g of groups){
+    const th = await Promise.all(g.slice(0,6).map(p => thumbHTML(p)));
+    html += `<button class="recap" data-recap="${esc(g[0].id)}"><div style="font-size:18px;font-weight:900">${esc(g[0].title || 'Sunday Recap')}</div>
+      <div style="font-size:14px;color:#D1C8BF;font-weight:700">${esc(g[0].from || '')} · ${g.length} ${g.length === 1 ? 'photo' : 'photos'} · ${ago(g[0].at)}</div>
+      <div class="g">${th.map(t => `<div>${t}</div>`).join('')}</div></button>`;
+  }
+  body.innerHTML = html;
+  body.onclick = e => {
+    if (e.target.closest('#mem-recap')) return openRecap();
+    const r = e.target.closest('[data-recap]'); if (r){ const g = groups.find(x => x[0].id === r.dataset.recap); if (g) openPlayer(g, 'mem'); }
+  };
+}
+
+/* ---------- Sunday Recap: a weekly photo dump for Grandpa, kept forever ---------- */
+const RC = { files:[] };
+function recapTitle(){ const d = new Date(); d.setDate(d.getDate() - d.getDay()); return 'Sunday Recap · ' + d.toLocaleDateString(undefined, { month:'short', day:'numeric' }); }
+function openRecap(){
+  RC.files = [];
+  gsOpen(`<div class="gs-h">Sunday Recap</div><p class="gs-sub">Pick your favorite photos and videos from this week.<br>${esc(gpName())} gets them all at once, and they’re kept forever.</p>
+    <div id="rc-grid" class="rgrid"></div>
+    <button class="btn primary" id="rc-pick" style="width:100%;background:#4A4541;color:#FFF9F3;margin-bottom:10px">${ICON.pics} Pick photos (up to 10)</button>
+    <input class="field" id="rc-cap" maxlength="60" placeholder="Say something about your week" style="margin-bottom:10px;background:#FFF9F3;color:#34302D">
+    <button class="btn primary" id="rc-send" style="width:100%;background:#F2B8C6;color:#34302D" disabled>Send to ${esc(gpName())}</button>
+    <button class="sheet-x" data-gsx style="width:100%;margin-top:6px">Not now</button>`);
+  $('#rc-pick').onclick = () => $('#recap-file').click();
+  $('#rc-send').onclick = sendRecap;
+}
+$('#recap-file').addEventListener('change', async e => {
+  const fs = [...e.target.files].slice(0, 10 - RC.files.length); e.target.value = '';
+  RC.files.push(...fs);
+  const g = $('#rc-grid'); if (!g) return;
+  g.innerHTML = RC.files.map(f => { const u = URL.createObjectURL(f); return `<div>${f.type.startsWith('video') ? `<video src="${u}#t=0.1" muted playsinline></video>` : `<img src="${u}" alt="">`}</div>`; }).join('');
+  $('#rc-send').disabled = !RC.files.length;
+  $('#rc-pick').innerHTML = RC.files.length >= 10 ? 'That’s 10, the most for one recap' : `${ICON.pics} Add more`;
+});
+async function sendRecap(){
+  const btn = $('#rc-send'); if (!RC.files.length || btn.disabled) return; btn.disabled = true;
+  const title = recapTitle(), caption = ($('#rc-cap').value || '').trim() || 'My week';
+  let n = 0;
+  try {
+    for (const f of RC.files){
+      btn.textContent = `Sending ${++n} of ${RC.files.length}…`;
+      const kind = f.type.startsWith('video') ? 'video' : 'image';
+      await publishPost({ type:'recap', title, caption, note:'', from: meName() }, f, kind);
+    }
+    gsClose(); hearts(); say(`Your Sunday Recap is on its way to ${gpName()}!`);
+    S.lastRecap = title; save(); sundayChip(); if (current === 'mem') renderMem();
+  } catch(e){ btn.disabled = false; btn.textContent = 'Try again'; say('Couldn’t send. Check your internet and try again.'); }
+}
+/* on Sundays, a gentle reminder above the shutter until the week’s recap is sent */
+function sundayChip(){
+  const el = $('#cam-sunday'); if (!el) return;
+  const show = CAM.who === 'fam' && new Date().getDay() === 0 && S.lastRecap !== recapTitle();
+  el.innerHTML = show ? `<button class="sunday">${ICON.recap} It’s Sunday! Send ${esc(gpName())} your week ›</button>` : '';
+  const b = el.querySelector('button'); if (b) b.onclick = openRecap;
+}
+
+/* ---------- profile ---------- */
+const ICON_CHOICES = [['', 'Graphite', 'Graphite'], ['Pink', 'Pink', 'Pink'], ['Cream', 'Cream', 'Cream'], ['Classic', 'Classic navy', 'Classic']];
+const THEMES = [['silver','Silver','#C8CACE'], ['pink','Pink','#F2B8C6'], ['cream','Cream','#FFF9F3'], ['polaroid','Polaroid','#FFFFFF'], ['rainbow','Rainbow','linear-gradient(135deg,#F2B8C6,#FFE7A8,#BFE3C9,#B9D3F0)'], ['none','No frame','#34302D']];
+async function openProfile(){
+  const fam = S.members || [], others = fam.filter(m => !S.cloud || m.id !== S.cloud.mid);
+  const iconName = (ICON_CHOICES.find(c => c[0] === (S.appIcon || '')) || ICON_CHOICES[0])[1];
+  const themeName = (THEMES.find(t => t[0] === (S.camTheme || 'silver')) || THEMES[0])[1];
+  const gpM = fam.find(m => m.role === 'gp');
+  gsOpen(`<div class="pf-av">${esc(initials(meName()))}</div>
+    <div class="pf-name">${esc(meName())}</div>
+    <div class="pf-fam">${esc(gpName())}’s family on Hiello</div>
+    <div class="pf-row">
+      <button data-pf="family"><i>${IC.people}</i>${S.cloud ? others.length : 0} Family</button>
+      <button data-pf="qr"><i>${IC.qr}</i>Show QR</button>
+      <button data-pf="copy"><i>${IC.link}</i>Copy invite</button>
+      <button data-pf="share"><i>${IC.share}</i>Share invite</button>
+    </div>
+    <div class="pf-free"><span class="h">${heartSVG(26)}</span><div style="flex:1"><div style="font-size:17px;font-weight:900">Everything’s free</div><div style="font-size:14px;color:#D1C8BF;font-weight:700">No ads, no subscription, no limits on family.</div></div></div>
+    <div class="pf-sec"><span>Widgets</span><span class="new">How to add +</span></div>
+    <div class="wcards">
+      <button class="wcard" data-pf="widget"><span class="c">${esc(initials(gpM ? gpM.name : gpName()))}</span>${esc(gpName())}’s<span class="b">Set up</span></button>
+      <button class="wcard" data-pf="widget"><span class="c">${esc(initials(meName()))}</span>Mine<span class="b">Set up</span></button>
+      <button class="wcard" data-pf="widget"><span class="c add">+</span>Add one<span class="b">Create</span></button>
+    </div>
+    <div class="pf-label">Make it yours</div>
+    <div class="pf-list">
+      <button data-pf="icon"><span class="ic">${IC.app}</span>App icon<span class="v">${esc(iconName)} <span class="free">FREE</span> ${IC.chev}</span></button>
+      <button data-pf="theme"><span class="ic">${IC.cam}</span>Camera frame<span class="v">${esc(themeName)} <span class="free">FREE</span> ${IC.chev}</span></button>
+    </div>
+    <div class="pf-label">General</div>
+    <div class="pf-list">
+      <button data-pf="notify"><span class="ic">${IC.bell}</span>Notifications<span class="v">${IC.chev}</span></button>
+      <button data-pf="names"><span class="ic">${IC.pen}</span>Names and family<span class="v">${IC.chev}</span></button>
+      <button data-pf="codes"><span class="ic">${IC.plus}</span>Set up ${esc(gpName())}’s phone<span class="v">${IC.chev}</span></button>
+      <button data-pf="help"><span class="ic">${IC.help}</span>How Hiello works<span class="v">${IC.chev}</span></button>
+    </div>
+    <button class="sheet-x" data-gsx style="width:100%">Done</button>`);
+  $('#gs-in').onclick = profAction;
+}
+async function profAction(e){
+  const b = e.target.closest('[data-pf]'); if (!b) return; const a = b.dataset.pf; haptic();
+  if (a === 'family') return familySheet();
+  if (a === 'qr') return qrSheet('gp');
+  if (a === 'copy') return copyInvite();
+  if (a === 'share') return shareInvite();
+  if (a === 'widget') return widgetSheet();
+  if (a === 'icon') return iconSheet();
+  if (a === 'theme') return themeSheet();
+  if (a === 'notify'){ const ok = await pushStart(true); say(ok ? 'Notifications are on.' : pushPlugin() ? 'Turn them on in iPhone Settings › Hiello › Notifications.' : 'Notifications work in the iPhone app.'); return; }
+  if (a === 'names'){ gsClose(); go('settings'); return; }
+  if (a === 'codes'){ gsClose(); go('codes'); return; }
+  if (a === 'help') return helpSheet();
+}
+async function ensureCodes(){
+  const c = S.cloud; if (!c) return null;
+  const fresh = c.codes && c.codes.at && Date.now() - c.codes.at < 6 * DAY;
+  if (!fresh || !c.codes.gp || !c.codes.family){
+    try { const [g, f] = await Promise.all([rpc('hi_make_code', { ...famArgs(), p_role:'gp' }), rpc('hi_make_code', { ...famArgs(), p_role:'family' })]); c.codes = { gp:g, family:f, at:Date.now() }; save(); }
+    catch(e){ return null; }
+  }
+  return c.codes;
+}
+async function copyInvite(){
+  const codes = await ensureCodes(); if (!codes){ say(S.cloud ? 'Couldn’t get a code right now. Check your internet.' : 'Start a family first to get invite codes.'); return; }
+  const text = `Join our family on Hiello! Open Hiello, tap “I have a code” and type ${codes.family.slice(0,3)} ${codes.family.slice(3)}.`;
+  try { await navigator.clipboard.writeText(text); say('Invite copied. Paste it in a text.'); } catch(e){ say(`Your family code is ${codes.family.slice(0,3)} ${codes.family.slice(3)}`); }
+}
+function familySheet(){
+  const fam = S.members || [];
+  gsOpen(`<div class="gs-h">Your family</div><p class="gs-sub">Everyone here can send to ${esc(gpName())} and see what ${esc(gpName())} sends back. No limit.</p>
+    <div class="pf-list">${fam.length ? fam.map(m => `<button><span class="ic" style="color:#FFF9F3;font-family:Baskerville,Georgia,serif;font-weight:700">${esc(initials(m.name))}</span>${esc(m.name)}<span class="v">${m.role === 'gp' ? 'Grandparent' : (S.cloud && m.id === S.cloud.mid ? 'You' : '')}</span></button>`).join('') : `<button><span class="ic">${IC.people}</span>${S.cloud ? 'Loading…' : 'Start a family to invite people'}</button>`}</div>
+    <button class="btn primary" data-pf2="qr" style="width:100%;background:#F2B8C6;color:#34302D;margin-bottom:8px">${IC.qr} Show a QR code to join</button>
+    <button class="btn primary" data-pf2="share" style="width:100%;background:#4A4541;color:#FFF9F3">${IC.share} Send an invite</button>
+    <button class="sheet-x" data-gsx style="width:100%;margin-top:6px">Close</button>`);
+  $('#gs-in').onclick = e => { const b = e.target.closest('[data-pf2]'); if (!b) return; if (b.dataset.pf2 === 'qr') qrSheet('family'); else shareInvite(); };
+}
+async function qrSheet(role){
+  gsOpen(`<div class="gs-h">Scan to join</div>
+    <div class="seg" id="qr-seg"><button data-r="gp" class="${role === 'gp' ? 'on' : ''}">${esc(gpName())}’s phone</button><button data-r="family" class="${role === 'family' ? 'on' : ''}">Family</button></div>
+    <div class="qrbox"><canvas id="qr-c" width="290" height="290"></canvas></div>
+    <div class="qrcode" id="qr-code">— — —</div>
+    <p class="gs-sub" id="qr-how"></p>
+    <button class="sheet-x" data-gsx style="width:100%">Done</button>`);
+  $('#qr-seg').onclick = e => { const b = e.target.closest('[data-r]'); if (b) qrSheet(b.dataset.r); };
+  const codes = await ensureCodes(); const code = codes && codes[role];
+  $('#qr-how').innerHTML = role === 'gp'
+    ? `On ${esc(gpName())}’s iPhone: install Hiello, then open the <b>Camera</b> app and point it here. Tap <b>Open in Hiello</b>. That’s it.`
+    : 'Family members: install Hiello, open the iPhone <b>Camera</b>, point it here and tap <b>Open in Hiello</b>.';
+  if (!code){ const q = $('#qr-code'); q.style.cssText = 'font-size:18px;letter-spacing:0'; q.textContent = S.cloud ? 'No internet right now. Try again in a moment.' : 'Start a family first to get a code.'; return; }
+  $('#qr-code').textContent = code.slice(0,3) + ' ' + code.slice(3);
+  drawQR($('#qr-c'), `hiello://join/${code}`);
+}
+function drawQR(cv, text){
+  if (!window.HQR || !cv) return;
+  const q = new window.HQR(-1, 0); q.addData(text); q.make();
+  const n = q.getModuleCount(), quiet = 2, sz = cv.width / (n + quiet * 2), x = cv.getContext('2d');
+  x.fillStyle = '#FFF9F3'; x.fillRect(0, 0, cv.width, cv.height); x.fillStyle = '#34302D';
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) x.fillRect(Math.floor((c + quiet) * sz), Math.floor((r + quiet) * sz), Math.ceil(sz), Math.ceil(sz));
+}
+function widgetSheet(){
+  gsOpen(`<div class="gs-h">Add a Hiello widget</div><p class="gs-sub">New photos show up right on the home screen, no app to open.</p>
+    <ol class="steps" style="color:#FFF9F3;font-size:17px;line-height:1.5;margin:0 0 14px;padding-left:24px">
+      <li>Go to the <b>home screen</b>. Press and hold an empty spot until the apps wiggle.</li>
+      <li>Tap <b>Edit</b> (top left), then <b>Add Widget</b>.</li>
+      <li>Search <b>Hiello</b>, pick the <b>big</b> size, tap <b>Add Widget</b>, then <b>Done</b>.</li>
+      <li>Just one person’s photos? Press and hold the widget › <b>Edit Widget</b> › choose a person.</li>
+    </ol>
+    <div class="panel" style="font-size:15px;line-height:1.45;margin-bottom:12px;background:#4A4541;color:#D1C8BF;border:0">Setting up ${esc(gpName())}? Do these steps together on their phone. It takes a minute.</div>
+    <button class="sheet-x" data-gsx style="width:100%">Got it</button>`);
+}
+function iconSheet(){
+  gsOpen(`<div class="gs-h">App icon</div><p class="gs-sub">Free for everyone. Pick the one you like on your home screen.</p>
+    <div class="icgrid">${ICON_CHOICES.map(([v,n,f]) => `<button data-icon="${v}" class="${(S.appIcon || '') === v ? 'on' : ''}"><img src="icons/${f}.png" alt="">${n}</button>`).join('')}</div>
+    <button class="sheet-x" data-gsx style="width:100%">Done</button>`);
+  $('#gs-in').onclick = async e => {
+    const b = e.target.closest('[data-icon]'); if (!b) return; const v = b.dataset.icon;
+    const W = nativeWidget();
+    if (W && W.setIcon){ try { await W.setIcon({ name:v }); } catch(err){ say('This iPhone couldn’t change the icon.'); return; } }
+    else say('The new icon shows on your iPhone home screen.');
+    S.appIcon = v; save(); $$('[data-icon]').forEach(x => x.classList.toggle('on', x === b));
+  };
+}
+function themeSheet(){
+  gsOpen(`<div class="gs-h">Camera frame</div><p class="gs-sub">Free for everyone. The frame around your camera.</p>
+    <div class="icgrid">${THEMES.map(([v,n,c]) => `<button data-theme="${v}" class="${(S.camTheme || 'silver') === v ? 'on' : ''}"><span class="themesw" style="box-shadow:inset 0 0 0 8px #4A4541;background:${c}"></span>${n}</button>`).join('')}</div>
+    <button class="sheet-x" data-gsx style="width:100%">Done</button>`);
+  $('#gs-in').onclick = e => {
+    const b = e.target.closest('[data-theme]'); if (!b) return;
+    S.camTheme = b.dataset.theme; save(); $('#s-cam').dataset.theme = S.camTheme; haptic();
+    $$('#gs-in [data-theme]').forEach(x => x.classList.toggle('on', x === b));
+  };
+}
+function helpSheet(){
+  gsOpen(`<div class="gs-h">How Hiello works</div>
+    <div class="pf-list" style="font-size:16px">
+      <button>📸 <span>Tap the big button for a photo, hold it for a video with sound (up to 15 seconds).</span></button>
+      <button>🖼️ <span>It lands on ${esc(gpName())}’s home screen widget and phone. ✓ means they saw it.</span></button>
+      <button>💗 <span>${esc(gpName())} can heart it, stick a note on it, or send a photo back. Those show up in Chat.</span></button>
+      <button>🗓️ <span>Memories keeps every photo you’ve sent, day by day. Sundays, send a Recap of your week.</span></button>
+      <button>🔒 <span>Only your family can see your photos. No ads, ever.</span></button>
+    </div>
+    <button class="sheet-x" data-gsx style="width:100%">Close</button>`);
+}
 
 /* ---------- notifications: a ding (with the photo) when family sends one, and when Grandpa loves yours ---------- */
 function pushPlugin(){
@@ -1128,12 +1512,18 @@ function go(name){
   if (name !== 'photos') $$('#ph-deck video').forEach(v => v.pause());
   if (name !== 'golf') stopGolf();
   if (name !== 'cam') stopCam();
+  const famTab = S.setup && S.mode !== 'gp' && (name === 'mem' || name === 'fam' || (name === 'cam' && CAM.who === 'fam'));
+  $('#fnav').classList.toggle('on', famTab);
+  $$('#fnav button').forEach(b => b.classList.toggle('on', b.dataset.tab === name));
+  $('#gs').hidden = true;
   const rx = document.getElementById('react'); if (rx) rx.hidden = true;
-  ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, cam:enterCam, codes:renderCodes, game:enterGame, golf:enterGolf, trivia:enterTrivia, photos:renderPhotos, rsvp:renderRsvp, story:showStory, settings:renderSettings}[name] || (()=>{}))();
+  ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, cam:enterCam, codes:renderCodes, game:enterGame, golf:enterGolf, trivia:enterTrivia, photos:renderPhotos, rsvp:renderRsvp, story:showStory, settings:renderSettings, mem:renderMem}[name] || (()=>{}))();
   const sc = $('#s-' + name); if (sc) sc.scrollTop = 0;
 }
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (g) { go(g.dataset.go); return; }
+  if (e.target.closest('[data-prof]')) { openProfile(); return; }
+  const tb = e.target.closest('#fnav [data-tab]'); if (tb) { haptic(); if (tb.dataset.tab === 'cam') CAM.who = 'fam'; go(tb.dataset.tab); return; }
   const b = e.target.closest('[data-back]'); if (b) { go(b.dataset.back); return; }
 });
 $$('#demobar button').forEach(b => b.onclick = () => { S.mode = b.dataset.mode; save(); if (S.mode === 'fam') CAM.who = 'fam'; go(S.mode === 'gp' ? 'gp' : 'cam'); });
@@ -1222,7 +1612,8 @@ async function addSamples(){
 
 /* ---------- family side ---------- */
 async function renderFam(){
-  $('#fam-hello').textContent = `Sent to ${gpName()}`;
+  $('#fam-hello').textContent = 'Chat';
+  $$('[data-prof]').forEach(b => b.textContent = initials(meName()));
   const rp = [...(S.replies||[])].filter(r => !S.cloud || r.mid !== S.cloud.mid).sort((a,b) => b.at - a.at);
   if (rp.length){
     const th = await Promise.all(rp.map(r => thumbHTML(r)));
@@ -1674,15 +2065,13 @@ const ICON = {
   flip:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16M20 20v-4h-4"/></svg>',
   x:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
   send:'<svg width="40" height="40" viewBox="0 0 24 24" fill="#14285A" aria-hidden="true"><path d="M3 11.5L21 3l-6.5 18-3-7.5z"/></svg>',
+  recap:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="13" height="15" rx="2.5" transform="rotate(8 13.5 10.5)"/><rect x="3.5" y="6" width="13" height="15" rx="2.5" fill="#4A4541" transform="rotate(-6 10 13.5)"/></svg>',
   star:'<svg width="22" height="22" viewBox="0 0 24 24" fill="#F2B8C6" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21.1l1.4-7L2 9.3l7-.8z"/></svg>'
 };
 function camSentLabel(){
   if (CAM.who !== 'fam') return;
   const newReplies = (S.replies||[]).filter(r => !r.seen && (!S.cloud || r.mid !== S.cloud.mid)).length;
-  $('#cam-sent').innerHTML = newReplies ? `${HEART} ${esc(gpName())} sent you ${newReplies === 1 ? 'a hi' : newReplies + ' hi\u2019s'} \u203a` : 'Sent \u203a';
-  $('#cam-sent').onclick = () => go('fam');
-  $('#cam-left').querySelector('b')?.remove();
-  if (newReplies) $('#cam-left').insertAdjacentHTML('beforeend', `<b>${newReplies}</b>`);
+  fnavBadge(newReplies);
 }
 function openCam(who, opt = {}){ CAM.who = who; CAM.replyTo = opt.replyTo || null; CAM.back = opt.back || (who === 'gp' ? 'gp' : 'cam'); go('cam'); }
 function camBack(){ const b = CAM.back || 'gp'; CAM.replyTo = null; CAM.back = null; go(b); }
@@ -1690,11 +2079,13 @@ function enterCam(){
   const fam = CAM.who === 'fam';
   const rp = CAM.replyTo && S.posts.find(x => x.id === CAM.replyTo);
   $('#cam-to').textContent = fam ? `To ${gpName()}` : rp ? `Reply to ${rp.from}` : 'To the family';
-  $('#cam-left').innerHTML = fam ? ICON.list : ICON.home; $('#cam-left').setAttribute('aria-label', fam ? 'Sent' : 'Back');
-  $('#cam-left').onclick = () => fam ? go('fam') : camBack();
-  $('#cam-right').innerHTML = ICON.gear; $('#cam-right').onclick = () => go('settings');
+  $('#cam-left').innerHTML = fam ? ICON.recap : ICON.home; $('#cam-left').setAttribute('aria-label', fam ? 'Sunday Recap' : 'Back');
+  $('#cam-left').onclick = () => fam ? openRecap() : camBack();
+  $('#cam-right').innerHTML = esc(initials(meName())); $('#cam-right').classList.add('avbtn'); $('#cam-right').setAttribute('aria-label','Your profile');
+  $('#cam-right').onclick = () => openProfile();
   $('#cam-right').style.visibility = fam ? '' : 'hidden';
-  $('#cam-sent').style.display = fam ? '' : 'none';
+  $('#s-cam').dataset.theme = S.camTheme || 'silver';
+  sundayChip();
   camSentLabel();
   camLive();
 }
