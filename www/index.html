@@ -1443,8 +1443,22 @@ async function renderNewTab(){
   $('#newtab').onclick = () => { did('tapnew'); openStory(unseen()); };
   requestAnimationFrame(() => { const f = $('#gp-frame').getBoundingClientRect(), t = $('#newtab'); if (t) t.style.setProperty('--tabtop', Math.max(f.top, f.top + f.height/2 - t.offsetHeight/2) + 'px'); });
 }
+/* Grandpa phones set up before notifications existed: one friendly card until he answers */
+async function dingCard(){
+  const old = $('#gp-ding'); const P = pushPlugin();
+  if (!P || !S.cloud){ if (old) old.remove(); return; }
+  let st = 'prompt'; try { st = (await P.checkPermissions()).receive; } catch(e){}
+  if (st === 'granted' || st === 'denied'){ if (old) old.remove(); return; }
+  if (old) return;
+  const c = document.createElement('button'); c.id = 'gp-ding'; c.className = 'btn primary';
+  c.style.cssText = 'background:var(--pink);color:var(--navy);width:100%;min-height:62px;font-size:20px;margin:10px 0 2px';
+  c.textContent = '🔔 Ding me for new photos';
+  c.onclick = async () => { c.disabled = true; await pushStart(true); c.remove(); };
+  $('#s-gp .row.between').after(c);
+}
 async function renderGP(){
   $('#gp-hello').textContent = `Hi, ${gpName()}`;
+  dingCard();
   renderFaces();
   const cur = FR.list[FR.deck?.i];
   FR.list = allNewestFirst();
