@@ -615,7 +615,8 @@ textarea.field{resize:none;line-height:1.35}
   <div class="col" style="margin:auto 0;gap:16px;text-align:center;align-items:center">
     <div class="ck-big"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#14285A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div>
     <h1 style="font-size:30px">You're connected!</h1>
-    <p style="font-size:18px;line-height:1.45;margin:0;color:#E9E2DA">New photos from the family will pop up right on this phone's home screen.</p>
+    <p style="font-size:18px;line-height:1.45;margin:0;color:#E9E2DA">New photos from the family will pop up right on this phone.</p>
+    <button class="btn primary" id="gr-push" style="background:var(--pink);color:var(--navy);width:100%;min-height:64px;font-size:20px">🔔 Ding me for new photos</button>
     <div class="panel" style="text-align:left;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff">
       <div class="serif" style="font-size:20px;margin-bottom:8px">Last step: add the widget</div>
       <ol class="steps light">
@@ -624,7 +625,7 @@ textarea.field{resize:none;line-height:1.35}
         <li>Search <b>Hiello</b>, choose the big size, tap <b>Add Widget</b>.</li>
       </ol>
     </div>
-    <button class="btn primary" data-go="gp" style="background:var(--pink);color:var(--navy);width:100%">I did it, let's go</button>
+    <button class="btn primary" data-go="gp" id="gr-go" style="background:var(--pink);color:var(--navy);width:100%">I did it, let's go</button>
   </div>
 </section>
 
@@ -945,7 +946,7 @@ function refreshCurrent(){
   else if (current === 'cam' && typeof camSentLabel === 'function') camSentLabel();
   else if (current === 'game') renderBanner();
 }
-function startSync(){ clearInterval(syncT); if (!S.cloud || !CLOUD()) return; syncNow(); syncT = setInterval(() => { if (!document.hidden) syncNow(); }, 15000); }
+function startSync(){ clearInterval(syncT); if (!S.cloud || !CLOUD()) return; syncNow(); setTimeout(() => pushStart(false), 1200); syncT = setInterval(() => { if (!document.hidden) syncNow(); }, 15000); }
 document.addEventListener('visibilitychange', () => { if (!document.hidden) syncNow(); });
 
 /* ---------- the home screen widget: hand it what it needs (it fetches photos itself) ---------- */
@@ -999,6 +1000,38 @@ async function openLink(url){
 (() => { const C = window.Capacitor, A = C && C.Plugins && C.Plugins.App; if (!A) return;
   try { A.addListener('appUrlOpen', e => openLink(e.url)); A.getLaunchUrl && A.getLaunchUrl().then(r => r && r.url && setTimeout(() => openLink(r.url), 400)).catch(() => {}); } catch(e){}
 })();
+
+/* ---------- notifications: a ding (with the photo) when family sends one, and when Grandpa loves yours ---------- */
+function pushPlugin(){
+  const C = window.Capacitor; if (!C || !C.isNativePlatform || !C.isNativePlatform()) return null;
+  return (C.Plugins && C.Plugins.PushNotifications) || (C.registerPlugin ? C.registerPlugin('PushNotifications') : null);
+}
+let pushHooked = false;
+function pushHook(){
+  const P = pushPlugin(); if (!P || pushHooked) return P; pushHooked = true;
+  try {
+    P.addListener('registration', t => { const tok = t && t.value; if (!tok || !S.cloud || S.cloud.push === tok) return;
+      rpc('hi_set_push', { ...famArgs(), p_member:S.cloud.mid, p_token:tok }).then(() => { S.cloud.push = tok; save(); }).catch(() => {}); });
+    /* tapping a notification opens that Hiello */
+    P.addListener('pushNotificationActionPerformed', a => { const d = a && a.notification && a.notification.data; if (d && d.link) setTimeout(() => openLink(d.link), 350); });
+  } catch(e){}
+  return P;
+}
+/* ask = show Apple's "Allow notifications?" if we haven't yet; otherwise only refresh the token quietly */
+async function pushStart(ask){
+  const P = pushHook(); if (!P || !S.cloud) return false;
+  try {
+    let st = await P.checkPermissions();
+    if (st.receive !== 'granted'){
+      if (!ask || st.receive === 'denied') return false;
+      S.pushAsked = true; save();
+      st = await P.requestPermissions();
+    }
+    if (st.receive === 'granted'){ await P.register(); return true; }
+  } catch(e){}
+  return false;
+}
+pushHook();
 
 /* ---------- starting / joining a family ---------- */
 function joinedAs(j){
@@ -1735,6 +1768,7 @@ async function camSend(){
       haptic();
       await camSentShow(`Sent to ${gpName()}!`, `${gpName()} will see it right away.`);
       URL.revokeObjectURL(sh.url); camLive();
+      if (!S.pushAsked) setTimeout(() => pushStart(true), 300);
     } else {
       await publishReply(note, sh.blob, sh.kind, CAM.replyTo || null);
       haptic(); const who = CAM.replyTo && S.posts.find(x => x.id === CAM.replyTo);
@@ -1763,6 +1797,12 @@ function camMore(){
   drawPreview();
 }
 $('#gp-cam').onclick = () => openCam('gp', { back:'gp' });
+$('#gr-push').onclick = async () => {
+  const b = $('#gr-push'); b.disabled = true;
+  const ok = await pushStart(true);
+  b.textContent = ok ? '✓ You’ll get a ding' : (pushPlugin() ? 'No dings (you can turn them on in Settings)' : '✓ You’ll get a ding');
+  b.style.background = 'rgba(255,255,255,.14)'; b.style.color = '#FFF9F3';
+};
 
 /* ---------- tap a picture to reply: a photo back, a little stuck-on note, or love ---------- */
 const RX = { p:null, ctx:null };

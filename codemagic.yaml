@@ -131,6 +131,12 @@ workflows:
           # add the widget target to the Xcode project (xcodeproj comes with CocoaPods)
           ruby -e "require 'xcodeproj'" 2>/dev/null || gem install xcodeproj --no-document
           ruby scripts/add_widget.rb
+      - name: Add photo notifications
+        script: |
+          # the piece that puts the photo inside each notification, and the token hand-off in AppDelegate
+          mkdir -p ios/App/HielloNotify && cp native/ios/HielloNotify/* ios/App/HielloNotify/
+          ruby scripts/add_notify.rb
+          grep -q capacitorDidRegisterForRemoteNotifications ios/App/App/AppDelegate.swift || { echo "AppDelegate was not updated"; exit 1; }
       - name: Copy the app in
         script: npx cap sync ios
       - name: Signing

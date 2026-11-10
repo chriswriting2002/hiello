@@ -67,3 +67,20 @@ Chosen with the "Jobs Treatment" plus a readability check for older eyes (WCAG c
 - **Ballet pink `#F2B8C6` + heart red `#9B1B1F`**: the only highlight color, used sparingly.
 - Ruled out: pewter `#6B655F` (pink 3.4, small text 4.6) and brushed aluminum `#BFB9B2` (pink 1.2, disappears).
 - 2000s Apple touches: a faint brushed finish on slate screens and a soft gloss on round buttons. The navy charm logo stays as the signature mark.
+
+## Photo notifications
+
+When someone sends a Hiello, everyone else in the family gets a notification with the photo inside it.
+When Grandpa sees it, hearts it, writes a note or RSVPs, the person who sent it gets one too. These replace
+each other, so each photo only ever has one notification on screen.
+
+How it fits together:
+- `backend/push.sql`: database triggers. When something happens, they quietly call the Edge Function, passing a private secret.
+- `backend/functions/hiello-push/index.ts`: the Supabase Edge Function. It signs in to Apple with your push key and sends the alerts, attaching a one-day link to the small photo.
+- `native/ios/HielloNotify/`: a Notification Service Extension. It downloads that photo and puts it inside the notification.
+- `scripts/add_notify.rb`: adds that extension to the Xcode project. It also adds the AppDelegate token hand-off. This runs in the "Hiello for iPhone + Widget" workflow.
+- When the app asks: Grandpa sees "Ding me for new photos" on the You're connected screen. Parents are asked right after their first send.
+
+Setup (one time):
+1. In Apple Developer, create an APNs key and turn on Push Notifications for `com.hiello.family`. Then register a new App ID, `com.hiello.family.notify`, with no capabilities.
+2. In Supabase, run `backend/push.sql`. Then deploy the `hiello-push` function with "Verify JWT" turned off; the database calls it with its own secret instead. Finally, add the secrets `APNS_KEY`, `APNS_KEY_ID` and `APNS_TEAM_ID`.
