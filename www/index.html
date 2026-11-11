@@ -448,7 +448,7 @@ textarea.field{resize:none;line-height:1.35}
 .ftop h1{font-size:24px;margin:0;text-align:center;flex:1}
 .seg{display:flex;gap:4px;padding:4px;border-radius:999px;background:#4A4541;margin:0 auto 14px;width:max-content}
 .seg button{border:0;border-radius:999px;background:none;color:#D1C8BF;font-size:16px;font-weight:900;padding:9px 18px;display:flex;align-items:center;gap:6px}
-.seg button.on{background:#6E6761;color:#FFF9F3}
+.seg button.on{background:#6E6761;color:#FFF9F3;box-shadow:none}
 .mcount{display:flex;justify-content:center;gap:0;margin:2px auto 14px;width:max-content;background:#4A4541;border-radius:999px;padding:9px 6px;font-size:16px;font-weight:900;color:#E9E2DA}
 .mcount span{padding:0 14px;display:flex;align-items:center;gap:6px}
 .mcount span+span{border-left:2px solid #6E6761}
@@ -600,36 +600,28 @@ textarea.field{resize:none;line-height:1.35}
 .wt-cap small{display:block;font-size:13px;color:#BDB4AB;font-weight:800;margin-bottom:2px}
 .wt-dots{display:flex;gap:6px}.wt-dots i{width:8px;height:8px;border-radius:50%;background:#5C5651}.wt-dots i.on{background:#F2B8C6}
 
-/* ===== the icon's look carried through the app: navy, framed in brushed silver, pink for love =====
-   (the previous warm-graphite look is saved on the git branch "look-warm-graphite") */
+/* ===== accents from the icon (previous looks: git branch "look-warm-graphite")
+   - the bottom bar is the one red-white-and-blue piece
+   - round buttons and initials circles are the icon's light brushed silver
+   - everything else stays pink, grey and graphite ===== */
 :root{
-  --navy-ui:#14285A; --navy-hi:#1D3570;
-  --metal:linear-gradient(145deg,#F4F5F7 0%,#B9BDC4 28%,#E9EBEE 50%,#9EA3AB 74%,#DADDE1 100%);
+  --navy-ui:#14285A; --flag-red:#C8313E;
+  --metal:linear-gradient(145deg,#F4F5F7 0%,#C9CCD2 30%,#ECEEF0 52%,#AEB2B9 76%,#DDE0E4 100%);
 }
-/* a navy chip with a silver rim, like the icon */
-#fnav,.cam-rb,.cam-side,.cam-to,.mcount,.fd-bar,.pf-av,.cmsg .av,.fd-who .av,.wcard .c,.fs-arr,
-#s-gp .gpbtn:not(.send),.pf-list.bl{
-  border:2px solid transparent!important;
-  background:linear-gradient(var(--navy-ui),var(--navy-ui)) padding-box,var(--metal) border-box!important;
-  color:#F5F5F7;
+/* bottom bar: navy, a white rim, a thin red edge */
+#fnav{background:var(--navy-ui)!important;box-shadow:0 0 0 2px #FFFFFF,0 0 0 4px var(--flag-red),0 10px 26px rgba(0,0,0,.45)!important}
+#fnav button{color:rgba(255,255,255,.72)}
+#fnav button.on{background:#FFFFFF;color:var(--flag-red);box-shadow:inset 0 0 0 2px #F2B8C6}
+#fnav b{background:#F2B8C6;color:var(--flag-red);box-shadow:0 0 0 2px #FFFFFF}
+/* round buttons and initials: light brushed silver with graphite marks */
+.cam-rb,.cam-side,.pf-av,.cmsg .av,.fd-who .av,.wcard .c,.pf-row button i{
+  background:var(--metal)!important;color:#34302D!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -1px 0 rgba(0,0,0,.18),0 2px 6px rgba(0,0,0,.3)!important;
 }
-#fnav{box-shadow:0 8px 24px rgba(0,0,0,.45)}
-#fnav button{color:#AFC0E6}
-#fnav button.on{background:rgba(255,255,255,.16);color:#FFFFFF;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
-.cam-rb,.cam-side{box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 2px 6px rgba(0,0,0,.3)}
-.fd-bar button{background:#0E1D45}
-.pf-list.bl button+button{border-top-color:rgba(255,255,255,.12)}
-.pf-list.bl .ic{background:#0E1D45}
-.cmsg .av,.fd-who .av{font-weight:700}
-#s-gp .gpbtn:not(.send){color:#F5F5F7!important}
-#s-gp .gpbtn:not(.send) svg{stroke:#F2B8C6}
-/* navy accents */
-.month h3{background:var(--navy-ui);color:#F5F5F7;border-bottom:2px solid #A9ADB4}
-.seg button.on{background:var(--navy-ui);color:#FFFFFF;box-shadow:inset 0 0 0 1.5px #B9BDC4}
-.wt-dots i.on{background:#F2B8C6}
+.cam-rb svg,.cam-side svg,.pf-row button i svg{stroke:#34302D}
+.cam-side span{color:#34302D}
+.wcard .c.add{color:var(--flag-red)!important}
 .gs-grab{background:var(--metal)}
-/* the camera window gets the same silver frame as the icon */
-#s-cam:not([data-theme]) .cam-sq,#s-cam[data-theme="silver"] .cam-sq{box-shadow:0 0 0 2px #14285A,0 0 0 7px #C9CCD2,0 0 0 8px #8E939B}
 </style>
 </head>
 <body>
