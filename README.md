@@ -84,3 +84,7 @@ How it fits together:
 Setup (one time):
 1. In Apple Developer, create an APNs key and turn on Push Notifications for `com.hiello.family`. Then register a new App ID, `com.hiello.family.notify`, with no capabilities.
 2. In Supabase, run `backend/push.sql`. Then deploy the `hiello-push` function with "Verify JWT" turned off; the database calls it with its own secret instead. Finally, add the secrets `APNS_KEY`, `APNS_KEY_ID` and `APNS_TEAM_ID`.
+
+## Words we use
+
+The thing you send is **a hi**: "Send a hi", "Chris sent you a hi", "Grandma loved your hi". "Hiello" is only the app's name and logo. We avoid the plural, so counts say "3 new" or "4 photos", and the collection is "Family photos". We don't say "Charm", which belongs to Locket's jewelry world.

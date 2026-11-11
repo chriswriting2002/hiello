@@ -95,10 +95,10 @@ Deno.serve(async (req) => {
     const what = row.media_kind === "video" ? "video" : "photo";
 
     if (kind === "post") {
-      // a new Hiello: everyone else in the family, Grandpa first of all
+      // a new hi: everyone else in the family, Grandpa first of all
       to = members.filter((m: any) => m.id !== row.member_id);
-      title = `${row.from_name || "Family"} sent you a ${what}`;
-      body = short(row.note || row.caption || row.title) || "Tap to see it ♥";
+      title = `${row.from_name || "Family"} sent you a hi`;
+      body = short(row.note || row.caption || row.title) || (what === "video" ? "A video! Tap to watch ♥" : "Tap to see it ♥");
       link = `hiello://post/${row.id}`;
       if (row.kind === "recap") {
         // a Sunday Recap arrives as several photos: one notification that updates, not a ding per photo
@@ -108,18 +108,18 @@ Deno.serve(async (req) => {
       }
     } else if (kind === "reply") {
       to = members.filter((m: any) => m.id !== row.member_id);
-      title = `${row.from_name || gp} sent you a hi!`;
-      body = short(row.note) || `A ${what} back, just for you ♥`;
+      title = `${row.from_name || gp} sent you a hi`;
+      body = short(row.note) || (row.media_kind ? `A ${what} back, just for you ♥` : "♥");
       link = "hiello://reply/";
     } else {
-      // Grandpa did something with your Hiello: tell the person who sent it (one alert per photo, updated in place)
+      // Grandpa did something with your hi: tell the person who sent it (one alert per photo, updated in place)
       to = members.filter((m: any) => m.id === row.member_id && m.role !== "gp");
       link = `hiello://post/${row.id}`;
       collapse = `p-${row.id}`;
-      if (kind === "note") { title = `${gp} wrote on your ${what}`; body = `“${short(row.gp_note, 60)}”`; }
-      else if (kind === "heart") { title = `${gp} ♥ your ${what}`; body = row.hearts > 1 ? `Loved it ${row.hearts} times!` : "Made their day."; }
+      if (kind === "note") { title = `${gp} wrote on your hi`; body = `“${short(row.gp_note, 60)}”`; }
+      else if (kind === "heart") { title = `${gp} ♥ your hi`; body = row.hearts > 1 ? `Loved it ${row.hearts} times!` : "Made their day."; }
       else if (kind === "rsvp") { title = row.rsvp === "yes" ? `${gp} will be there!` : `${gp} can’t make it`; body = row.rsvp === "yes" ? (short(row.title || row.note) || "Tap to see.") : "Send them a recap after ♥"; }
-      else if (kind === "seen") { title = `${gp} just saw your ${what} ✓`; body = short(row.note || row.caption) || "Seen on the home screen."; }
+      else if (kind === "seen") { title = `${gp} just saw your hi ✓`; body = short(row.note || row.caption) || "Seen on the home screen."; }
       else return new Response("skip");
     }
     if (!to.length) return new Response("nobody");
