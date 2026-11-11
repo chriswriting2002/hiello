@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
     const row = await one(isReply ? "replies" : "posts", `id=eq.${id}&select=*`);
     if (!row) return new Response("gone", { status: 200 });
     const fam = await one("families", `id=eq.${row.family_id}&select=gp_name`);
-    const gp = fam?.gp_name || "Grandpa";
+    const gp = fam?.gp_name || "Grandma & Grandpa";
     const members = await many("members", `family_id=eq.${row.family_id}&push_token=not.is.null&select=id,name,role,push_token`);
 
     let to: typeof members = [], title = "", body = "", link = "hiello://home", picture = row.thumb_path, collapse: string | undefined;
