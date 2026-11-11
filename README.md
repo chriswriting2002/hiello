@@ -88,3 +88,10 @@ Setup (one time):
 ## Words we use
 
 The thing you send is **a hi**: "Send a hi", "Chris sent you a hi", "Grandma loved your hi". "Hiello" is only the app's name and logo. We avoid the plural, so counts say "3 new" or "4 photos", and the collection is "Family photos". We don't say "Charm", which belongs to Locket's jewelry world.
+
+## Accounts and legal (App Store requirements)
+
+- **Delete account:** Profile → Delete my account. It removes your posts, replies, notes and storage files, and deletes the Circle if you're the last member. Needs `backend/account.sql` run once in Supabase.
+- **Leave this Circle:** Profile → Leave this Circle. What you already sent stays for everyone else.
+- **Privacy Policy and Terms:** `www/privacy.html` and `www/terms.html`. They open inside the app, and the same pages need a public URL for App Store Connect. Replace `SUPPORT_EMAIL` before submitting.
+- **Widget tutorial:** an animated, looping guide. It shows once after joining, and again from Profile → Add a home screen widget and from the Easy mode "You're connected" screen.
