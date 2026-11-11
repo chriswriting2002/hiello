@@ -26,7 +26,7 @@ workflows:
         script: |
           if [ ! -d ios ]; then npx cap add ios; fi
       - name: App icon and launch screen
-        script: npx capacitor-assets generate --ios --iconBackgroundColor '#34302D' --splashBackgroundColor '#34302D'
+        script: npx capacitor-assets generate --ios --iconBackgroundColor '#14285A' --splashBackgroundColor '#34302D'
       - name: iPhone only, portrait only, app settings
         script: |
           PLIST=ios/App/App/Info.plist
@@ -97,7 +97,7 @@ workflows:
         script: |
           if [ ! -d ios ]; then npx cap add ios; fi
       - name: App icon and launch screen
-        script: npx capacitor-assets generate --ios --iconBackgroundColor '#34302D' --splashBackgroundColor '#34302D'
+        script: npx capacitor-assets generate --ios --iconBackgroundColor '#14285A' --splashBackgroundColor '#34302D'
       - name: iPhone only, portrait only, app settings
         script: |
           PLIST=ios/App/App/Info.plist
@@ -148,7 +148,7 @@ workflows:
           /usr/libexec/PlistBuddy -c "Delete :CFBundleIcons:CFBundleAlternateIcons" "$PLIST" 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :CFBundleIcons dict" "$PLIST" 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundleAlternateIcons dict" "$PLIST"
-          for N in Pink Cream Classic; do
+          for N in Graphite Pink Cream; do
             /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundleAlternateIcons:$N dict" "$PLIST"
             /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundleAlternateIcons:$N:CFBundleIconFiles array" "$PLIST"
             /usr/libexec/PlistBuddy -c "Add :CFBundleIcons:CFBundleAlternateIcons:$N:CFBundleIconFiles:0 string Icon$N" "$PLIST"

@@ -599,6 +599,14 @@ textarea.field{resize:none;line-height:1.35}
 .wt-cap{font-size:18px;font-weight:900;color:#FFF9F3;text-align:center;min-height:48px;line-height:1.3;max-width:300px}
 .wt-cap small{display:block;font-size:13px;color:#BDB4AB;font-weight:800;margin-bottom:2px}
 .wt-dots{display:flex;gap:6px}.wt-dots i{width:8px;height:8px;border-radius:50%;background:#5C5651}.wt-dots i.on{background:#F2B8C6}
+
+/* ===== a whisper of the old navy-blue: thin lines, one per screen ===== */
+:root{--blueline:rgba(108,140,212,.6)}
+#fnav{box-shadow:0 8px 24px rgba(0,0,0,.4),inset 0 0 0 1.5px var(--blueline)}
+.fd-bar,.mcount,.seg,.fs-arr{box-shadow:inset 0 0 0 1.5px var(--blueline)}
+.pf-list.bl{box-shadow:inset 0 0 0 1.5px var(--blueline)}
+.cam-to{box-shadow:inset 0 0 0 1.5px var(--blueline)}
+.gs-grab{background:#6C8CD4}
 </style>
 </head>
 <body>
@@ -1335,7 +1343,7 @@ function sundayChip(){
 }
 
 /* ---------- profile ---------- */
-const ICON_CHOICES = [['', 'Graphite', 'Graphite'], ['Pink', 'Pink', 'Pink'], ['Cream', 'Cream', 'Cream'], ['Classic', 'Classic navy', 'Classic']];
+const ICON_CHOICES = [['', 'Classic navy', 'Classic'], ['Graphite', 'Graphite', 'Graphite'], ['Pink', 'Pink', 'Pink'], ['Cream', 'Cream', 'Cream']];
 const THEMES = [['silver','Silver','#C8CACE'], ['pink','Pink','#F2B8C6'], ['cream','Cream','#FFF9F3'], ['polaroid','Polaroid','#FFFFFF'], ['rainbow','Rainbow','linear-gradient(135deg,#F2B8C6,#FFE7A8,#BFE3C9,#B9D3F0)'], ['none','No frame','#34302D']];
 async function openProfile(){
   const fam = S.members || [], others = fam.filter(m => !S.cloud || m.id !== S.cloud.mid);
@@ -1352,7 +1360,7 @@ async function openProfile(){
       <button data-pf="share"><i>${IC.share}</i>Share invite</button>
     </div>
     <div class="pf-free"><span class="h">${heartSVG(26)}</span><div style="flex:1"><div style="font-size:17px;font-weight:900">Everything’s free</div><div style="font-size:14px;color:#D1C8BF;font-weight:700">No ads, no subscription, no limit on your Circle.</div></div></div>
-    <div class="pf-list">
+    <div class="pf-list bl">
       <button data-pf="widget"><span class="ic">${IC.widget}</span>Add a home screen widget<span class="v">${IC.chev}</span></button>
       <button data-pf="gpmode"><span class="ic">${heartSVG(18)}</span>Easy mode<span class="v">${S.mode === 'gp' ? 'On' : 'Off'} ${IC.chev}</span></button>
     </div>
@@ -1575,7 +1583,7 @@ function wtHTML(){
     <span class="wt-edit">Edit</span><span class="wt-done">Done</span>
     <div class="wt-big"></div><div class="wt-grid">${'<i></i>'.repeat(16)}</div>
     <div class="wt-menu"><b>Add Widget</b><b>Customize</b><b>Edit Pages</b></div>
-    <div class="wt-sheet"><div class="wt-search">⌕ <span>Hiello</span></div><div class="wt-res"><img src="icons/Graphite.png" alt="">Hiello</div>
+    <div class="wt-sheet"><div class="wt-search">⌕ <span>Hiello</span></div><div class="wt-res"><img src="icons/Classic.png" alt="">Hiello</div>
       <div class="wt-prev"><div class="w"></div><div class="add">Add Widget</div></div></div>
     <span class="wt-f"></span></div>
     <div class="wt-cap"></div><div class="wt-dots">${'<i></i>'.repeat(WT_STEPS.length)}</div></div>`;
@@ -2322,7 +2330,7 @@ function gameBreak(back, after){ const p = nextBreakPost(); if (p) openPlayer([p
    Tap for a photo, hold for a video (up to 15 s). Type a note on the picture, tap send.
    Grandpa uses the same camera from "Send a hi" to send one back.
    ========================================================= */
-const CAM = { who:'fam', stream:null, facing:'environment', rec:null, chunks:[], t0:0, raf:0, holdT:null, shot:null };
+const CAM = { who:'fam', stream:null, facing:'user', rec:null, chunks:[], t0:0, raf:0, holdT:null, shot:null };
 const ICON = {
   list:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>',
   gear:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>',
@@ -2446,11 +2454,12 @@ async function camSend(){
   const btn = $('#cam-send'); btn.disabled = true;
   try {
     const note = $('#cam-note').value.trim();
-    if (CAM.who === 'fam'){
+    if (CAM.who === 'fam' || !CAM.replyTo){
       await publishPost({ from: meName(), note, caption:'', tpl:'polaroid', sx:50, sy:80, type:'everyday', title:'', when:'' }, sh.blob, sh.kind);
       haptic();
       await camSentShow('Sent to the fam!', 'It’s on their home screens now.');
-      URL.revokeObjectURL(sh.url); camLive();
+      URL.revokeObjectURL(sh.url);
+      if (CAM.who === 'fam') camLive(); else camBack();
       if (!S.pushAsked) setTimeout(() => pushStart(true), 300);
     } else {
       await publishReply(note, sh.blob, sh.kind, CAM.replyTo || null);

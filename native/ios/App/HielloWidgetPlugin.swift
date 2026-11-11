@@ -45,7 +45,7 @@ public class HielloWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve()
     }
 
-    /// Switch the home screen icon. name: "Pink", "Cream", "Classic", or empty for the standard graphite icon.
+    /// Switch the home screen icon. name: "Graphite", "Pink", "Cream", or empty for the standard graphite icon.
     @objc func setIcon(_ call: CAPPluginCall) {
         let raw = call.getString("name") ?? ""
         let name: String? = raw.isEmpty ? nil : raw

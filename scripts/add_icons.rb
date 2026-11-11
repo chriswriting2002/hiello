@@ -1,7 +1,7 @@
-# Adds the free alternate app icons (Pink, Cream, Classic) to the iPhone app.
+# Adds the free alternate app icons (Graphite, Pink, Cream) to the iPhone app.
 # Expects ios/App/App/IconPink@2x.png etc. (copied by codemagic.yaml) and registers them in Info.plist there.
 require 'xcodeproj'
-NAMES = %w[Pink Cream Classic]
+NAMES = %w[Graphite Pink Cream]
 project = Xcodeproj::Project.open(File.expand_path('ios/App/App.xcodeproj', Dir.pwd))
 app = project.targets.find { |t| t.name == 'App' } or abort('add_icons: App target not found')
 group = project.main_group.find_subpath('App', false) or abort('add_icons: App group not found')
