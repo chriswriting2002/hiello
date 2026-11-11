@@ -600,13 +600,36 @@ textarea.field{resize:none;line-height:1.35}
 .wt-cap small{display:block;font-size:13px;color:#BDB4AB;font-weight:800;margin-bottom:2px}
 .wt-dots{display:flex;gap:6px}.wt-dots i{width:8px;height:8px;border-radius:50%;background:#5C5651}.wt-dots i.on{background:#F2B8C6}
 
-/* ===== a whisper of the old navy-blue: thin lines, one per screen ===== */
-:root{--blueline:rgba(108,140,212,.6)}
-#fnav{box-shadow:0 8px 24px rgba(0,0,0,.4),inset 0 0 0 1.5px var(--blueline)}
-.fd-bar,.mcount,.seg,.fs-arr{box-shadow:inset 0 0 0 1.5px var(--blueline)}
-.pf-list.bl{box-shadow:inset 0 0 0 1.5px var(--blueline)}
-.cam-to{box-shadow:inset 0 0 0 1.5px var(--blueline)}
-.gs-grab{background:#6C8CD4}
+/* ===== the icon's look carried through the app: navy, framed in brushed silver, pink for love =====
+   (the previous warm-graphite look is saved on the git branch "look-warm-graphite") */
+:root{
+  --navy-ui:#14285A; --navy-hi:#1D3570;
+  --metal:linear-gradient(145deg,#F4F5F7 0%,#B9BDC4 28%,#E9EBEE 50%,#9EA3AB 74%,#DADDE1 100%);
+}
+/* a navy chip with a silver rim, like the icon */
+#fnav,.cam-rb,.cam-side,.cam-to,.mcount,.fd-bar,.pf-av,.cmsg .av,.fd-who .av,.wcard .c,.fs-arr,
+#s-gp .gpbtn:not(.send),.pf-list.bl{
+  border:2px solid transparent!important;
+  background:linear-gradient(var(--navy-ui),var(--navy-ui)) padding-box,var(--metal) border-box!important;
+  color:#F5F5F7;
+}
+#fnav{box-shadow:0 8px 24px rgba(0,0,0,.45)}
+#fnav button{color:#AFC0E6}
+#fnav button.on{background:rgba(255,255,255,.16);color:#FFFFFF;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.cam-rb,.cam-side{box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 2px 6px rgba(0,0,0,.3)}
+.fd-bar button{background:#0E1D45}
+.pf-list.bl button+button{border-top-color:rgba(255,255,255,.12)}
+.pf-list.bl .ic{background:#0E1D45}
+.cmsg .av,.fd-who .av{font-weight:700}
+#s-gp .gpbtn:not(.send){color:#F5F5F7!important}
+#s-gp .gpbtn:not(.send) svg{stroke:#F2B8C6}
+/* navy accents */
+.month h3{background:var(--navy-ui);color:#F5F5F7;border-bottom:2px solid #A9ADB4}
+.seg button.on{background:var(--navy-ui);color:#FFFFFF;box-shadow:inset 0 0 0 1.5px #B9BDC4}
+.wt-dots i.on{background:#F2B8C6}
+.gs-grab{background:var(--metal)}
+/* the camera window gets the same silver frame as the icon */
+#s-cam:not([data-theme]) .cam-sq,#s-cam[data-theme="silver"] .cam-sq{box-shadow:0 0 0 2px #14285A,0 0 0 7px #C9CCD2,0 0 0 8px #8E939B}
 </style>
 </head>
 <body>
