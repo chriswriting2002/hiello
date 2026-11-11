@@ -622,6 +622,21 @@ textarea.field{resize:none;line-height:1.35}
 .cam-side span{color:#34302D}
 .wcard .c.add{color:var(--flag-red)!important}
 .gs-grab{background:var(--metal)}
+
+/* ===== pink background (the dark grey turned pink); grey pieces, silver circles and the bottom bar unchanged ===== */
+:root{--bgpink:#F4C7D3;--ink:#34302D;--ink2:#6B5A60}
+#s-cam,#s-mem,#s-fam,#s-feed,#s-gp,#s-photos,#s-games,#s-trivia,.gs-in{background-color:var(--bgpink)!important;color:var(--ink)!important}
+#s-feed .fd-top{background:linear-gradient(var(--bgpink) 60%,rgba(244,199,211,0))}
+.cam-hint,.cam-hist,.fs-tip,.fd-who small,.mempty,.gs-sub,.pf-fam,.pf-label,.wt-cap small,.gp-regular,#s-fam .muted,.fd-empty,.sheet-x{color:var(--ink2)!important}
+.fs-num,.mempty b,.fd-empty b,.wt-cap,.pf-row button,.pf-sec,.pf-name,.gs-h,.fd-who,.qrcode{color:var(--ink)!important}
+#s-gp h1,#s-gp .kicker,#s-games h1,#s-trivia h1{color:var(--ink)!important}
+.cam-hist b{background:#34302D;color:#F4C7D3}
+.fd-empty svg path,.fd-empty svg rect{stroke:#B98A97}
+.mempty svg{fill:#B98A97}
+.cam-to,.month h3,.seg button,.mcount,.fd-bar input,.recap{color:#FFF9F3!important}
+.seg button:not(.on){color:#D1C8BF!important}
+.shutter{border-color:#FFFFFF!important;box-shadow:0 0 0 2px #34302D,0 4px 12px rgba(0,0,0,.18)}
+#s-gp .gpbtn.send{background:#FFF9F3!important;box-shadow:inset 0 0 0 3px #34302D,0 2px 6px rgba(0,0,0,.18)!important}
 </style>
 </head>
 <body>
