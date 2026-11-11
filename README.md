@@ -93,5 +93,5 @@ The thing you send is **a hi**: "Send a hi", "Chris sent you a hi", "Grandma lov
 
 - **Delete account:** Profile → Delete my account. It removes your posts, replies, notes and storage files, and deletes the Circle if you're the last member. Needs `backend/account.sql` run once in Supabase.
 - **Leave this Circle:** Profile → Leave this Circle. What you already sent stays for everyone else.
-- **Privacy Policy and Terms:** `www/privacy.html` and `www/terms.html`. They open inside the app, and the same pages need a public URL for App Store Connect. Replace `SUPPORT_EMAIL` before submitting.
+- **Privacy Policy and Terms:** `www/privacy.html` and `www/terms.html`. They open inside the app, and the same pages need a public URL for App Store Connect. Support email: papermeadowgames@gmail.com.
 - **Widget tutorial:** an animated, looping guide. It shows once after joining, and again from Profile → Add a home screen widget and from the Easy mode "You're connected" screen.
