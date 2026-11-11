@@ -7,7 +7,7 @@ import UIKit
 
 enum HB {
     static let navy = Color(red: 20/255, green: 40/255, blue: 90/255)       // #14285A
-    static let midnight = Color(red: 52/255, green: 48/255, blue: 45/255)   // #34302D warm graphite
+    static let midnight = Color(red: 15/255, green: 30/255, blue: 69/255)   // #0F1E45 icon navy
     static let pink = Color(red: 242/255, green: 184/255, blue: 198/255)    // #F2B8C6
     static let red = Color(red: 155/255, green: 27/255, blue: 31/255)       // #9B1B1F
     static let silver = Color(red: 200/255, green: 202/255, blue: 206/255)  // #C8CACE
@@ -365,7 +365,7 @@ struct PhotoBackground: View {
             if let img = photo?.image {
                 Image(uiImage: img).resizable().scaledToFill()
             } else if photo != nil {
-                LinearGradient(colors: [Color(red: 74/255, green: 69/255, blue: 65/255), HB.midnight], startPoint: .top, endPoint: .bottom)
+                LinearGradient(colors: [Color(red: 27/255, green: 49/255, blue: 102/255), HB.midnight], startPoint: .top, endPoint: .bottom)
                 HeartBadge(size: 54).opacity(0.5)
             }
         }
