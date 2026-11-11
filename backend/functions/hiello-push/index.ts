@@ -87,15 +87,17 @@ Deno.serve(async (req) => {
     const isReply = kind === "reply";
     const row = await one(isReply ? "replies" : "posts", `id=eq.${id}&select=*`);
     if (!row) return new Response("gone", { status: 200 });
-    const fam = await one("families", `id=eq.${row.family_id}&select=gp_name`);
-    const gp = fam?.gp_name || "Grandma & Grandpa";
-    const members = await many("members", `family_id=eq.${row.family_id}&push_token=not.is.null&select=id,name,role,push_token`);
+    const everyone = await many("members", `family_id=eq.${row.family_id}&select=id,name,role,push_token`);
+    const members = everyone.filter((m: any) => m.push_token);
+    // hearts, notes and "seen" come from people in Easy mode: use their names
+    const easy = everyone.filter((m: any) => m.role === "gp").map((m: any) => m.name).filter(Boolean);
+    const gp = easy.length ? easy.join(" & ") : "Someone";
 
     let to: typeof members = [], title = "", body = "", link = "hiello://home", picture = row.thumb_path, collapse: string | undefined;
     const what = row.media_kind === "video" ? "video" : "photo";
 
     if (kind === "post") {
-      // a new hi: everyone else in the family, Grandpa first of all
+      // a new hi: everyone else in the Circle
       to = members.filter((m: any) => m.id !== row.member_id);
       title = `${row.from_name || "Family"} sent you a hi`;
       body = short(row.note || row.caption || row.title) || (what === "video" ? "A video! Tap to watch ♥" : "Tap to see it ♥");
@@ -110,9 +112,10 @@ Deno.serve(async (req) => {
       to = members.filter((m: any) => m.id !== row.member_id);
       title = `${row.from_name || gp} sent you a hi`;
       body = short(row.note) || (row.media_kind ? `A ${what} back, just for you ♥` : "♥");
+      if (!row.media_kind && (row.note || "").trim() === "♥") { title = `${row.from_name || "Someone"} ♥ your hi`; body = "Made their day."; }
       link = "hiello://reply/";
     } else {
-      // Grandpa did something with your hi: tell the person who sent it (one alert per photo, updated in place)
+      // someone in Easy mode did something with your hi: tell the person who sent it (one alert per photo, updated in place)
       to = members.filter((m: any) => m.id === row.member_id && m.role !== "gp");
       link = `hiello://post/${row.id}`;
       collapse = `p-${row.id}`;
