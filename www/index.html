@@ -1264,7 +1264,7 @@ async function openLink(url){
   /* the widget takes turns between people: open whoever was on screen when it was tapped */
   const q = /[?&]turns=([\w,:-]+)&t0=(\d+)/.exec(url);
   if (q){ const ids = q[1].split(','), el = Date.now() / 1000 - +q[2];
-    if (ids.length > 1 && el >= 0 && el < 3600){ const pick = ids[(Math.floor(el / 10) % 6) % ids.length]; if (pick) id = pick; } }
+    if (ids.length > 1 && el >= 0 && el < 3600){ const pick = ids[Math.floor(el / 10) % ids.length]; if (pick) id = pick; } }
   const find = () => S.posts.find(x => String(x.id) === id) || (S.replies || []).find(x => String(x.id) === id);
   let p = find();
   if (!p && S.cloud){ await syncNow(); p = find(); }

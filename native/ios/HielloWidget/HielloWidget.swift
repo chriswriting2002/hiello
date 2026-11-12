@@ -418,47 +418,37 @@ func agoText(_ d: Date, now: Date) -> String {
 // MARK: - The 1, 2 beat
 //
 // A widget can't play video or GIFs, but a timer label ticks by itself every second while the widget is on
-// screen. Drawn in one of Hiello's stencil fonts (HielloBeat1, HielloS…; see scripts/make_mask_fonts.py),
-// where some digits are solid squares and everything else is blank, the timer becomes a stencil that opens
-// and closes on the beat. Only public SwiftUI/WidgetKit is used; nothing runs in the background.
+// screen. Hiello's stencil fonts (HielloB…, HielloC…; see scripts/make_mask_fonts.py) turn each whole timer
+// reading ("0:07", "12:31", …) into a single glyph that is either a huge solid block or nothing, so a timer
+// drawn in one of them is a stencil that is fully open or fully shut each second. Where the text lands doesn't
+// matter, so a picture is never cut in half. Only public SwiftUI/WidgetKit is used.
 
-/// A stencil cut from one digit of a running timer. `place` 0 = the last digit (changes every second),
-/// 1 = the digit before it (changes every 10 seconds).
+/// A stencil that opens and shuts with the beat. The font decides on which seconds it's open.
 struct StencilMask: View {
     var font: String
     var beat: ClosedRange<Date>
-    var place: Int
     var body: some View {
         GeometryReader { g in
-            let side = max(g.size.width, g.size.height, 1)
             Text(timerInterval: beat, countsDown: false)
-                .font(.custom(font, fixedSize: side))
+                .font(.custom(font, fixedSize: max(g.size.width, g.size.height, 1)))
                 .environment(\.locale, Locale(identifier: "en_US_POSIX"))
-                .multilineTextAlignment(.trailing)
                 .lineLimit(1)
                 .fixedSize()
                 .foregroundStyle(Color.black)
-                .offset(x: CGFloat(place) * side)
-                .frame(width: side, height: side, alignment: .trailing)
-                .clipped()
-                .position(x: g.size.width / 2, y: g.size.height / 2)
+                .frame(width: g.size.width, height: g.size.height)
         }
     }
 }
 
 extension View {
-    /// Shows this only on person `p`'s turn (of `n` taking turns), and, if `second`, only on beat 2.
-    @ViewBuilder func onTurn(_ p: Int, of n: Int, second: Bool, beat: ClosedRange<Date>) -> some View {
-        if n > 1 && second {
-            self.mask(StencilMask(font: "HielloS\(n)\(p)", beat: beat, place: 1))
-                .mask(StencilMask(font: "HielloBeat1", beat: beat, place: 0))
-        } else if n > 1 {
-            self.mask(StencilMask(font: "HielloS\(n)\(p)", beat: beat, place: 1))
-        } else if second {
-            self.mask(StencilMask(font: "HielloBeat1", beat: beat, place: 0))
-        } else {
-            self
-        }
+    /// Shows this only on person `p`'s turn (of `n` taking turns, 10 seconds each) and on beat `f`
+    /// (0 = picture 1 on even seconds, 1 = picture 2 on odd seconds).
+    func onBeat(_ p: Int, of n: Int, frame f: Int, beat: ClosedRange<Date>) -> some View {
+        self.mask(StencilMask(font: "HielloB\(n)\(p)\(f)", beat: beat))
+    }
+    /// Shows this on person `p`'s whole turn.
+    func onTurn(_ p: Int, of n: Int, beat: ClosedRange<Date>) -> some View {
+        self.mask(StencilMask(font: "HielloC\(n)\(p)", beat: beat))
     }
 }
 
@@ -480,11 +470,12 @@ struct BeatStack: View {
         ZStack {
             ForEach(0..<n, id: \.self) { p in
                 let pics = people[p].beat
-                ForEach(0..<pics.count, id: \.self) { f in
+                ForEach(0..<2, id: \.self) { f in
                     if p == 0 && f == 0 {
-                        FillImage(image: pics[f])   // underneath everything, and where it rests
-                    } else {
-                        FillImage(image: pics[f]).onTurn(p, of: n, second: f == 1, beat: beat)
+                        if let first = pics.first { FillImage(image: first) }   // underneath everything, and where it rests
+                    } else if !pics.isEmpty {
+                        // a plain photo shows on both beats of its turn
+                        FillImage(image: pics[min(f, pics.count - 1)]).onBeat(p, of: n, frame: f, beat: beat)
                     }
                 }
             }
@@ -584,7 +575,7 @@ struct PhotoView: View {
                 ZStack {
                     ForEach(0..<people.count, id: \.self) { p in
                         Caption(photo: people[p], now: entry.date, heartRoom: photo.canHeart)
-                            .mask(StencilMask(font: "HielloS\(people.count)\(p)", beat: b, place: 1))
+                            .onTurn(p, of: people.count, beat: b)
                     }
                 }
             } else {

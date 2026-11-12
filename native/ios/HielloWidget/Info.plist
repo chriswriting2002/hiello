@@ -22,12 +22,23 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>HielloBeat1.ttf</string>
-		<string>HielloS20.ttf</string>
-		<string>HielloS21.ttf</string>
-		<string>HielloS30.ttf</string>
-		<string>HielloS31.ttf</string>
-		<string>HielloS32.ttf</string>
+		<string>HielloB100.ttf</string>
+		<string>HielloB101.ttf</string>
+		<string>HielloB200.ttf</string>
+		<string>HielloB201.ttf</string>
+		<string>HielloB210.ttf</string>
+		<string>HielloB211.ttf</string>
+		<string>HielloB300.ttf</string>
+		<string>HielloB301.ttf</string>
+		<string>HielloB310.ttf</string>
+		<string>HielloB311.ttf</string>
+		<string>HielloB320.ttf</string>
+		<string>HielloB321.ttf</string>
+		<string>HielloC20.ttf</string>
+		<string>HielloC21.ttf</string>
+		<string>HielloC30.ttf</string>
+		<string>HielloC31.ttf</string>
+		<string>HielloC32.ttf</string>
 	</array>
 	<key>NSExtension</key>
 	<dict>
