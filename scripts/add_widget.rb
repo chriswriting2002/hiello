@@ -32,6 +32,11 @@ widget.add_file_references([wgroup.new_reference('HielloWidget.swift')])
 wgroup.new_reference('Info.plist')
 wgroup.new_reference('HielloWidget.entitlements')
 widget.resources_build_phase.add_file_reference(wgroup.new_reference('PrivacyInfo.xcprivacy'))
+# the stencil fonts that make a Flip move on the widget (listed in the widget's Info.plist UIAppFonts)
+Dir.glob(File.join(Dir.pwd, 'ios/App', WIDGET_NAME, '*.ttf')).sort.each do |f|
+  widget.resources_build_phase.add_file_reference(wgroup.new_reference(File.basename(f)))
+  puts "add_widget: font #{File.basename(f)}"
+end
 widget.add_system_framework(%w[WidgetKit SwiftUI AppIntents])
 
 widget.build_configurations.each do |c|

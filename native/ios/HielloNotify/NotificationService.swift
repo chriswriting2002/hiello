@@ -51,7 +51,7 @@ class NotificationService: UNNotificationServiceExtension {
         let out = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".gif")
         guard let dest = CGImageDestinationCreateWithURL(out as CFURL, UTType.gif.identifier as CFString, n, nil) else { return nil }
         CGImageDestinationSetProperties(dest, [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: 0]] as CFDictionary)
-        let frameProps = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: 0.45]] as CFDictionary
+        let frameProps = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: 0.5]] as CFDictionary
         let fw = w / CGFloat(n)
         for i in 0..<n {
             if let c = cg.cropping(to: CGRect(x: (CGFloat(i) * fw).rounded(), y: 0, width: fw.rounded(.down), height: h)) {

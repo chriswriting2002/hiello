@@ -103,9 +103,20 @@ enum HStore {
     static func addPendingHeart(_ id: String) { defaults?.set(pendingHearts(id) + 1, forKey: "hiello.heart." + id) }
     static func clearPendingHeart(_ id: String) { defaults?.removeObject(forKey: "hiello.heart." + id) }
 
-    /// Which frame of a Flip is showing (tapping the widget moves it on by one).
-    static func flipIndex(_ id: String) -> Int { defaults?.integer(forKey: "hiello.flip." + id) ?? 0 }
-    static func nextFlip(_ id: String) { defaults?.set(flipIndex(id) + 1, forKey: "hiello.flip." + id) }
+    /// The 1, 2 beat: a widget moves for a while when something new lands (or when Play is tapped), then rests.
+    static let beatLength: TimeInterval = 60 * 60
+    static func beatWindow(scope: String, key: String, now: Date) -> ClosedRange<Date>? {
+        let d = defaults
+        if d?.string(forKey: "hiello.beatkey." + scope) != key {
+            d?.set(key, forKey: "hiello.beatkey." + scope)
+            d?.set(now.timeIntervalSince1970, forKey: "hiello.beatstart." + scope)
+        }
+        let t = d?.double(forKey: "hiello.beatstart." + scope) ?? 0
+        let start = t > 0 ? Date(timeIntervalSince1970: t) : now
+        let end = start.addingTimeInterval(beatLength)
+        return now < end ? start...end : nil
+    }
+    static func replay(scope: String) { defaults?.set(Date().timeIntervalSince1970, forKey: "hiello.beatstart." + scope) }
 }
 
 // MARK: - Timeline
@@ -123,13 +134,13 @@ struct HPhoto {
     var isVideo: Bool
     var canHeart: Bool
     var status: String?
-    var frames: [UIImage] = []   // a Flip: 3 quick pictures, shown one at a time
+    var frames: [UIImage] = []   // a Flip: quick pictures taken one after another
 
-    func shown(step: Int) -> UIImage? {
-        guard !frames.isEmpty else { return image }
-        return frames[(HStore.flipIndex(id) + step) % frames.count]
+    /// What the widget beats between: picture 1, picture 2 (older 3-picture Flips use their first and last).
+    var beat: [UIImage] {
+        if frames.count >= 2 { return [frames[0], frames[frames.count - 1]] }
+        return image.map { [$0] } ?? []
     }
-    func frameNumber(step: Int) -> Int { frames.isEmpty ? 0 : (HStore.flipIndex(id) + step) % frames.count }
 }
 
 enum HState {
@@ -142,7 +153,9 @@ struct HEntry: TimelineEntry {
     let date: Date
     let state: HState
     var title: String = "Hiello"
-    var flipStep: Int = 0
+    var people: [HPhoto] = []          // whose hi's take turns on the widget (newest first, up to 3)
+    var beat: ClosedRange<Date>? = nil // while set, the widget moves 1, 2, 1, 2 by itself
+    var scope: String = "all"
 }
 
 // MARK: - Loading (the widget fetches by itself, so it updates even when the app is closed)
@@ -179,7 +192,7 @@ enum HLoader {
     /// Small pictures are kept in the shared folder so they show instantly next time (and when offline).
     static func image(_ cfg: HConfig, path: String?, maxSide: CGFloat = 700) async -> UIImage? {
         guard let path = path, !path.isEmpty, let dir = HStore.dir else { return nil }
-        let name = (maxSide > 700 ? "wf_" : "w_") + path.replacingOccurrences(of: "/", with: "_")
+        let name = (maxSide > 700 ? "wf2_" : "w_") + path.replacingOccurrences(of: "/", with: "_")
         let file = dir.appendingPathComponent(name)
         if let img = UIImage(contentsOfFile: file.path) { return img }
         guard let base = cfg.url, let url = URL(string: base + "/storage/v1/object/authenticated/media/" + path) else { return nil }
@@ -213,12 +226,6 @@ enum HLoader {
         return out
     }
 
-    /// While a Flip is showing, quietly move to the next face every few minutes.
-    static func flipEntries(_ p: HPhoto, start: Date, title: String) -> [HEntry]? {
-        guard !p.frames.isEmpty else { return nil }
-        return (0..<12).map { i in HEntry(date: start.addingTimeInterval(Double(i) * 5 * 60), state: .photo(p), title: title, flipStep: i) }
-    }
-
     /// Widgets have a small memory budget, so pictures are shrunk to what the widget can show.
     static func downsized(_ data: Data, max side: CGFloat = 700) -> UIImage? {
         guard let img = UIImage(data: data) else { return nil }
@@ -248,18 +255,19 @@ enum HLoader {
             for r in feed.replies ?? [] where r.member_id != mine && r.thumb_path != nil && (who == nil || r.from_name == who) { rows.append((r, true)) }
             rows.sort { (parseDate($0.0.created_at) ?? now) > (parseDate($1.0.created_at) ?? now) }
             let unseen = isGP ? rows.filter { !$0.1 && $0.0.watched_at == nil }.count : 0
-            for (r, isReply) in rows.prefix(6) {
+            for (r, isReply) in turns(rows, by: { $0.0.from_name ?? $0.0.member_id ?? $0.0.id }) {
                 let pending = isReply ? 0 : HStore.pendingHearts(r.id)
                 if !isReply, (r.hearts ?? 0) >= pending, pending > 0 { HStore.clearPendingHeart(r.id) }
                 let isFlip = r.media_kind == "flip"
-                let pic = await image(cfg, path: r.thumb_path, maxSide: isFlip ? 1500 : 700)
+                let pic = await image(cfg, path: r.thumb_path, maxSide: isFlip ? 1100 : 700)
+                let frames = isFlip ? flipFrames(pic) : []
                 photos.append(HPhoto(id: r.id, link: (isReply ? "hiello://reply/" : "hiello://post/") + r.id,
                                      from: r.from_name ?? "", note: r.note ?? "",
-                                     at: parseDate(r.created_at) ?? now, image: pic,
+                                     at: parseDate(r.created_at) ?? now, image: frames.first ?? pic,
                                      isNew: isGP && !isReply && r.watched_at == nil, newCount: unseen,
                                      hearts: Swift.max(r.hearts ?? 0, pending), isVideo: r.media_kind == "video",
                                      canHeart: isGP && !isReply, status: nil,
-                                     frames: isFlip ? flipFrames(pic) : []))
+                                     frames: frames))
             }
         }
 
@@ -267,15 +275,16 @@ enum HLoader {
         if photos.isEmpty, let items = cfg.items, !items.isEmpty {
             let list = items.filter { who == nil || $0.from == who }
             let unseen = list.filter { !$0.watched }.count
-            for it in list.prefix(6) {
+            for it in turns(list, by: { $0.from }) {
                 let isFlip = it.flip ?? false
-                let pic = localImage(it.file, maxSide: isFlip ? 1500 : 700)
+                let pic = localImage(it.file, maxSide: isFlip ? 1100 : 700)
+                let frames = isFlip ? flipFrames(pic) : []
                 photos.append(HPhoto(id: it.id, link: "hiello://post/" + it.id, from: it.from, note: it.note,
-                                     at: Date(timeIntervalSince1970: it.at / 1000), image: pic,
+                                     at: Date(timeIntervalSince1970: it.at / 1000), image: frames.first ?? pic,
                                      isNew: isGP && !it.watched, newCount: isGP ? unseen : 0,
                                      hearts: Swift.max(it.hearts, HStore.pendingHearts(it.id)), isVideo: it.video ?? false,
                                      canHeart: isGP && cfg.demo != true, status: nil,
-                                     frames: isFlip ? flipFrames(pic) : []))
+                                     frames: frames))
             }
         }
 
@@ -285,23 +294,25 @@ enum HLoader {
             return [HEntry(date: now, state: .empty(msg), title: title)]
         }
 
-        // Something new: keep showing the newest until it's opened (like Locket).
-        if let fresh = photos.first(where: { $0.isNew }) {
-            return flipEntries(fresh, start: now, title: title) ?? [HEntry(date: now, state: .photo(fresh), title: title)]
+        // The newest hi leads. If it's a Flip it beats 1, 2, 1, 2; if a few people sent hi's lately,
+        // they take turns every 10 seconds. It moves for an hour after something new lands, then rests
+        // on the newest one (tap Play to see it move again).
+        let main = photos[0]
+        let scope = who ?? "all"
+        let moving = photos.count > 1 || main.beat.count > 1
+        if moving, let w = HStore.beatWindow(scope: scope, key: photos.map(\.id).joined(separator: ","), now: now) {
+            return [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: w, scope: scope),
+                    HEntry(date: w.upperBound, state: .photo(main), title: title, people: photos, beat: nil, scope: scope)]
         }
-        // The newest hi is a Flip: stay on it a while and let it flip by itself.
-        if let first = photos.first, !first.frames.isEmpty, now.timeIntervalSince(first.at) < 6 * 3600 {
-            return flipEntries(first, start: now, title: title) ?? []
-        }
-        // Nothing new: slowly go through recent ones, like a photo frame (Locket just sits on the last one).
-        let step: TimeInterval = 20 * 60
-        let base = floor(now.timeIntervalSince1970 / step)
-        var out: [HEntry] = []
-        for i in 0..<6 {
-            let slot = base + Double(i)
-            let idx = Int(slot.truncatingRemainder(dividingBy: Double(photos.count)))
-            let d = i == 0 ? now : Date(timeIntervalSince1970: slot * step)
-            out.append(HEntry(date: d, state: .photo(photos[idx]), title: title, flipStep: i))
+        return [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: nil, scope: scope)]
+    }
+
+    /// The newest hi from each person, newest first, at most 3 people (so the turns divide a minute evenly).
+    static func turns<T>(_ list: [T], by key: (T) -> String) -> [T] {
+        var seen = Set<String>(), out: [T] = []
+        for x in list where !seen.contains(key(x)) {
+            seen.insert(key(x)); out.append(x)
+            if out.count == 3 { break }
         }
         return out
     }
@@ -351,20 +362,20 @@ struct HeartIntent: AppIntent {
     }
 }
 
-/// Tapping a Flip on the widget shows the next face.
-struct FlipIntent: AppIntent {
-    static var title: LocalizedStringResource = "Flip"
-    static var description = IntentDescription("Show the next picture of a Flip.")
+/// Play: start the 1, 2 beat again after the widget has come to rest.
+struct PlayIntent: AppIntent {
+    static var title: LocalizedStringResource = "Play"
+    static var description = IntentDescription("Make the Hiello widget move again.")
     static var isDiscoverable: Bool = false
 
-    @Parameter(title: "Hiello")
-    var postId: String
+    @Parameter(title: "Widget")
+    var scope: String
 
     init() {}
-    init(postId: String) { self.postId = postId }
+    init(scope: String) { self.scope = scope }
 
     func perform() async throws -> some IntentResult {
-        HStore.nextFlip(postId)
+        HStore.replay(scope: scope)
         return .result()
     }
 }
@@ -400,21 +411,150 @@ func agoText(_ d: Date, now: Date) -> String {
     return days == 1 ? "yesterday" : "\(days) days ago"
 }
 
+// MARK: - The 1, 2 beat
+//
+// A widget can't play video or GIFs, but a timer label ticks by itself every second while the widget is on
+// screen. Drawn in one of Hiello's stencil fonts (HielloBeat1, HielloS…; see scripts/make_mask_fonts.py),
+// where some digits are solid squares and everything else is blank, the timer becomes a stencil that opens
+// and closes on the beat. Only public SwiftUI/WidgetKit is used; nothing runs in the background.
+
+/// A stencil cut from one digit of a running timer. `place` 0 = the last digit (changes every second),
+/// 1 = the digit before it (changes every 10 seconds).
+struct StencilMask: View {
+    var font: String
+    var beat: ClosedRange<Date>
+    var place: Int
+    var body: some View {
+        GeometryReader { g in
+            let side = max(g.size.width, g.size.height, 1)
+            Text(timerInterval: beat, countsDown: false)
+                .font(.custom(font, fixedSize: side))
+                .environment(\.locale, Locale(identifier: "en_US_POSIX"))
+                .multilineTextAlignment(.trailing)
+                .lineLimit(1)
+                .fixedSize()
+                .foregroundStyle(Color.black)
+                .offset(x: CGFloat(place) * side)
+                .frame(width: side, height: side, alignment: .trailing)
+                .clipped()
+                .position(x: g.size.width / 2, y: g.size.height / 2)
+        }
+    }
+}
+
+extension View {
+    /// Shows this only on person `p`'s turn (of `n` taking turns), and, if `second`, only on beat 2.
+    @ViewBuilder func onTurn(_ p: Int, of n: Int, second: Bool, beat: ClosedRange<Date>) -> some View {
+        if n > 1 && second {
+            self.mask(StencilMask(font: "HielloS\(n)\(p)", beat: beat, place: 1))
+                .mask(StencilMask(font: "HielloBeat1", beat: beat, place: 0))
+        } else if n > 1 {
+            self.mask(StencilMask(font: "HielloS\(n)\(p)", beat: beat, place: 1))
+        } else if second {
+            self.mask(StencilMask(font: "HielloBeat1", beat: beat, place: 0))
+        } else {
+            self
+        }
+    }
+}
+
+struct FillImage: View {
+    var image: UIImage
+    var body: some View {
+        Color.clear
+            .overlay(Image(uiImage: image).resizable().scaledToFill())
+            .clipped()
+    }
+}
+
+/// Every picture stacked; the stencils decide which one shows: person by person, 1, 2, 1, 2.
+struct BeatStack: View {
+    var people: [HPhoto]
+    var beat: ClosedRange<Date>
+    var body: some View {
+        let n = people.count
+        ZStack {
+            ForEach(0..<n, id: \.self) { p in
+                let pics = people[p].beat
+                ForEach(0..<pics.count, id: \.self) { f in
+                    if p == 0 && f == 0 {
+                        FillImage(image: pics[f])   // underneath everything, and where it rests
+                    } else {
+                        FillImage(image: pics[f]).onTurn(p, of: n, second: f == 1, beat: beat)
+                    }
+                }
+            }
+        }
+    }
+}
+
 struct PhotoBackground: View {
-    var photo: HPhoto?
-    var step: Int = 0
+    var entry: HEntry
+    var mainPhoto: HPhoto? { if case .photo(let p) = entry.state { return p } else { return nil } }
     var body: some View {
         ZStack {
             HB.midnight
-            if let p = photo, let img = p.shown(step: step) {
-                Image(uiImage: img).resizable().scaledToFill()
-                    .id(p.frameNumber(step: step))
-                    .transition(.opacity)
-            } else if photo != nil {
-                LinearGradient(colors: [Color(red: 27/255, green: 49/255, blue: 102/255), HB.midnight], startPoint: .top, endPoint: .bottom)
-                HeartBadge(size: 54).opacity(0.5)
+            if let main = mainPhoto {
+                let people = entry.people.isEmpty ? [main] : entry.people
+                if let b = entry.beat {
+                    BeatStack(people: people, beat: b)
+                } else if let img = main.beat.first {
+                    FillImage(image: img)
+                } else {
+                    LinearGradient(colors: [Color(red: 27/255, green: 49/255, blue: 102/255), HB.midnight], startPoint: .top, endPoint: .bottom)
+                    HeartBadge(size: 54).opacity(0.5)
+                }
             }
         }
+    }
+}
+
+/// Who sent it, when, and their note: changes along with whose turn it is.
+struct Caption: View {
+    var photo: HPhoto
+    var now: Date
+    var heartRoom: Bool
+    @Environment(\.widgetFamily) var family
+    var big: Bool { family == .systemLarge }
+    var small: Bool { family == .systemSmall }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if !photo.note.isEmpty && !small {
+                Text(photo.note)
+                    .font(.custom("Baskerville-Bold", size: big ? 22 : 16))
+                    .foregroundColor(HB.navy)
+                    .lineLimit(big ? 3 : 2)
+                    .padding(.horizontal, 10).padding(.vertical, 6)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color.white))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(HB.navy, lineWidth: 2))
+                    .rotationEffect(.degrees(-3))
+                    .shadow(color: .black.opacity(0.25), radius: 4, y: 2)
+                    .padding(.top, 34)
+                    .padding(.trailing, 70)
+            }
+            Spacer(minLength: 0)
+            VStack(alignment: .leading, spacing: 1) {
+                if let st = photo.status {
+                    Text(st)
+                        .font(.system(size: small ? 12 : 14, weight: .heavy))
+                        .foregroundColor(.white)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
+                } else {
+                    Text(photo.from.isEmpty ? "From the family" : "From " + photo.from)
+                        .font(.system(size: small ? 15 : (big ? 22 : 18), weight: .heavy))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                }
+                Text(agoText(photo.at, now: now))
+                    .font(.system(size: small ? 11 : 13, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.85))
+            }
+            .padding(.trailing, heartRoom ? (small ? 44 : 64) : 0)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .padding(small ? 11 : 14)
     }
 }
 
@@ -425,6 +565,8 @@ struct PhotoView: View {
 
     var big: Bool { family == .systemLarge }
     var small: Bool { family == .systemSmall }
+    var people: [HPhoto] { entry.people.isEmpty ? [photo] : entry.people }
+    var canMove: Bool { people.count > 1 || photo.beat.count > 1 }
 
     var body: some View {
         ZStack {
@@ -433,6 +575,16 @@ struct PhotoView: View {
                 Spacer()
                 LinearGradient(colors: [.clear, Color.black.opacity(0.62)], startPoint: .top, endPoint: .bottom)
                     .frame(height: small ? 70 : (big ? 130 : 90))
+            }
+            if let b = entry.beat, people.count > 1 {
+                ZStack {
+                    ForEach(0..<people.count, id: \.self) { p in
+                        Caption(photo: people[p], now: entry.date, heartRoom: photo.canHeart)
+                            .mask(StencilMask(font: "HielloS\(people.count)\(p)", beat: b, place: 1))
+                    }
+                }
+            } else {
+                Caption(photo: photo, now: entry.date, heartRoom: photo.canHeart)
             }
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
@@ -446,60 +598,30 @@ struct PhotoView: View {
                             .overlay(Capsule().stroke(HB.red, lineWidth: 1.5))
                     }
                     Spacer()
-                    if !photo.frames.isEmpty {
-                        Button(intent: FlipIntent(postId: photo.id)) {
+                    if entry.beat == nil && canMove {
+                        // resting: Play starts the 1, 2 again
+                        Button(intent: PlayIntent(scope: entry.scope)) {
                             HStack(spacing: 5) {
-                                Image(systemName: "hand.tap.fill").font(.system(size: small ? 12 : 15, weight: .bold))
-                                Text("\(photo.frameNumber(step: entry.flipStep) + 1)/\(photo.frames.count)")
-                                    .font(.system(size: small ? 12 : 15, weight: .black))
+                                Image(systemName: "play.fill").font(.system(size: small ? 11 : 13, weight: .bold))
+                                Text("1, 2").font(.system(size: small ? 12 : 14, weight: .black))
                             }
                             .foregroundColor(HB.navy)
-                            .padding(.horizontal, small ? 9 : 12).padding(.vertical, small ? 6 : 8)
+                            .padding(.horizontal, small ? 9 : 12).padding(.vertical, small ? 6 : 7)
                             .background(Capsule().fill(Color.white))
                             .overlay(Capsule().stroke(HB.pink, lineWidth: 2))
                         }
                         .buttonStyle(.plain)
                     }
                     if photo.isVideo {
-                        Image(systemName: "play.fill")
+                        Image(systemName: "play.rectangle.fill")
                             .font(.system(size: small ? 11 : 14, weight: .bold))
                             .foregroundColor(.white)
                             .padding(7)
                             .background(Circle().fill(Color.black.opacity(0.45)))
                     }
                 }
-                if !photo.note.isEmpty && !small {
-                    Text(photo.note)
-                        .font(.custom("Baskerville-Bold", size: big ? 22 : 16))
-                        .foregroundColor(HB.navy)
-                        .lineLimit(big ? 3 : 2)
-                        .padding(.horizontal, 10).padding(.vertical, 6)
-                        .background(RoundedRectangle(cornerRadius: 10).fill(Color.white))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(HB.navy, lineWidth: 2))
-                        .rotationEffect(.degrees(-3))
-                        .shadow(color: .black.opacity(0.25), radius: 4, y: 2)
-                        .padding(.top, 8)
-                }
                 Spacer(minLength: 0)
-                HStack(alignment: .bottom, spacing: 8) {
-                    VStack(alignment: .leading, spacing: 1) {
-                        if let st = photo.status {
-                            Text(st)
-                                .font(.system(size: small ? 12 : 14, weight: .heavy))
-                                .foregroundColor(.white)
-                                .lineLimit(2)
-                                .minimumScaleFactor(0.8)
-                        } else {
-                            Text(photo.from.isEmpty ? "From the family" : "From " + photo.from)
-                                .font(.system(size: small ? 15 : (big ? 22 : 18), weight: .heavy))
-                                .foregroundColor(.white)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                        }
-                        Text(agoText(photo.at, now: entry.date))
-                            .font(.system(size: small ? 11 : 13, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.85))
-                    }
+                HStack {
                     Spacer(minLength: 0)
                     if photo.canHeart {
                         Button(intent: HeartIntent(postId: photo.id)) {
@@ -590,7 +712,7 @@ struct HielloWidgetView: View {
                 }
             }
             // The photo is the widget's background, so it fills edge to edge (and in StandBy on the nightstand).
-            .containerBackground(for: .widget) { PhotoBackground(photo: photo, step: entry.flipStep) }
+            .containerBackground(for: .widget) { PhotoBackground(entry: entry) }
         }
     }
 }
@@ -604,7 +726,7 @@ struct HielloWidget: Widget {
             HielloWidgetView(entry: entry)
         }
         .configurationDisplayName("Hiello")
-        .description("Your Circle's hi's, right on your home screen. Tap a Flip to see the next face.")
+        .description("Your Circle's hi's on your home screen. Flips move 1, 2, 1, 2.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .accessoryRectangular, .accessoryCircular])
         .contentMarginsDisabled()
     }

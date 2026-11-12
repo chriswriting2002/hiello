@@ -653,7 +653,11 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
 #p-love{display:none!important}
 
 /* ===== Flip ===== */
-.flipimg{width:100%;height:100%;background-size:300% 100%;background-repeat:no-repeat;background-position:0 0;animation:flip3 1.35s steps(1,end) infinite}
+/* the 1, 2 beat: picture 1, picture 2, picture 1, picture 2… (older 3-picture Flips still play all three) */
+.flipimg{width:100%;height:100%;background-size:200% 100%;background-repeat:no-repeat;background-position:0 0;animation:flip2 1s steps(1,end) infinite}
+.flipimg.f3{background-size:300% 100%;animation:flip3 1.35s steps(1,end) infinite}
+@keyframes flip2{0%{background-position:0% 0}50%{background-position:100% 0}100%{background-position:0% 0}}
+.flipghost{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.38;z-index:3;pointer-events:none}
 @keyframes flip3{0%{background-position:0% 0}33.333%{background-position:50% 0}66.666%{background-position:100% 0}100%{background-position:0% 0}}
 .flipmode{border:0;margin:4px auto 0;display:flex;align-items:center;gap:8px;border-radius:999px;padding:8px 16px;font-size:16px;font-weight:900;background:var(--c-s1);color:var(--c-text)}
 .flipmode.on{background:var(--c-acc);color:var(--c-ink)}
@@ -930,7 +934,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
     <button class="cam-side" id="cam-b"></button>
   </div>
   <div class="cam-hint" id="cam-hint">Tap for a photo · hold for a video</div>
-  <button class="flipmode" id="cam-flipmode" aria-pressed="false"><span class="fm-ic"><i></i><i></i><i></i></span>Flip</button>
+  <button class="flipmode" id="cam-flipmode" aria-pressed="false"><span class="fm-ic"><i></i><i></i></span>Flip</button>
   <div id="cam-sunday"></div>
   <button class="cam-hist" id="cam-hist"></button>
   <input type="file" id="cam-file" accept="image/*,video/*" style="display:none">
@@ -1126,7 +1130,9 @@ function makeThumb(blob, kind){
   });
 }
 /* a Flip is one wide picture with its frames side by side; on screen it flips through them */
-function flipHTML(u){ return `<div class="flipimg" style="background-image:url('${u}')" role="img" aria-label="Flip"></div>`; }
+function flipHTML(u){ return `<div class="flipimg" style="background-image:url('${u}')" role="img" aria-label="Flip"><img src="${u}" alt="" hidden onload="flipFit(this)"></div>`; }
+/* older Flips have 3 pictures side by side instead of 2 */
+function flipFit(im){ if (Math.round(im.naturalWidth / Math.max(1, im.naturalHeight)) === 3) im.parentNode.classList.add('f3'); }
 function mediaImg(u, kind, attrs){ return kind === 'flip' ? flipHTML(u) : `<img src="${u}" alt=""${attrs || ''}>`; }
 function extFor(blob, kind){ if (kind !== 'video') return 'jpg'; const t = blob.type || ''; return t.includes('mp4') ? 'mp4' : t.includes('quicktime') ? 'mov' : t.includes('webm') ? 'webm' : 'mp4'; }
 
@@ -2464,7 +2470,7 @@ function enterCam(){
   camLive();
 }
 async function camLive(){
-  CAM.frames = [];
+  CAM.frames = []; flipGhost(null);
   if (!$('#cam-flipdots')) $('#cam-sq').insertAdjacentHTML('beforeend', '<div class="flipdots" id="cam-flipdots"></div>');
   $('#cam-flipmode').style.display = CAM.who === 'fam' ? '' : 'none'; if (CAM.who !== 'fam') CAM.flipMode = false;
   $('#cam-flipmode').classList.toggle('on', !!CAM.flipMode);
@@ -2519,8 +2525,12 @@ function snap(){
   haptic();
   c.toBlob(bl => { if (bl) review(bl, 'image'); }, 'image/jpeg', 0.85);
 }
-/* ---------- Flip: 3 quick taps, 3 pictures, sent as one hi that flips ---------- */
-const FLIP_N = 3;
+/* ---------- Flip: tap 1, tap 2. Two pictures, sent as one hi that beats 1, 2, 1, 2 ---------- */
+const FLIP_N = 2;
+function flipGhost(c){
+  $('#cam-ghost')?.remove();
+  if (c) $('#cam-sq').insertAdjacentHTML('beforeend', `<img class="flipghost" id="cam-ghost" alt="" src="${c.toDataURL('image/jpeg', 0.6)}">`);
+}
 const EASY_MODE = false;   /* Easy mode is paused: everyone uses the standard app */
 function flipSnap(v){
   CAM.busy = true;
@@ -2530,7 +2540,9 @@ function flipSnap(v){
   if (CAM.facing === 'user'){ x.translate(c.width, 0); x.scale(-1, 1); }
   x.drawImage(v, (v.videoWidth - side)/2, (v.videoHeight - side)/2, side, side, 0, 0, c.width, c.height);
   haptic(); CAM.frames.push(c); flipDots();
-  if (CAM.frames.length < FLIP_N){ setTimeout(() => { CAM.busy = false; }, 220); return; }
+  /* a faint ghost of picture 1 stays on screen so picture 2 lines up (Vine's stop-motion trick) */
+  if (CAM.frames.length < FLIP_N){ flipGhost(c); setTimeout(() => { CAM.busy = false; }, 220); return; }
+  flipGhost(null);
   /* all frames in: put them side by side in one picture and show it flipping */
   const n = CAM.frames.length, w = CAM.frames[0].width, sp = document.createElement('canvas'); sp.width = w * n; sp.height = w;
   const sx = sp.getContext('2d'); CAM.frames.forEach((f,i) => sx.drawImage(f, i * w, 0));
@@ -2540,15 +2552,15 @@ function flipSnap(v){
 function flipDots(){
   const el = $('#cam-flipdots'); if (!el) return;
   el.innerHTML = CAM.flipMode ? Array.from({length:FLIP_N}, (_,i) => `<i class="${i < CAM.frames.length ? 'on' : ''}"></i>`).join('') : '';
-  if (CAM.flipMode) $('#cam-hint').textContent = CAM.frames.length ? `${FLIP_N - CAM.frames.length} more… make a funny face!` : `Tap ${FLIP_N} times: a picture each tap`;
+  if (CAM.flipMode) $('#cam-hint').textContent = CAM.frames.length ? 'Now 2! Change something: a wink, a wave, a new face' : 'Flip: tap 1… then tap 2';
 }
 function flipToggle(){
-  CAM.flipMode = !CAM.flipMode; CAM.frames = []; haptic();
+  CAM.flipMode = !CAM.flipMode; CAM.frames = []; flipGhost(null); haptic();
   $('#cam-flipmode').classList.toggle('on', CAM.flipMode);
   $('#cam-flipmode').setAttribute('aria-pressed', CAM.flipMode ? 'true' : 'false');
   if (!CAM.flipMode) $('#cam-hint').textContent = 'Tap for a photo · hold for a video';
   flipDots();
-  if (CAM.flipMode && !did('flipintro')) { did('flipintro'); say('Flip: tap 3 times. Do something different each time!'); }
+  if (CAM.flipMode && !did('flipintro')) { did('flipintro'); say('Flip: tap 1, then tap 2. On their home screen it goes 1, 2, 1, 2!'); }
 }
 function startRec(){
   if (CAM.flipMode) return;
@@ -2577,7 +2589,7 @@ function review(blob, kind){
   $('#cam-mid').innerHTML = `<button class="sendbtn" id="cam-send" aria-label="Send">${ICON.send}</button>`;
   $('#cam-flipmode').style.display = 'none'; const fd = $('#cam-flipdots'); if (fd) fd.innerHTML = '';
   $('#cam-send').onclick = camSend;
-  $('#cam-hint').textContent = kind === 'flip' ? 'Here\u2019s your Flip! It flips on their widget when they tap it.' : 'Here\u2019s your picture! Write a note, then tap send.';
+  $('#cam-hint').textContent = kind === 'flip' ? 'Here\u2019s your Flip! On their home screen it goes 1, 2, 1, 2.' : 'Here\u2019s your picture! Write a note, then tap send.';
   $('#cam-send').disabled = true; setTimeout(() => { if (CAM.shot){ CAM.busy = false; const sb = $('#cam-send'); if (sb) sb.disabled = false; } }, 800);
 }
 $('#cam-flipmode').onclick = flipToggle;

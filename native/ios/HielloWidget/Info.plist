@@ -20,6 +20,15 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>HielloBeat1.ttf</string>
+		<string>HielloS20.ttf</string>
+		<string>HielloS21.ttf</string>
+		<string>HielloS30.ttf</string>
+		<string>HielloS31.ttf</string>
+		<string>HielloS32.ttf</string>
+	</array>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>
