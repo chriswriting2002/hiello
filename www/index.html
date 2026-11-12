@@ -635,6 +635,22 @@ html[data-look="pink"] #s-gp .gpbtn.send{color:#34302D!important;box-shadow:inse
 .gs-grab{background:var(--metal)}
 html[data-look="pink"] :is(.cam-to,.bigstrip,.bigstrip *),html[data-look="cream"] :is(.cam-to,.bigstrip,.bigstrip *){color:var(--c-text)!important}
 html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color:#B03A5B!important}
+
+/* family break photo: hero photo, one pink Reply, two quiet ways out (Jobs Team) */
+.p-acts{margin-top:auto;padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.p-acts .lovebtn{width:100%;min-height:68px;font-size:21px}
+.p-quiet{display:flex;gap:10px}
+.p-quiet .btn{flex:1;min-height:56px;font-size:18px;font-weight:900;background:var(--metal);color:#0F1E45;border:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 3px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:8px}
+#playCard{position:relative}
+.p-hint{position:fixed;left:50%;top:36%;transform:translate(-50%,-50%) scale(.9);z-index:60;background:rgba(15,30,69,.9);color:#fff;font-size:18px;font-weight:900;border-radius:999px;padding:12px 18px;display:flex;align-items:center;gap:8px;opacity:0;pointer-events:none;transition:opacity .4s,transform .4s;white-space:nowrap;box-shadow:0 0 0 2px #F2B8C6}
+.p-hint.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.p-hint .hand{display:inline-block;animation:dtap 1.1s ease-in-out infinite}
+@keyframes dtap{0%,100%{transform:translateY(0)}15%{transform:translateY(5px)}30%{transform:translateY(0)}45%{transform:translateY(5px)}60%{transform:translateY(0)}}
+/* the game's family strip: arrows on each side, like the photo strip */
+.gs-wrap{display:flex;align-items:center;gap:6px}
+.gs-wrap .fs-row{flex:1;min-width:0}
+.gs-wrap .fs-row .banner{flex:0 0 100%}
+#p-love{display:none!important}
 </style>
 </head>
 <body>
@@ -716,9 +732,11 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
   <div><button class="pmbtn" id="g-shuffle" aria-label="Shuffle"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFE7A8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button><div class="pmlab">Shuffle</div></div></div>
   <div style="text-align:center;font-size:15px;font-weight:700;color:#E3F1E8">Tap open tiles. Matching twins disappear.</div>
   <div id="board"></div>
-  <div class="fstrip"><div class="fs-top"><span>From the family</span><span class="fs-hint">slide to see more</span></div>
-    <div class="fs-bar" id="fs-bar" aria-label="Slide through family photos"><i id="fs-thumb"></i></div>
-    <div class="fs-row" id="g-banner"></div></div>
+  <div class="fstrip"><div class="fs-top"><span>From the family</span><span class="fs-hint" id="gs-num"></span></div>
+    <div class="fs-bar" id="fs-bar" style="display:none"><i id="fs-thumb"></i></div>
+    <div class="gs-wrap"><button class="fs-arr" id="gs-prev" aria-label="Previous photo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="fs-row" id="g-banner"></div>
+    <button class="fs-arr" id="gs-next" aria-label="Next photo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></div></div>
 </section>
 
 
@@ -842,12 +860,15 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
   <div id="playCard"></div>
   <div style="font-size:18px;font-weight:700;line-height:1.4;margin:14px 2px 0" id="p-caption"></div>
   <div class="muted" style="font-size:14px;margin:6px 2px 0" id="p-meta"></div>
-  <div class="postit" id="p-postit"></div>
-  <div class="row" style="margin-top:auto;padding-top:14px;gap:12px">
-    <button class="btn ghost" id="p-home" style="flex:0 0 38%"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Home</button>
-    <button class="btn primary" id="p-done" style="flex:1;background:#fff;color:var(--navy)">Back to game</button>
+    <div class="p-acts">
+    <button class="lovebtn" id="p-reply"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg><span id="p-reply-l">Reply</span></button>
+    <div class="p-quiet">
+      <button class="btn" id="p-home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>Home</button>
+      <button class="btn" id="p-done">Back to game</button>
+    </div>
   </div>
-  <button class="lovebtn" id="p-love" style="margin-top:12px;width:100%"></button>
+  <button class="lovebtn" id="p-love" hidden></button>
+  <div class="p-hint" id="p-hint"></div>
 </section>
 
 <!-- ============ WEEK ============ -->
@@ -2355,7 +2376,7 @@ async function showSlide(){
   $('#p-caption').textContent = p.caption || '';
   $('#p-meta').textContent = `From ${p.from} · ${ago(p.at)}` + (p.type === 'big' && p.title ? ` · ★ ${p.title}` : '');
   $('#p-done').textContent = GAMES.includes(P.back) ? 'Back to game' : (P.i < P.queue.length - 1 ? 'Next' : 'Done');
-  loveLabel($('#p-love'), p);
+  $('#p-reply-l').textContent = `Reply to ${p.from || 'them'}`; hideLoveHint(); showLoveHint(3000);
   $('#p-home').style.display = P.back === 'gp' ? 'none' : '';
   markWatched(p);
   const prog = $('#p-prog');
@@ -2371,9 +2392,17 @@ async function showSlide(){
 function advance(){ if (P.i < P.queue.length - 1){ P.i++; showSlide(); } else { stopPlayback(); if (P.recap) say("That's the week! You're all caught up."); go(P.back); } }
 $('#p-love').onclick = () => { const p = P.queue[P.i]; sendLove(p, $('#playCard')); loveLabel($('#p-love'), p); };
 $('#p-home').onclick = () => { stopPlayback(); P.after = null; go('gp'); };
-$('#playCard').onclick = tapper(e => { if (e.target.closest('video')) return; const p = P.queue[P.i]; if (p) openReact(p, 'play'); },
-                                 () => { const p = P.queue[P.i]; if (!p) return; sendLove(p, $('#playCard')); loveLabel($('#p-love'), p); });
-$('#p-postit').innerHTML = postitHTML(); applyLearned();
+$('#playCard').onclick = tapper(e => { if (e.target.closest('video')) return; showLoveHint(0); },
+                                 () => { const p = P.queue[P.i]; if (!p) return; did('heart'); hideLoveHint(); sendLove(p, $('#playCard')); });
+$('#p-reply').onclick = () => { const p = P.queue[P.i]; if (!p) return; haptic(); stopPlayback(); openCam('gp', { replyTo:p.id, back:'play' }); };
+/* give them time to look first; after 3 seconds a little hand shows the double-tap */
+let loveHintT = null;
+function showLoveHint(delay){
+  clearTimeout(loveHintT);
+  loveHintT = setTimeout(() => { if (current !== 'play' || knows('heart', 3)) return; const h = $('#p-hint'); h.innerHTML = `<span class="hand">👆👆</span> Double-tap the photo to send ${heartSVG(18)}`; h.classList.add('on'); clearTimeout(h._t); h._t = setTimeout(hideLoveHint, 4500); }, delay);
+}
+function hideLoveHint(){ clearTimeout(loveHintT); const h = $('#p-hint'); if (h) h.classList.remove('on'); }
+
 $('#p-done').onclick = () => { if (GAMES.includes(P.back)){ stopPlayback(); const a = P.after; P.after = null; go(P.back); if (a) a(); return; } advance(); };
 /* a Family Break between rounds: plays the next Hiello, then runs "after" when Grandpa taps Back to game */
 function gameBreak(back, after){ const p = nextBreakPost(); if (p) openPlayer([p], back, false, after); else after(); }
@@ -2565,7 +2594,6 @@ function openReact(p, ctx){
   if (ctx === 'play') clearTimeout(P.timer);
   $('#react-in').innerHTML = `<div class="sheet-h">Reply to ${esc(p.from)}</div>
     <button class="rbtn" data-r="photo">${RX_ICONS.photo}Send a hi back</button>
-    <button class="rbtn" data-r="note">${RX_ICONS.note}${p.gpNote ? 'Change my note' : 'Stick a note on it'}</button>
     <button class="rbtn" data-r="love">${RX_ICONS.love}Send love${p.hearts ? ` <span style="font-size:15px;color:var(--muted);font-weight:800">(sent ×${p.hearts})</span>` : ''}</button>
     <button class="sheet-x" data-r="x">Cancel</button>`;
   $('#react').hidden = false;
@@ -3068,7 +3096,13 @@ async function renderBanner(){
   requestAnimationFrame(fsSync);
 }
 /* the slide bar: its handle shows where you are in the strip; drag it (or the strip) to move */
+function gsIndex(){ const row = $('#g-banner'); return row.clientWidth ? Math.round(row.scrollLeft / row.clientWidth) : 0; }
+function gsGo(d){ const row = $('#g-banner'), n = row.children.length; if (!n) return; haptic(); const k = Math.max(0, Math.min(n - 1, gsIndex() + d)); row.scrollTo({ left: k * row.clientWidth, behavior:'smooth' }); }
+$('#gs-prev').onclick = () => gsGo(-1); $('#gs-next').onclick = () => gsGo(1);
 function fsSync(){
+  const row0 = $('#g-banner'), n0 = row0.querySelectorAll('.banner[data-k]').length;
+  $('#gs-num').textContent = n0 > 1 ? `${Math.min(n0, gsIndex() + 1)} of ${n0}` : '';
+  $('#gs-prev').style.visibility = $('#gs-next').style.visibility = n0 > 1 ? '' : 'hidden';
   const row = $('#g-banner'), th = $('#fs-thumb'), bar = $('#fs-bar');
   const max = row.scrollWidth - row.clientWidth;
   bar.style.visibility = max > 4 ? '' : 'hidden';
@@ -3104,7 +3138,7 @@ function idleTarget(){
   if (current === 'photos' && knows('swipe', 4) && knows('reply', 3)) return null;
   if (current === 'photos') return IDLE.n % 2 && !knows('swipe', 4) ? { ...centerOf($('#ph-deck'), .5), kind:'swipe', lab:'Swipe for the next one' } : { ...centerOf($('#ph-deck'), .5), kind:'tap', lab:'Tap to reply' };
   if (current === 'play' && knows('reply', 3)) return null;
-  if (current === 'play') return { ...centerOf($('#playCard'), .5), kind:'tap', lab:'Tap to reply' };
+  if (current === 'play') return null;   /* the play screen has its own double-tap hint */
   if (current === 'story') return { ...centerOf($('#st-next-z'), .5), kind:'tap', lab:'Tap for the next one' };
   if (current === 'games') return { ...centerOf($('#s-games [data-go="golf"]'), .5), kind:'tap', lab:'Tap a game' };
   if (current === 'game' && !G.busy && !G.cleared){
