@@ -657,6 +657,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
 .flipimg{width:100%;height:100%;background-size:200% 100%;background-repeat:no-repeat;background-position:0 0;animation:flip2 1s steps(1,end) infinite}
 .flipimg.f3{background-size:300% 100%;animation:flip3 1.35s steps(1,end) infinite}
 @keyframes flip2{0%{background-position:0% 0}50%{background-position:100% 0}100%{background-position:0% 0}}
+@keyframes fdHit{0%{transform:scale(.96)}50%{transform:scale(1.02)}100%{transform:scale(1)}}.fd-hit .fd-sq{animation:fdHit .6s ease-out;box-shadow:0 0 0 4px var(--c-acc)}
 .mh-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mh-it{border:0;padding:0;background:none;color:var(--c-mut);font-weight:800;text-align:center}.mh-it>*:first-child{display:block;width:100%;aspect-ratio:1;border-radius:14px;overflow:hidden}.mh-it img,.mh-it .flipimg{width:100%;height:100%;object-fit:cover}.mh-it small{font-size:12px}
 .flipghost{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.38;z-index:3;pointer-events:none}
 @keyframes flip3{0%{background-position:0% 0}33.333%{background-position:50% 0}66.666%{background-position:100% 0}100%{background-position:0% 0}}
@@ -1259,12 +1260,18 @@ async function openLink(url){
     say('Code filled in. Tap Join!'); return;
   }
   if (m[1] === 'camera') return go('cam');
-  if (m[1] === 'reply') return go('fam');
-  let p = S.posts.find(x => String(x.id) === m[2]);
-  if (!p && S.cloud){ await syncNow(); p = S.posts.find(x => String(x.id) === m[2]); }
+  let id = m[2];
+  /* the widget takes turns between people: open whoever was on screen when it was tapped */
+  const q = /[?&]turns=([\w,:-]+)&t0=(\d+)/.exec(url);
+  if (q){ const ids = q[1].split(','), el = Date.now() / 1000 - +q[2];
+    if (ids.length > 1 && el >= 0 && el < 3600){ const pick = ids[(Math.floor(el / 10) % 6) % ids.length]; if (pick) id = pick; } }
+  const find = () => S.posts.find(x => String(x.id) === id) || (S.replies || []).find(x => String(x.id) === id);
+  let p = find();
+  if (!p && S.cloud){ await syncNow(); p = find(); }
   if (!p){ go(S.mode === 'gp' ? 'gp' : 'cam'); return; }
-  /* from the widget or a notification: show the picture first; tapping it brings up the reply choices */
-  if (S.mode === 'gp') openPhotos(p);
+  /* from the widget or a notification: show that exact picture */
+  if (S.mode === 'gp' && S.posts.includes(p)) openPhotos(p);
+  else if (!p.media) go('fam');
   else { FEED.focus = p.id; go('feed'); }
 }
 (() => { const C = window.Capacitor, A = C && C.Plugins && C.Plugins.App; if (!A) return;
@@ -1612,7 +1619,7 @@ async function renderFeed(){
     if (en.isIntersecting){ const it = items[+en.target.dataset.fi]; if (it && it.k === 'p'){ it.o.seenByMe = true; markWatched(it.o); } if (it && it.k === 'r' && !it.o.seen){ it.o.seen = true; } save(); }
   }), { threshold:.6 });
   $$('.fd-item', list).forEach(el => io.observe(el));
-  if (FEED.focus){ const k = items.findIndex(it => it.o.id === FEED.focus); FEED.focus = null; if (k > 0){ const el = list.querySelector(`[data-fi="${k}"]`); if (el) el.scrollIntoView({ block:'start' }); } }
+  if (FEED.focus){ const k = items.findIndex(it => it.o.id === FEED.focus); FEED.focus = null; const el = k >= 0 && list.querySelector(`[data-fi="${k}"]`); if (el){ el.scrollIntoView({ block:'start' }); el.classList.add('fd-hit'); setTimeout(() => el.classList.remove('fd-hit'), 1600); } }
   list.onclick = async e => {
     const lb = e.target.closest('[data-fl]'); if (lb){ const it = items[+lb.dataset.fl]; feedLove(it, lb.closest('.fd-item').querySelector('.fd-sq')); return; }
     const v = e.target.closest('.fd-sq video'); if (v){ v.muted = !v.muted; }

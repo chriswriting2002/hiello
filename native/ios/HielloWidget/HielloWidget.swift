@@ -299,6 +299,8 @@ enum HLoader {
         // The newest hi leads. If it's a Flip it beats 1, 2, 1, 2; if a few people sent hi's lately,
         // they take turns every 10 seconds. It moves for an hour after something new lands, then rests
         // on the newest one (tap Play to see it move again).
+        // Others only take turns if they sent something in the last week (old hi's don't hang around).
+        photos = [photos[0]] + photos.dropFirst().filter { now.timeIntervalSince($0.at) < 7 * 86400 }
         let main = photos[0]
         let scope = who ?? "all"
         let moving = photos.count > 1 || main.beat.count > 1
@@ -644,7 +646,14 @@ struct PhotoView: View {
             }
             .padding(small ? 11 : 14)
         }
-        .widgetURL(URL(string: photo.link))
+        .widgetURL(tapLink)
+    }
+
+    /// Tapping opens the hi that's on screen: the app works out whose turn it was from these.
+    var tapLink: URL? {
+        guard let b = entry.beat, people.count > 1 else { return URL(string: photo.link) }
+        let ids = people.map(\.id).joined(separator: ",")
+        return URL(string: photo.link + "?turns=" + ids + "&t0=" + String(Int(b.lowerBound.timeIntervalSince1970)))
     }
 }
 
