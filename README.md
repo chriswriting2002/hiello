@@ -96,6 +96,10 @@ The thing you send is **a hi**: "Send a hi", "Chris sent you a hi", "Grandma lov
 - **Privacy Policy and Terms:** `www/privacy.html` and `www/terms.html`. They open inside the app, and the same pages need a public URL for App Store Connect. Support email: papermeadowgames@gmail.com.
 - **Widget tutorial:** an animated, looping guide. It shows once after joining, and again from Profile → Add a home screen widget and from the Easy mode "You're connected" screen.
 
+## Easy mode (paused)
+
+Easy mode is switched off with `EASY_MODE = false` in `www/index.html`. Everyone gets the standard app, and old grandparent codes join it too. Its code is kept, so setting it to `true` brings it back.
+
 ## Flip
 
 Tap **Flip** under the shutter, then tap the shutter 3 times. That takes 3 pictures, and they send as one hi.

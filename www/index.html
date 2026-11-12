@@ -701,7 +701,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
       <input class="field" id="w-kid" value="" placeholder="e.g. Emma" maxlength="20">
     </div>
     <button class="btn primary" id="w-go">Start the demo</button>
-    <p class="muted" id="w-demo-note" style="margin:0;font-size:14px;text-align:center">Demo: everything stays on this phone. Use the switch at the bottom to flip between the regular view and Easy mode.</p>
+    <p class="muted" id="w-demo-note" style="margin:0;font-size:14px;text-align:center">Demo: everything stays on this phone, so you can look around safely.</p>
   </div>
 </section>
 
@@ -836,7 +836,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
     <button class="btn primary" id="cd-share">Send the invite</button>
     <button class="btn light" id="cd-qr">Show a QR code</button>
   </div>
-  <div class="panel col" style="gap:8px;margin-top:12px">
+  <div class="panel col" id="cd-easy" style="gap:8px;margin-top:12px;display:none">
     <div class="serif" style="font-size:19px">Easy mode, for someone who wants it simpler</div>
     <div class="muted" style="font-size:15px">Big photos, one-tap love, a big Send button. Great for grandparents. On their iPhone: install Hiello, tap <b>I have a code</b>, type:</div>
     <div class="bigcode small" id="cd-gpcode">—</div>
@@ -987,7 +987,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
   <div class="panel col" id="set-demo" style="margin-top:16px;gap:10px">
     <div class="serif" style="font-size:19px">Demo tools</div>
     <button class="btn light" id="set-sim">Send a surprise hi in 10 seconds</button>
-    <div class="muted" style="font-size:14px">Then go play mahjong in Easy mode to see it arrive live.</div>
+    <div class="muted" style="font-size:14px">It arrives on this phone like a real hi.</div>
     <button class="btn light" id="set-samples">Add sample family updates</button>
     <button class="btn light" id="set-reset" style="color:#9C2C2C">Erase everything and start over</button>
   </div>
@@ -1020,6 +1020,7 @@ const DAY = 86400000;
 /* ---------- storage ---------- */
 const KEY = 'hiello_v1';
 let S = load();
+if (S.mode === 'gp'){ S.mode = 'fam'; }
 applyLook();
 function blank(){ return { setup:false, gp:'Grandma & Grandpa', me:'', kid:'', mode:'fam', posts:[], game:{round:1}, rot:0 }; }
 function load(){ try { const v = JSON.parse(localStorage.getItem(KEY)); return v ? Object.assign(blank(), v) : blank(); } catch(e){ return blank(); } }
@@ -1427,7 +1428,6 @@ async function openProfile(){
     <div class="pf-free"><span class="h">${heartSVG(26)}</span><div style="flex:1"><div style="font-size:17px;font-weight:900">Everything’s free</div><div style="font-size:14px;color:var(--c-mut);font-weight:700">No ads, no subscription, no limit on your Circle.</div></div></div>
     <div class="pf-list bl">
       <button data-pf="widget"><span class="ic">${IC.widget}</span>Add a home screen widget<span class="v">${IC.chev}</span></button>
-      <button data-pf="gpmode"><span class="ic">${heartSVG(18)}</span>Easy mode<span class="v">${S.mode === 'gp' ? 'On' : 'Off'} ${IC.chev}</span></button>
     </div>
     <div class="pf-label">Make it yours</div>
     <div class="pf-list">
@@ -1497,12 +1497,13 @@ function familySheet(){
 }
 async function qrSheet(role){
   gsOpen(`<div class="gs-h">Scan to join</div>
-    <div class="seg" id="qr-seg"><button data-r="family" class="${role === 'family' ? 'on' : ''}">Join my Circle</button><button data-r="gp" class="${role === 'gp' ? 'on' : ''}">Easy mode</button></div>
+    ${EASY_MODE ? `<div class="seg" id="qr-seg"><button data-r="family" class="${role === 'family' ? 'on' : ''}">Join my Circle</button><button data-r="gp" class="${role === 'gp' ? 'on' : ''}">Easy mode</button></div>` : ''}
     <div class="qrbox"><canvas id="qr-c" width="290" height="290"></canvas></div>
     <div class="qrcode" id="qr-code">— — —</div>
     <p class="gs-sub" id="qr-how"></p>
     <button class="sheet-x" data-gsx style="width:100%">Done</button>`);
-  $('#qr-seg').onclick = e => { const b = e.target.closest('[data-r]'); if (b) qrSheet(b.dataset.r); };
+  if (!EASY_MODE) role = 'family';
+  if ($('#qr-seg')) $('#qr-seg').onclick = e => { const b = e.target.closest('[data-r]'); if (b) qrSheet(b.dataset.r); };
   const codes = await ensureCodes(); const code = codes && codes[role];
   $('#qr-how').innerHTML = role === 'gp'
     ? 'For someone who wants it extra simple: big photos, one-tap love, a big Send button. Install Hiello on their phone, open the iPhone <b>Camera</b>, point it here and tap <b>Open in Hiello</b>.'
@@ -1776,7 +1777,7 @@ pushHook();
 /* ---------- starting / joining a family ---------- */
 function joinedAs(j){
   S.cloud = { fid: j.family_id, sec: j.secret, mid: j.member_id, role: j.role, codes: { gp: j.gp_code || null, family: j.family_code || null, at: Date.now() } };
-  S.gp = j.gp_name || S.gp; S.setup = true; S.mode = j.role === 'gp' ? 'gp' : 'fam'; S.posts = []; S.replies = [];
+  S.gp = j.gp_name || S.gp; S.setup = true; S.mode = (EASY_MODE && j.role === 'gp') ? 'gp' : 'fam'; S.posts = []; S.replies = [];
   if (j.role === 'gp') S.me = j.name || S.gp;
   save(); startSync(); widgetPush(true);
 }
@@ -1796,7 +1797,7 @@ async function joinFamily(){
     const j = await rpc('hi_join_family', { p_code: code, p_name: name });
     if (name && j.role !== 'gp') S.me = name;
     joinedAs(j);
-    if (j.role === 'gp') go('gpready'); else { go('cam'); say('You’re in! Say hi to the fam.'); }
+    go('cam'); say('You’re in! Say hi to the fam.');
   } catch(e){ say(e.message || 'That code didn’t work.'); }
   b.disabled = false; b.textContent = 'Join';
 }
@@ -1851,11 +1852,12 @@ async function cardHTML(post, opts={}){
 /* ---------- navigation ---------- */
 let current = null, prevForSettings = 'fam';
 function go(name){
+  if (!EASY_MODE && (name === 'gp' || name === 'gpready')){ S.mode = 'fam'; CAM.who = 'fam'; name = 'cam'; }
   if (name === 'settings') prevForSettings = current || 'fam';
   $$('.screen').forEach(s => s.classList.toggle('on', s.id === 's-' + name));
   current = name;
   const showBar = S.setup && !S.cloud && ['gp','cam'].includes(name);
-  $('#demobar').classList.toggle('on', showBar);
+  $('#demobar').classList.toggle('on', showBar && EASY_MODE);
   $$('#demobar button').forEach(b => b.classList.toggle('on', b.dataset.mode === (name === 'cam' ? CAM.who : S.mode)));
   if (name !== 'play') stopPlayback();
   if (name !== 'game') stopBanner();
@@ -2519,6 +2521,7 @@ function snap(){
 }
 /* ---------- Flip: 3 quick taps, 3 pictures, sent as one hi that flips ---------- */
 const FLIP_N = 3;
+const EASY_MODE = false;   /* Easy mode is paused: everyone uses the standard app */
 function flipSnap(v){
   CAM.busy = true;
   const fl = document.createElement('div'); fl.className = 'cam-flash'; $('#cam-sq').appendChild(fl); setTimeout(() => fl.remove(), 400);
@@ -2716,7 +2719,7 @@ function confirmTwice(){ const now = Date.now(); if (now - resetArm < 4000) retu
 $('#set-sim').onclick = () => {
   S.gp = $('#set-gp').value.trim() || 'Grandma & Grandpa'; S.me = $('#set-me').value.trim() || 'Family'; save();
   say('A surprise hi will arrive in 10 seconds. Go play!');
-  S.mode = 'gp'; save();
+  if (EASY_MODE){ S.mode = 'gp'; save(); }
   setTimeout(async () => {
     const key = 'm_' + uid(); await putMedia(key, await drawScene(['soccer','tooth','test','trophy'][Math.floor(Math.random()*4)]));
     const p = { id: uid(), at: Date.now(), from: meName(), note: `Thinking of you, ${gpName()}!`, caption: 'Just wanted to say hi between practices!', tpl: 'polaroid', sx:50, sy:80, type:'everyday', media:{kind:'image', key}, watched:false, hearts:0, rsvp:null };
