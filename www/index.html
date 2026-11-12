@@ -657,6 +657,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
 .flipimg{width:100%;height:100%;background-size:200% 100%;background-repeat:no-repeat;background-position:0 0;animation:flip2 1s steps(1,end) infinite}
 .flipimg.f3{background-size:300% 100%;animation:flip3 1.35s steps(1,end) infinite}
 @keyframes flip2{0%{background-position:0% 0}50%{background-position:100% 0}100%{background-position:0% 0}}
+.mh-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mh-it{border:0;padding:0;background:none;color:var(--c-mut);font-weight:800;text-align:center}.mh-it>*:first-child{display:block;width:100%;aspect-ratio:1;border-radius:14px;overflow:hidden}.mh-it img,.mh-it .flipimg{width:100%;height:100%;object-fit:cover}.mh-it small{font-size:12px}
 .flipghost{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.38;z-index:3;pointer-events:none}
 @keyframes flip3{0%{background-position:0% 0}33.333%{background-position:50% 0}66.666%{background-position:100% 0}100%{background-position:0% 0}}
 .flipmode{border:0;margin:4px auto 0;display:flex;align-items:center;gap:8px;border-radius:999px;padding:8px 16px;font-size:16px;font-weight:900;background:var(--c-s1);color:var(--c-text)}
@@ -1106,7 +1107,7 @@ function rowToPost(r){
     type:r.kind, title:r.title, when:r.when_at,
     media: r.media_path ? { kind:r.media_kind, key:'r:' + r.media_path, thumb: r.thumb_path ? 'r:' + r.thumb_path : null } : null,
     watched: !!r.watched_at, watchedAt: r.watched_at ? Date.parse(r.watched_at) : null, hearts: r.hearts || 0, rsvp: r.rsvp,
-    gpNote: r.gp_note ? { text:r.gp_note, at:Date.parse(r.gp_note_at) } : null, cloud:true };
+    gpNote: r.gp_note ? { text:r.gp_note, at:Date.parse(r.gp_note_at) } : null, shownAt: r.shown_at ? Date.parse(r.shown_at) : null, cloud:true };
 }
 function rowToReply(r){
   return { id:r.id, at:Date.parse(r.created_at), from:r.from_name, mid:r.member_id, note:r.note,
@@ -1179,6 +1180,7 @@ async function syncNow(){
     const first = !S.cloud.synced;
     S.gp = f.gp_name || S.gp;
     S.members = f.members || [];
+    { const meM = S.members.find(m => m.id === S.cloud.mid); if (meM){ if (meM.role && meM.role !== S.cloud.role){ S.cloud.role = meM.role; widgetPush(); } if (meM.name && meM.name !== S.me) S.me = meM.name; } }
     S.posts = (f.posts || []).map(rowToPost);
     S.posts.forEach(p => { const o = oldPosts.get(p.id); if (o && o.watched && !p.watched && S.cloud.role === 'gp') p.watched = true; });
     S.replies = (f.replies || []).map(rowToReply);
@@ -1433,6 +1435,7 @@ async function openProfile(){
     </div>
     <div class="pf-free"><span class="h">${heartSVG(26)}</span><div style="flex:1"><div style="font-size:17px;font-weight:900">Everything’s free</div><div style="font-size:14px;color:var(--c-mut);font-weight:700">No ads, no subscription, no limit on your Circle.</div></div></div>
     <div class="pf-list bl">
+      <button data-pf="mine"><span class="ic">${IC.cam}</span>Your hi’s<span class="v">On the widget, delete ${IC.chev}</span></button>
       <button data-pf="widget"><span class="ic">${IC.widget}</span>Add a home screen widget<span class="v">${IC.chev}</span></button>
     </div>
     <div class="pf-label">Make it yours</div>
@@ -1444,7 +1447,7 @@ async function openProfile(){
     <div class="pf-label">General</div>
     <div class="pf-list">
       <button data-pf="notify"><span class="ic">${IC.bell}</span>Notifications<span class="v">${IC.chev}</span></button>
-      <button data-pf="names"><span class="ic">${IC.pen}</span>Names and family<span class="v">${IC.chev}</span></button>
+      <button data-pf="names"><span class="ic">${IC.pen}</span>Your name<span class="v">${IC.chev}</span></button>
       <button data-pf="codes"><span class="ic">${IC.plus}</span>Invite to your Circle<span class="v">${IC.chev}</span></button>
       <button data-pf="help"><span class="ic">${IC.help}</span>How Hiello works<span class="v">${IC.chev}</span></button>
       <button data-pf="privacy"><span class="ic">${IC.lock}</span>Privacy Policy<span class="v">${IC.chev}</span></button>
@@ -1465,6 +1468,7 @@ async function profAction(e){
   if (a === 'copy') return copyInvite();
   if (a === 'share') return shareInvite();
   if (a === 'widget') return widgetSheet();
+  if (a === 'mine') return myHisSheet();
   if (a === 'gpmode') return gpModeSheet();
   if (a === 'look') return lookSheet();
   if (a === 'icon') return iconSheet();
@@ -1829,7 +1833,7 @@ async function shareInvite(){
 
 /* thumbnail <img>/<video> element html for a post */
 async function thumbHTML(post){
-  if (post.media && post.media.thumb){ const t = await keyURL(post.media.thumb); if (t) return `<img src="${t}" alt="">`; }
+  if (post.media && post.media.thumb){ const t = await keyURL(post.media.thumb); if (t) return post.media.kind === 'flip' ? flipHTML(t) : `<img src="${t}" alt="">`; }
   const u = await mediaURL(post);
   if (!u) return '';
   return post.media.kind === 'video' ? `<video src="${u}#t=0.1" muted playsinline preload="metadata"></video>` : mediaImg(u, post.media.kind);
@@ -2003,7 +2007,45 @@ async function viewOne(x){
   const media = !u ? '' : x.media.kind === 'video' ? `<video src="${u}" controls playsinline autoplay></video>` : mediaImg(u, x.media.kind);
   gsOpen(`<div class="fd-sq" style="margin:0 auto 12px">${media}${x.note || x.caption ? `<div class="fd-cap">${esc(x.note || x.caption)}</div>` : ''}</div>
     <div class="fd-who" style="justify-content:center"><span class="av">${esc(initials(x.from))}</span>${esc(x.from || '')} <small>${ago(x.at)}</small></div>
+    ${isMine(x) ? `<button class="btn primary" id="vo-show" style="width:100%;margin-top:10px;background:var(--c-acc);color:var(--c-ink)">${IC.widget} Put on everyone’s widget</button>
+    <button class="btn primary" id="vo-del" style="width:100%;margin-top:8px;background:var(--c-s1);color:#F2A5A5">${IC.trash} Delete this hi</button>` : ''}
     <button class="sheet-x" data-gsx style="width:100%;margin-top:8px">Close</button>`);
+  if (isMine(x)){
+    $('#vo-show').onclick = () => showAgain(x);
+    $('#vo-del').onclick = () => { const b = $('#vo-del'); if (!b.dataset.sure){ b.dataset.sure = 1; b.innerHTML = `${IC.trash} Tap again to delete it for everyone`; return; } deletePost(x); };
+  }
+}
+/* ---------- your hi's: pick what's on everyone's widget, or clear old ones ---------- */
+function isMine(x){ return !!(x && S.posts.includes(x) && (S.cloud ? x.mid === S.cloud.mid : x.from === meName())); }
+const OLD_DB = 'One quick Supabase step first: run backend/circle.sql (see the setup steps). Then try again.';
+async function showAgain(x){
+  haptic();
+  if (S.cloud){ try { await rpc('hi_show_again', { ...famArgs(), p_member:S.cloud.mid, p_post:x.id }); } catch(e){ say(/function|schema|404/i.test(String(e)) ? OLD_DB : 'Couldn’t do that. Check your internet.'); return; } }
+  x.shownAt = Date.now(); save(); widgetPush(); gsClose();
+  say('It’s on everyone’s widget now. Their widgets update within a few minutes.');
+}
+async function deletePost(x){
+  haptic();
+  if (S.cloud){
+    let r; try { r = await rpc('hi_delete_post', { ...famArgs(), p_member:S.cloud.mid, p_post:x.id }); } catch(e){ say(/function|schema|404/i.test(String(e)) ? OLD_DB : 'Couldn’t delete it. Check your internet.'); return; }
+    const files = (r && r.files) || [];
+    if (files.length) await fetch(`${HIELLO_CLOUD.url}/storage/v1/object/media`, { method:'DELETE', headers: chdr({'Content-Type':'application/json'}), body: JSON.stringify({ prefixes: files }) }).catch(() => {});
+  }
+  S.posts = S.posts.filter(p => p !== x); save(); widgetPush(); gsClose();
+  say('Deleted. It’s gone from everyone’s phones.');
+  if (current === 'mem' && typeof renderMem === 'function') renderMem(); else refreshCurrent();
+}
+async function myHisSheet(){
+  const mine = myPosts().filter(p => p.media).sort((a,b) => b.at - a.at);
+  const th = await Promise.all(mine.map(async (p,k) => `<button class="mh-it" data-mh="${k}">${await thumbHTML(p)}<small>${ago(p.at)}</small></button>`));
+  gsOpen(`<div class="gs-h">Your hi’s</div><p class="gs-sub">Tap one to put it back on everyone’s widget, or to delete it.</p>
+    ${mine.length ? `<div class="mh-grid">${th.join('')}</div>` : '<p class="gs-sub">You haven’t sent any yet. Take one from the camera!</p>'}
+    <button class="sheet-x" data-gsx style="width:100%;margin-top:10px">Done</button>`);
+  $('#gs-in').onclick = e => { const b = e.target.closest('[data-mh]'); if (b) viewOne(mine[+b.dataset.mh]); };
+}
+async function setMyName(nm){
+  try { const r = await rpc('hi_set_name', { ...famArgs(), p_member:S.cloud.mid, p_name:nm }); if (r){ S.me = r; save(); syncSoon(); say('Name saved for everyone.'); } }
+  catch(e){ say(/function|schema|404/i.test(String(e)) ? OLD_DB : 'Couldn’t save your name. Check your internet.'); }
 }
 
 /* ---------- make a Hiello ---------- */
@@ -2708,9 +2750,9 @@ $('#w-privacy').onclick = e => { e.preventDefault(); legalSheet('privacy.html');
 /* ---------- settings ---------- */
 function renderSettings(){
   $('#set-gp').value = S.gp; $('#set-me').value = S.me;
-  $('#set-family').style.display = S.cloud ? '' : 'none'; $('#set-demo').style.display = S.cloud ? 'none' : '';
+  $('#set-family').style.display = S.cloud ? '' : 'none'; $('#set-demo').style.display = 'none';
   $('#set-note').textContent = S.cloud ? `Connected. Everything you send goes to your family’s phones.` : 'Demo: everything is saved only on this phone.';
-  if (S.cloud) $('#set-members').innerHTML = (S.members || []).map(m => `<div>${m.role === 'gp' ? heartSVG(14) : '\u2022'} <b>${esc(m.name)}</b>${m.role === 'gp' ? ' (grandparent)' : ''}${m.id === S.cloud.mid ? ' \u2014 this phone' : ''}</div>`).join('') || '<div class="muted">Loading\u2026</div>';
+  if (S.cloud) $('#set-members').innerHTML = (S.members || []).map(m => `<div>\u2022 <b>${esc(m.name)}</b>${m.id === S.cloud.mid ? ' \u2014 you' : ''}</div>`).join('') || '<div class="muted">Loading\u2026</div>';
 }
 $('#set-leave').onclick = async () => {
   if (!confirmTwice()) return;
@@ -2718,7 +2760,7 @@ $('#set-leave').onclick = async () => {
   try { localStorage.removeItem(KEY); } catch(e){}
   await clearMedia(); S = blank(); clearInterval(syncT); widgetPush(true); welcomeView('choices'); go('welcome');
 };
-$('#set-back').onclick = () => { const ng = $('#set-gp').value.trim() || 'Grandma & Grandpa'; if (S.cloud && ng !== S.gp) rpc('hi_set_gp_name', { ...famArgs(), p_name: ng }).catch(() => {}); S.gp = ng; S.me = $('#set-me').value.trim() || 'Family'; save(); go(prevForSettings === 'settings' ? (S.mode === 'gp' ? 'gp' : 'cam') : prevForSettings); };
+$('#set-back').onclick = () => { const nm = $('#set-me').value.trim(); if (S.cloud && nm && nm !== S.me) setMyName(nm); S.me = nm || S.me || 'Family'; save(); go(prevForSettings === 'settings' ? (S.mode === 'gp' ? 'gp' : 'cam') : prevForSettings); };
 $('#set-samples').onclick = async () => { await addSamples(); say('Sample updates added.'); };
 $('#set-reset').onclick = async () => {
   if (!confirmTwice()) return;

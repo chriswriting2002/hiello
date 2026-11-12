@@ -81,6 +81,7 @@ struct HRow: Decodable {
     var hearts: Int?
     var thumb_path: String?
     var media_kind: String?
+    var shown_at: String?   // put back on everyone's widget by its sender
 }
 
 struct HFeed: Decodable {
@@ -253,7 +254,8 @@ enum HLoader {
             var rows: [(HRow, Bool)] = []
             for r in feed.posts ?? [] where r.member_id != mine && (who == nil || r.from_name == who) { rows.append((r, false)) }
             for r in feed.replies ?? [] where r.member_id != mine && r.thumb_path != nil && (who == nil || r.from_name == who) { rows.append((r, true)) }
-            rows.sort { (parseDate($0.0.created_at) ?? now) > (parseDate($1.0.created_at) ?? now) }
+            let when = { (r: HRow) -> Date in parseDate(r.shown_at) ?? parseDate(r.created_at) ?? now }
+            rows.sort { when($0.0) > when($1.0) }
             let unseen = isGP ? rows.filter { !$0.1 && $0.0.watched_at == nil }.count : 0
             for (r, isReply) in turns(rows, by: { $0.0.from_name ?? $0.0.member_id ?? $0.0.id }) {
                 let pending = isReply ? 0 : HStore.pendingHearts(r.id)
