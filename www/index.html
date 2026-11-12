@@ -686,7 +686,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
     <div class="col" id="w-join-form" style="gap:8px;display:none">
       <label class="lbl" for="wj-code">Type the 6-number code</label>
       <input class="field codefield" id="wj-code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="123 456">
-      <label class="lbl" for="wj-me">Your name <span class="muted" style="font-weight:600">(what your Circle calls you, like Nana)</span></label>
+      <label class="lbl" for="wj-me">Your name <span class="muted" style="font-weight:600">(what your Circle calls you)</span></label>
       <input class="field" id="wj-me" maxlength="20">
       <button class="btn primary" id="wj-go" style="margin-top:8px">Join</button>
       <button class="linkbtn" data-wback>Back</button>
@@ -975,7 +975,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
     <h2 style="font-size:24px">Settings</h2><span style="width:52px"></span>
   </div>
   <div class="col" style="gap:8px">
-    <label class="lbl" for="set-gp">What the kids call the grandparents</label><input class="field" id="set-gp" maxlength="32">
+    <input type="hidden" id="set-gp">
     <label class="lbl" for="set-me">Your name</label><input class="field" id="set-me" maxlength="20">
   </div>
   <div class="panel col" id="set-family" style="margin-top:16px;gap:10px;display:none">
@@ -1055,7 +1055,7 @@ function hearts(){ const h = $('#hearts'); for (let i=0;i<14;i++){ const s = doc
 function haptic(){ try { window.Capacitor?.Plugins?.Haptics?.impact({style:'LIGHT'}); } catch(e){} }
 function gpName(){ return S.gp || 'Grandma & Grandpa'; }
 /* hearts, notes and 'seen' come from people using Easy mode; name them when we know who */
-function easyName(){ const g = (S.members || []).filter(m => m.role === 'gp').map(m => m.name).filter(Boolean); return g.length ? g.join(' & ') : (S.cloud ? 'Someone' : gpName()); }
+function easyName(){ const g = (S.members || []).filter(m => m.role === 'gp').map(m => m.name).filter(Boolean); return g.length ? g.join(' & ') : 'Someone'; }
 function meName(){ return S.me || 'Family'; }
 function dayLabel(t){ const d = new Date(t); const days = Math.floor((startOfDay(Date.now()) - startOfDay(t)) / DAY); if (days <= 0) return 'Today'; if (days === 1) return 'Yesterday'; return d.toLocaleDateString(undefined,{weekday:'long'}); }
 function startOfDay(t){ const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); }
@@ -1952,8 +1952,8 @@ async function addSamples(){
   const list = [
     {scene:'soccer', at: now - 3*DAY, note:`${kid} scored!`, caption:`Soccer practice: ${kid} scored in the drill today!`, tpl:'polaroid', sx:32, sy:22, watched:true, from:'Aunt Lisa'},
     {scene:'test', at: now - 2*DAY, note:'10 out of 10!', caption:`${kid} got every word right on her spelling test.`, tpl:'comic', sx:30, sy:80, from:'Uncle Dan'},
-    {scene:'tooth', at: now - 1*DAY, note:`Hi ${g}!\nWe love you!`, caption:`${kid} lost her first tooth! She wanted you to see the gap.`, tpl:'retro', sx:50, sy:80},
-    {scene:'trophy', at: now - 3*3600000, note:'Can you come?', caption:`Championship game Saturday! ${kid} asked if you can come.`, tpl:'postcard', sx:50, sy:82, type:'big', title:'Championship game', when: iso}
+    {scene:'tooth', at: now - 1*DAY, note:'Hi fam!\nLove you!', caption:`${kid} lost her first tooth! She wanted you to see the gap.`, tpl:'retro', sx:50, sy:80},
+    {scene:'trophy', at: now - 3*3600000, note:'Big win!', caption:`${kid} won the championship game!`, tpl:'postcard', sx:50, sy:82}
   ];
   for (const s of list){
     const key = 'm_' + uid();
@@ -2573,8 +2573,7 @@ function review(blob, kind){
   $('#cam-shot').innerHTML = `<div class="pola" id="cam-pola"><div class="pola-img">${kind === 'flip' ? flipHTML(CAM.shot.url) : kind === 'video' ? `<video src="${CAM.shot.url}" playsinline autoplay loop></video>` : `<img src="${CAM.shot.url}" alt="">`}</div><div class="pola-cap" id="cam-cap"></div></div>`;
   const note = $('#cam-note'); $('#cam-cap').appendChild(note); note.hidden = false; note.placeholder = 'Write a note…';
   $('#cam-a').innerHTML = ICON.x + '<span>Retake</span>'; $('#cam-a').onclick = () => { URL.revokeObjectURL(CAM.shot.url); camLive(); };
-  if (CAM.who === 'fam'){ $('#cam-b').innerHTML = ICON.star + '<span>More</span>'; $('#cam-b').onclick = camMore; $('#cam-b').style.visibility = ''; }
-  else $('#cam-b').style.visibility = 'hidden';
+  $('#cam-b').style.visibility = 'hidden';
   $('#cam-mid').innerHTML = `<button class="sendbtn" id="cam-send" aria-label="Send">${ICON.send}</button>`;
   $('#cam-flipmode').style.display = 'none'; const fd = $('#cam-flipdots'); if (fd) fd.innerHTML = '';
   $('#cam-send').onclick = camSend;
@@ -2722,7 +2721,7 @@ $('#set-sim').onclick = () => {
   if (EASY_MODE){ S.mode = 'gp'; save(); }
   setTimeout(async () => {
     const key = 'm_' + uid(); await putMedia(key, await drawScene(['soccer','tooth','test','trophy'][Math.floor(Math.random()*4)]));
-    const p = { id: uid(), at: Date.now(), from: meName(), note: `Thinking of you, ${gpName()}!`, caption: 'Just wanted to say hi between practices!', tpl: 'polaroid', sx:50, sy:80, type:'everyday', media:{kind:'image', key}, watched:false, hearts:0, rsvp:null };
+    const p = { id: uid(), at: Date.now(), from: meName(), note: 'Thinking of you!', caption: 'Just wanted to say hi between practices!', tpl: 'polaroid', sx:50, sy:80, type:'everyday', media:{kind:'image', key}, watched:false, hearts:0, rsvp:null };
     S.posts.push(p); save(); arrived(p);
   }, 10000);
   go('gp');
