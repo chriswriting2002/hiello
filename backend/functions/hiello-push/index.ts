@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
       // a new hi: everyone else in the Circle
       to = members.filter((m: any) => m.id !== row.member_id);
       title = `${row.from_name || "Family"} sent you a hi`;
-      body = short(row.note || row.caption || row.title) || (what === "video" ? "A video! Tap to watch ♥" : "Tap to see it ♥");
+      body = short(row.note || row.caption || row.title) || (row.media_kind === "flip" ? "A Flip! Press and hold to watch it ♥" : what === "video" ? "A video! Tap to watch ♥" : "Tap to see it ♥");
       link = `hiello://post/${row.id}`;
       if (row.kind === "recap") {
         // a Sunday Recap arrives as several photos: one notification that updates, not a ding per photo

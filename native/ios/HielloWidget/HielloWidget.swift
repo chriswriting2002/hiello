@@ -68,6 +68,7 @@ struct HLocalItem: Decodable {
     var hearts: Int
     var file: String
     var video: Bool?
+    var flip: Bool?
 }
 
 struct HRow: Decodable {
@@ -101,6 +102,10 @@ enum HStore {
     static func pendingHearts(_ id: String) -> Int { defaults?.integer(forKey: "hiello.heart." + id) ?? 0 }
     static func addPendingHeart(_ id: String) { defaults?.set(pendingHearts(id) + 1, forKey: "hiello.heart." + id) }
     static func clearPendingHeart(_ id: String) { defaults?.removeObject(forKey: "hiello.heart." + id) }
+
+    /// Which frame of a Flip is showing (tapping the widget moves it on by one).
+    static func flipIndex(_ id: String) -> Int { defaults?.integer(forKey: "hiello.flip." + id) ?? 0 }
+    static func nextFlip(_ id: String) { defaults?.set(flipIndex(id) + 1, forKey: "hiello.flip." + id) }
 }
 
 // MARK: - Timeline
@@ -117,7 +122,14 @@ struct HPhoto {
     var hearts: Int
     var isVideo: Bool
     var canHeart: Bool
-    var status: String?     // parent widget: "Grandpa watched ✓"
+    var status: String?
+    var frames: [UIImage] = []   // a Flip: 3 quick pictures, shown one at a time
+
+    func shown(step: Int) -> UIImage? {
+        guard !frames.isEmpty else { return image }
+        return frames[(HStore.flipIndex(id) + step) % frames.count]
+    }
+    func frameNumber(step: Int) -> Int { frames.isEmpty ? 0 : (HStore.flipIndex(id) + step) % frames.count }
 }
 
 enum HState {
@@ -130,6 +142,7 @@ struct HEntry: TimelineEntry {
     let date: Date
     let state: HState
     var title: String = "Hiello"
+    var flipStep: Int = 0
 }
 
 // MARK: - Loading (the widget fetches by itself, so it updates even when the app is closed)
@@ -164,9 +177,9 @@ enum HLoader {
     }
 
     /// Small pictures are kept in the shared folder so they show instantly next time (and when offline).
-    static func image(_ cfg: HConfig, path: String?) async -> UIImage? {
+    static func image(_ cfg: HConfig, path: String?, maxSide: CGFloat = 700) async -> UIImage? {
         guard let path = path, !path.isEmpty, let dir = HStore.dir else { return nil }
-        let name = "w_" + path.replacingOccurrences(of: "/", with: "_")
+        let name = (maxSide > 700 ? "wf_" : "w_") + path.replacingOccurrences(of: "/", with: "_")
         let file = dir.appendingPathComponent(name)
         if let img = UIImage(contentsOfFile: file.path) { return img }
         guard let base = cfg.url, let url = URL(string: base + "/storage/v1/object/authenticated/media/" + path) else { return nil }
@@ -174,14 +187,36 @@ enum HLoader {
         headers(cfg, &req)
         guard let (data, resp) = try? await URLSession.shared.data(for: req),
               let http = resp as? HTTPURLResponse, http.statusCode < 300,
-              let img = downsized(data) else { return nil }
+              let img = downsized(data, max: maxSide) else { return nil }
         if let jpg = img.jpegData(compressionQuality: 0.85) { try? jpg.write(to: file, options: .atomic) }
         return img
     }
 
-    static func localImage(_ file: String) -> UIImage? {
+    static func localImage(_ file: String, maxSide: CGFloat = 700) -> UIImage? {
         guard let dir = HStore.dir, let d = try? Data(contentsOf: dir.appendingPathComponent(file)) else { return nil }
-        return downsized(d)
+        return downsized(d, max: maxSide)
+    }
+
+    /// A Flip arrives as one wide picture with its frames side by side; cut it back into frames.
+    static func flipFrames(_ img: UIImage?) -> [UIImage] {
+        guard let img = img, let cg = img.cgImage else { return [] }
+        let w = CGFloat(cg.width), h = CGFloat(cg.height)
+        guard h > 0 else { return [] }
+        let n = Int((w / h).rounded())
+        guard n >= 2, n <= 7 else { return [] }
+        let fw = w / CGFloat(n)
+        var out: [UIImage] = []
+        for i in 0..<n {
+            let r = CGRect(x: (CGFloat(i) * fw).rounded(), y: 0, width: fw.rounded(.down), height: h)
+            if let c = cg.cropping(to: r) { out.append(UIImage(cgImage: c)) }
+        }
+        return out
+    }
+
+    /// While a Flip is showing, quietly move to the next face every few minutes.
+    static func flipEntries(_ p: HPhoto, start: Date, title: String) -> [HEntry]? {
+        guard !p.frames.isEmpty else { return nil }
+        return (0..<12).map { i in HEntry(date: start.addingTimeInterval(Double(i) * 5 * 60), state: .photo(p), title: title, flipStep: i) }
     }
 
     /// Widgets have a small memory budget, so pictures are shrunk to what the widget can show.
@@ -199,7 +234,6 @@ enum HLoader {
     static func entries(person: String?, family: WidgetFamily) async -> [HEntry] {
         let now = Date()
         guard let cfg = HStore.config() else { return [HEntry(date: now, state: .notSetUp)] }
-        let gpName = cfg.gp ?? "Grandpa"
         let isGP = (cfg.role ?? "gp") == "gp"
         let who = (person == nil || person == "Everyone" || person == "") ? nil : person
         var photos: [HPhoto] = []
@@ -208,40 +242,24 @@ enum HLoader {
         if cfg.url != nil, cfg.fid != nil, cfg.sec != nil,
            let data = await rpc(cfg, "hi_widget_feed", ["p_fid": cfg.fid ?? "", "p_sec": cfg.sec ?? ""]),
            let feed = try? JSONDecoder().decode(HFeed.self, from: data) {
-            let posts = (feed.posts ?? []).filter { who == nil || $0.from_name == who }
-            if isGP {
-                let unseen = posts.filter { $0.watched_at == nil }
-                for r in posts.prefix(6) {
-                    let pending = HStore.pendingHearts(r.id)
-                    if (r.hearts ?? 0) >= pending, pending > 0 { HStore.clearPendingHeart(r.id) }
-                    let pic = await image(cfg, path: r.thumb_path)
-                    photos.append(HPhoto(id: r.id, link: "hiello://post/" + r.id, from: r.from_name ?? "", note: r.note ?? "",
-                                         at: parseDate(r.created_at) ?? now, image: pic,
-                                         isNew: r.watched_at == nil, newCount: unseen.count,
-                                         hearts: Swift.max(r.hearts ?? 0, pending), isVideo: r.media_kind == "video",
-                                         canHeart: true, status: nil))
-                }
-            } else {
-                // The parent's widget: Grandpa's photos back to you first, then how your Hiellos are doing.
-                let mine = cfg.mid ?? ""
-                let replies = (feed.replies ?? []).filter { $0.member_id != mine && (who == nil || $0.from_name == who) }
-                for r in replies.prefix(3) {
-                    let pic = await image(cfg, path: r.thumb_path)
-                    photos.append(HPhoto(id: r.id, link: "hiello://reply/" + r.id, from: r.from_name ?? gpName, note: r.note ?? "",
-                                         at: parseDate(r.created_at) ?? now, image: pic,
-                                         isNew: false, newCount: 0, hearts: 0, isVideo: r.media_kind == "video",
-                                         canHeart: false, status: "A hi back from " + (r.from_name ?? gpName)))
-                }
-                for r in (feed.posts ?? []).prefix(Swift.max(0, 6 - photos.count)) {
-                    var st = r.watched_at != nil ? "\(gpName) watched \u{2713}" : "\(gpName) hasn\u{2019}t seen it yet"
-                    if (r.hearts ?? 0) > 0 { st += "  \u{2665} \(r.hearts ?? 0)" }
-                    let pic = await image(cfg, path: r.thumb_path)
-                    photos.append(HPhoto(id: r.id, link: "hiello://post/" + r.id, from: r.from_name ?? "", note: r.note ?? "",
-                                         at: parseDate(r.created_at) ?? now, image: pic,
-                                         isNew: false, newCount: 0, hearts: r.hearts ?? 0, isVideo: r.media_kind == "video",
-                                         canHeart: false, status: st))
-                }
-                photos.sort { $0.at > $1.at }
+            let mine = cfg.mid ?? ""
+            var rows: [(HRow, Bool)] = []
+            for r in feed.posts ?? [] where r.member_id != mine && (who == nil || r.from_name == who) { rows.append((r, false)) }
+            for r in feed.replies ?? [] where r.member_id != mine && r.thumb_path != nil && (who == nil || r.from_name == who) { rows.append((r, true)) }
+            rows.sort { (parseDate($0.0.created_at) ?? now) > (parseDate($1.0.created_at) ?? now) }
+            let unseen = isGP ? rows.filter { !$0.1 && $0.0.watched_at == nil }.count : 0
+            for (r, isReply) in rows.prefix(6) {
+                let pending = isReply ? 0 : HStore.pendingHearts(r.id)
+                if !isReply, (r.hearts ?? 0) >= pending, pending > 0 { HStore.clearPendingHeart(r.id) }
+                let isFlip = r.media_kind == "flip"
+                let pic = await image(cfg, path: r.thumb_path, maxSide: isFlip ? 1500 : 700)
+                photos.append(HPhoto(id: r.id, link: (isReply ? "hiello://reply/" : "hiello://post/") + r.id,
+                                     from: r.from_name ?? "", note: r.note ?? "",
+                                     at: parseDate(r.created_at) ?? now, image: pic,
+                                     isNew: isGP && !isReply && r.watched_at == nil, newCount: unseen,
+                                     hearts: Swift.max(r.hearts ?? 0, pending), isVideo: r.media_kind == "video",
+                                     canHeart: isGP && !isReply, status: nil,
+                                     frames: isFlip ? flipFrames(pic) : []))
             }
         }
 
@@ -250,23 +268,30 @@ enum HLoader {
             let list = items.filter { who == nil || $0.from == who }
             let unseen = list.filter { !$0.watched }.count
             for it in list.prefix(6) {
+                let isFlip = it.flip ?? false
+                let pic = localImage(it.file, maxSide: isFlip ? 1500 : 700)
                 photos.append(HPhoto(id: it.id, link: "hiello://post/" + it.id, from: it.from, note: it.note,
-                                     at: Date(timeIntervalSince1970: it.at / 1000), image: localImage(it.file),
+                                     at: Date(timeIntervalSince1970: it.at / 1000), image: pic,
                                      isNew: isGP && !it.watched, newCount: isGP ? unseen : 0,
                                      hearts: Swift.max(it.hearts, HStore.pendingHearts(it.id)), isVideo: it.video ?? false,
-                                     canHeart: isGP && cfg.demo != true, status: nil))
+                                     canHeart: isGP && cfg.demo != true, status: nil,
+                                     frames: isFlip ? flipFrames(pic) : []))
             }
         }
 
         let title = who.map { "Hiello \u{00B7} " + $0 } ?? "Hiello"
         if photos.isEmpty {
-            let msg = isGP ? "New photos from the family will pop up right here." : "When \(gpName) writes back, it shows up here."
+            let msg = "When someone in your Circle sends a hi, it shows up right here."
             return [HEntry(date: now, state: .empty(msg), title: title)]
         }
 
         // Something new: keep showing the newest until it's opened (like Locket).
         if let fresh = photos.first(where: { $0.isNew }) {
-            return [HEntry(date: now, state: .photo(fresh), title: title)]
+            return flipEntries(fresh, start: now, title: title) ?? [HEntry(date: now, state: .photo(fresh), title: title)]
+        }
+        // The newest hi is a Flip: stay on it a while and let it flip by itself.
+        if let first = photos.first, !first.frames.isEmpty, now.timeIntervalSince(first.at) < 6 * 3600 {
+            return flipEntries(first, start: now, title: title) ?? []
         }
         // Nothing new: slowly go through recent ones, like a photo frame (Locket just sits on the last one).
         let step: TimeInterval = 20 * 60
@@ -276,7 +301,7 @@ enum HLoader {
             let slot = base + Double(i)
             let idx = Int(slot.truncatingRemainder(dividingBy: Double(photos.count)))
             let d = i == 0 ? now : Date(timeIntervalSince1970: slot * step)
-            out.append(HEntry(date: d, state: .photo(photos[idx]), title: title))
+            out.append(HEntry(date: d, state: .photo(photos[idx]), title: title, flipStep: i))
         }
         return out
     }
@@ -326,6 +351,24 @@ struct HeartIntent: AppIntent {
     }
 }
 
+/// Tapping a Flip on the widget shows the next face.
+struct FlipIntent: AppIntent {
+    static var title: LocalizedStringResource = "Flip"
+    static var description = IntentDescription("Show the next picture of a Flip.")
+    static var isDiscoverable: Bool = false
+
+    @Parameter(title: "Hiello")
+    var postId: String
+
+    init() {}
+    init(postId: String) { self.postId = postId }
+
+    func perform() async throws -> some IntentResult {
+        HStore.nextFlip(postId)
+        return .result()
+    }
+}
+
 // MARK: - Provider
 
 struct Provider: AppIntentTimelineProvider {
@@ -359,11 +402,14 @@ func agoText(_ d: Date, now: Date) -> String {
 
 struct PhotoBackground: View {
     var photo: HPhoto?
+    var step: Int = 0
     var body: some View {
         ZStack {
             HB.midnight
-            if let img = photo?.image {
+            if let p = photo, let img = p.shown(step: step) {
                 Image(uiImage: img).resizable().scaledToFill()
+                    .id(p.frameNumber(step: step))
+                    .transition(.opacity)
             } else if photo != nil {
                 LinearGradient(colors: [Color(red: 27/255, green: 49/255, blue: 102/255), HB.midnight], startPoint: .top, endPoint: .bottom)
                 HeartBadge(size: 54).opacity(0.5)
@@ -400,6 +446,20 @@ struct PhotoView: View {
                             .overlay(Capsule().stroke(HB.red, lineWidth: 1.5))
                     }
                     Spacer()
+                    if !photo.frames.isEmpty {
+                        Button(intent: FlipIntent(postId: photo.id)) {
+                            HStack(spacing: 5) {
+                                Image(systemName: "hand.tap.fill").font(.system(size: small ? 12 : 15, weight: .bold))
+                                Text("\(photo.frameNumber(step: entry.flipStep) + 1)/\(photo.frames.count)")
+                                    .font(.system(size: small ? 12 : 15, weight: .black))
+                            }
+                            .foregroundColor(HB.navy)
+                            .padding(.horizontal, small ? 9 : 12).padding(.vertical, small ? 6 : 8)
+                            .background(Capsule().fill(Color.white))
+                            .overlay(Capsule().stroke(HB.pink, lineWidth: 2))
+                        }
+                        .buttonStyle(.plain)
+                    }
                     if photo.isVideo {
                         Image(systemName: "play.fill")
                             .font(.system(size: small ? 11 : 14, weight: .bold))
@@ -530,7 +590,7 @@ struct HielloWidgetView: View {
                 }
             }
             // The photo is the widget's background, so it fills edge to edge (and in StandBy on the nightstand).
-            .containerBackground(for: .widget) { PhotoBackground(photo: photo) }
+            .containerBackground(for: .widget) { PhotoBackground(photo: photo, step: entry.flipStep) }
         }
     }
 }
@@ -544,7 +604,7 @@ struct HielloWidget: Widget {
             HielloWidgetView(entry: entry)
         }
         .configurationDisplayName("Hiello")
-        .description("New family photos, right on your home screen. Tap the heart to send love back.")
+        .description("Your Circle's hi's, right on your home screen. Tap a Flip to see the next face.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .accessoryRectangular, .accessoryCircular])
         .contentMarginsDisabled()
     }

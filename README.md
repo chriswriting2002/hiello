@@ -95,3 +95,12 @@ The thing you send is **a hi**: "Send a hi", "Chris sent you a hi", "Grandma lov
 - **Leave this Circle:** Profile → Leave this Circle. What you already sent stays for everyone else.
 - **Privacy Policy and Terms:** `www/privacy.html` and `www/terms.html`. They open inside the app, and the same pages need a public URL for App Store Connect. Support email: papermeadowgames@gmail.com.
 - **Widget tutorial:** an animated, looping guide. It shows once after joining, and again from Profile → Add a home screen widget and from the Easy mode "You're connected" screen.
+
+## Flip
+
+Tap **Flip** under the shutter, then tap the shutter 3 times. That takes 3 pictures, and they send as one hi.
+- The 3 frames are saved side by side in one wide JPEG (`media_kind = 'flip'`), so they travel like any other photo.
+- **App:** a CSS sprite animation flips the frames everywhere a photo shows.
+- **Widget:** it cuts the picture into frames. The `FlipIntent` button flips to the next frame on tap, and the timeline moves on by itself every 5 minutes or so.
+- **Notifications:** the extension turns a wide picture into a looping GIF, so press-and-hold plays it.
+- The camera's lens button is now called **Switch**, so it isn't confused with Flip.

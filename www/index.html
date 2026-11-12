@@ -651,6 +651,16 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
 .gs-wrap .fs-row{flex:1;min-width:0}
 .gs-wrap .fs-row .banner{flex:0 0 100%}
 #p-love{display:none!important}
+
+/* ===== Flip ===== */
+.flipimg{width:100%;height:100%;background-size:300% 100%;background-repeat:no-repeat;background-position:0 0;animation:flip3 1.35s steps(1,end) infinite}
+@keyframes flip3{0%{background-position:0% 0}33.333%{background-position:50% 0}66.666%{background-position:100% 0}100%{background-position:0% 0}}
+.flipmode{border:0;margin:4px auto 0;display:flex;align-items:center;gap:8px;border-radius:999px;padding:8px 16px;font-size:16px;font-weight:900;background:var(--c-s1);color:var(--c-text)}
+.flipmode.on{background:var(--c-acc);color:var(--c-ink)}
+.fm-ic{display:flex;gap:2px}.fm-ic i{width:7px;height:12px;border-radius:2px;background:currentColor;opacity:.55}.fm-ic i:nth-child(2){opacity:.8}.fm-ic i:nth-child(3){opacity:1}
+.flipdots{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:4;pointer-events:none}
+.flipdots i{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.4);box-shadow:0 0 0 2px #fff}
+.flipdots i.on{background:#F2B8C6}
 </style>
 </head>
 <body>
@@ -920,6 +930,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
     <button class="cam-side" id="cam-b"></button>
   </div>
   <div class="cam-hint" id="cam-hint">Tap for a photo · hold for a video</div>
+  <button class="flipmode" id="cam-flipmode" aria-pressed="false"><span class="fm-ic"><i></i><i></i><i></i></span>Flip</button>
   <div id="cam-sunday"></div>
   <button class="cam-hist" id="cam-hist"></button>
   <input type="file" id="cam-file" accept="image/*,video/*" style="display:none">
@@ -1100,7 +1111,7 @@ function rowToReply(r){
 /* small square-ish preview used by lists, the NEW tab and the home screen widget */
 function makeThumb(blob, kind){
   return new Promise(res => {
-    const done = (src, w, h) => { const sc = Math.min(1, 640 / Math.max(w, h)), c = document.createElement('canvas'); c.width = Math.round(w*sc); c.height = Math.round(h*sc); c.getContext('2d').drawImage(src, 0, 0, c.width, c.height); c.toBlob(b => res(b), 'image/jpeg', 0.8); };
+    const done = (src, w, h) => { const sc = Math.min(1, (kind === 'flip' ? 1440 : 640) / Math.max(w, h)), c = document.createElement('canvas'); c.width = Math.round(w*sc); c.height = Math.round(h*sc); c.getContext('2d').drawImage(src, 0, 0, c.width, c.height); c.toBlob(b => res(b), 'image/jpeg', 0.8); };
     const u = URL.createObjectURL(blob);
     if (kind === 'video'){
       const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = u;
@@ -1113,6 +1124,9 @@ function makeThumb(blob, kind){
     }
   });
 }
+/* a Flip is one wide picture with its frames side by side; on screen it flips through them */
+function flipHTML(u){ return `<div class="flipimg" style="background-image:url('${u}')" role="img" aria-label="Flip"></div>`; }
+function mediaImg(u, kind, attrs){ return kind === 'flip' ? flipHTML(u) : `<img src="${u}" alt=""${attrs || ''}>`; }
 function extFor(blob, kind){ if (kind !== 'video') return 'jpg'; const t = blob.type || ''; return t.includes('mp4') ? 'mp4' : t.includes('quicktime') ? 'mov' : t.includes('webm') ? 'webm' : 'mp4'; }
 
 /* send a Hiello: to the family's cloud when connected, otherwise just this phone */
@@ -1212,7 +1226,7 @@ async function widgetPush(force){
       const file = 'p_' + String(p.id).replace(/[^\w-]/g, '') + '.jpg';
       const b = await widgetJpeg(p); if (!b) continue;
       await W.saveFile({ name: file, base64: await blobToB64(b) });
-      items.push({ id: String(p.id), from: p.from || '', note: p.note || '', at: p.at, watched: !!p.watched, hearts: p.hearts || 0, file, video: p.media && p.media.kind === 'video' });
+      items.push({ id: String(p.id), from: p.from || '', note: p.note || '', at: p.at, watched: !!p.watched, hearts: p.hearts || 0, file, video: p.media && p.media.kind === 'video', flip: !!(p.media && p.media.kind === 'flip') });
     }
     cfg.items = items;
     await W.save({ json: JSON.stringify(cfg) });
@@ -1575,7 +1589,7 @@ async function renderFeed(){
     $('#fd-invite').onclick = familySheet; return; }
   const html = await Promise.all(items.map(async (it, k) => {
     const x = it.o, u = await mediaURL(x);
-    const media = !u ? '' : x.media.kind === 'video' ? `<video src="${u}" muted loop playsinline preload="metadata"></video>` : `<img src="${u}" alt="" loading="lazy">`;
+    const media = !u ? '' : x.media.kind === 'video' ? `<video src="${u}" muted loop playsinline preload="metadata"></video>` : mediaImg(u, x.media.kind, ' loading="lazy"');
     const cap = x.note || x.caption || '';
     return `<div class="fd-item" data-fi="${k}"><div class="fd-sq">${media}${cap ? `<div class="fd-cap">${esc(cap)}</div>` : ''}</div>
       <div class="fd-who"><span class="av">${esc(initials(x.from))}</span>${esc(x.from || '')} <small>${ago(x.at)}</small></div>
@@ -1811,7 +1825,7 @@ async function thumbHTML(post){
   if (post.media && post.media.thumb){ const t = await keyURL(post.media.thumb); if (t) return `<img src="${t}" alt="">`; }
   const u = await mediaURL(post);
   if (!u) return '';
-  return post.media.kind === 'video' ? `<video src="${u}#t=0.1" muted playsinline preload="metadata"></video>` : `<img src="${u}" alt="">`;
+  return post.media.kind === 'video' ? `<video src="${u}#t=0.1" muted playsinline preload="metadata"></video>` : mediaImg(u, post.media.kind);
 }
 
 /* ---------- card templates ---------- */
@@ -1821,7 +1835,7 @@ async function cardHTML(post, opts={}){
   let media = '';
   if (u) {
     if (post.media.kind === 'video') media = opts.live ? `<video src="${u}" playsinline controls autoplay></video>` : `<video src="${u}#t=0.1" muted playsinline preload="metadata"></video><div class="play-badge">${PLAY}</div>`;
-    else media = `<img src="${u}" alt="">`;
+    else media = mediaImg(u, post.media.kind);
   }
   const fs = opts.small ? 15 : 22;
   const stk = post.note ? `<div class="stk" style="left:${post.sx ?? 50}%;top:${post.sy ?? 78}%;font-size:${fs}px">${esc(post.note)}</div>` : '';
@@ -1978,7 +1992,7 @@ async function renderFam(){
 /* look at one photo or hi full size, in a sheet */
 async function viewOne(x){
   const u = await mediaURL(x);
-  const media = !u ? '' : x.media.kind === 'video' ? `<video src="${u}" controls playsinline autoplay></video>` : `<img src="${u}" alt="">`;
+  const media = !u ? '' : x.media.kind === 'video' ? `<video src="${u}" controls playsinline autoplay></video>` : mediaImg(u, x.media.kind);
   gsOpen(`<div class="fd-sq" style="margin:0 auto 12px">${media}${x.note || x.caption ? `<div class="fd-cap">${esc(x.note || x.caption)}</div>` : ''}</div>
     <div class="fd-who" style="justify-content:center"><span class="av">${esc(initials(x.from))}</span>${esc(x.from || '')} <small>${ago(x.at)}</small></div>
     <button class="sheet-x" data-gsx style="width:100%;margin-top:8px">Close</button>`);
@@ -2448,15 +2462,19 @@ function enterCam(){
   camLive();
 }
 async function camLive(){
+  CAM.frames = [];
+  if (!$('#cam-flipdots')) $('#cam-sq').insertAdjacentHTML('beforeend', '<div class="flipdots" id="cam-flipdots"></div>');
+  $('#cam-flipmode').style.display = CAM.who === 'fam' ? '' : 'none'; if (CAM.who !== 'fam') CAM.flipMode = false;
+  $('#cam-flipmode').classList.toggle('on', !!CAM.flipMode);
   $('#cam-sq').appendChild($('#cam-note'));          // the note box lives on the Polaroid while reviewing
   CAM.shot = null; CAM.busy = false; $('#cam-shot').innerHTML = ''; $('#cam-note').hidden = true; $('#cam-note').value = '';
   $('#cam-v').style.display = '';
   $('#cam-a').innerHTML = ICON.pics + '<span>Photos</span>'; $('#cam-a').onclick = () => $('#cam-file').click();
   $('#cam-a').style.visibility = ''; $('#cam-b').style.visibility = '';
-  $('#cam-b').innerHTML = ICON.flip + '<span>Flip</span>'; $('#cam-b').onclick = () => { CAM.facing = CAM.facing === 'user' ? 'environment' : 'user'; startStream(); };
+  $('#cam-b').innerHTML = ICON.flip + '<span>Switch</span>'; $('#cam-b').onclick = () => { CAM.facing = CAM.facing === 'user' ? 'environment' : 'user'; startStream(); };
   $('#cam-mid').innerHTML = `<button class="shutter" id="shutter" aria-label="Take a photo. Hold for video."><i></i><svg class="ring" viewBox="0 0 92 92"><circle cx="46" cy="46" r="43" fill="none" stroke="#9B1B1F" stroke-width="6" stroke-dasharray="270" stroke-dashoffset="270" id="ring"/></svg></button>`;
   $('#cam-hint').textContent = 'Tap for a photo · hold for a video';
-  bindShutter();
+  bindShutter(); flipDots();
   if (!CAM.stream) await startStream();
 }
 async function startStream(){
@@ -2489,6 +2507,7 @@ function bindShutter(){
 }
 function snap(){
   const v = $('#cam-v'); if (!v.videoWidth || CAM.busy) return;
+  if (CAM.flipMode) return flipSnap(v);
   CAM.busy = true; $('#shutter').disabled = true;            // one picture at a time
   const fl = document.createElement('div'); fl.className = 'cam-flash'; $('#cam-sq').appendChild(fl); setTimeout(() => fl.remove(), 500);
   const side = Math.min(v.videoWidth, v.videoHeight), c = document.createElement('canvas'); c.width = c.height = Math.min(side, 1280);
@@ -2498,7 +2517,38 @@ function snap(){
   haptic();
   c.toBlob(bl => { if (bl) review(bl, 'image'); }, 'image/jpeg', 0.85);
 }
+/* ---------- Flip: 3 quick taps, 3 pictures, sent as one hi that flips ---------- */
+const FLIP_N = 3;
+function flipSnap(v){
+  CAM.busy = true;
+  const fl = document.createElement('div'); fl.className = 'cam-flash'; $('#cam-sq').appendChild(fl); setTimeout(() => fl.remove(), 400);
+  const side = Math.min(v.videoWidth, v.videoHeight), c = document.createElement('canvas'); c.width = c.height = Math.min(side, 720);
+  const x = c.getContext('2d');
+  if (CAM.facing === 'user'){ x.translate(c.width, 0); x.scale(-1, 1); }
+  x.drawImage(v, (v.videoWidth - side)/2, (v.videoHeight - side)/2, side, side, 0, 0, c.width, c.height);
+  haptic(); CAM.frames.push(c); flipDots();
+  if (CAM.frames.length < FLIP_N){ setTimeout(() => { CAM.busy = false; }, 220); return; }
+  /* all frames in: put them side by side in one picture and show it flipping */
+  const n = CAM.frames.length, w = CAM.frames[0].width, sp = document.createElement('canvas'); sp.width = w * n; sp.height = w;
+  const sx = sp.getContext('2d'); CAM.frames.forEach((f,i) => sx.drawImage(f, i * w, 0));
+  CAM.frames = [];
+  sp.toBlob(bl => { if (bl) review(bl, 'flip'); }, 'image/jpeg', 0.86);
+}
+function flipDots(){
+  const el = $('#cam-flipdots'); if (!el) return;
+  el.innerHTML = CAM.flipMode ? Array.from({length:FLIP_N}, (_,i) => `<i class="${i < CAM.frames.length ? 'on' : ''}"></i>`).join('') : '';
+  if (CAM.flipMode) $('#cam-hint').textContent = CAM.frames.length ? `${FLIP_N - CAM.frames.length} more… make a funny face!` : `Tap ${FLIP_N} times: a picture each tap`;
+}
+function flipToggle(){
+  CAM.flipMode = !CAM.flipMode; CAM.frames = []; haptic();
+  $('#cam-flipmode').classList.toggle('on', CAM.flipMode);
+  $('#cam-flipmode').setAttribute('aria-pressed', CAM.flipMode ? 'true' : 'false');
+  if (!CAM.flipMode) $('#cam-hint').textContent = 'Tap for a photo · hold for a video';
+  flipDots();
+  if (CAM.flipMode && !did('flipintro')) { did('flipintro'); say('Flip: tap 3 times. Do something different each time!'); }
+}
 function startRec(){
+  if (CAM.flipMode) return;
   CAM.holdT = null;
   if (!window.MediaRecorder){ say('Videos need a newer iPhone update. Tap for a photo instead.'); return; }
   const type = ['video/mp4','video/webm;codecs=vp9','video/webm'].find(t => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || '';
@@ -2517,16 +2567,18 @@ function review(blob, kind){
   CAM.shot = { blob, kind, url: URL.createObjectURL(blob) };
   $('#cam-v').style.display = 'none'; $('#cam-off').hidden = true;
   /* the picture slides out like a Polaroid and develops */
-  $('#cam-shot').innerHTML = `<div class="pola" id="cam-pola"><div class="pola-img">${kind === 'video' ? `<video src="${CAM.shot.url}" playsinline autoplay loop></video>` : `<img src="${CAM.shot.url}" alt="">`}</div><div class="pola-cap" id="cam-cap"></div></div>`;
+  $('#cam-shot').innerHTML = `<div class="pola" id="cam-pola"><div class="pola-img">${kind === 'flip' ? flipHTML(CAM.shot.url) : kind === 'video' ? `<video src="${CAM.shot.url}" playsinline autoplay loop></video>` : `<img src="${CAM.shot.url}" alt="">`}</div><div class="pola-cap" id="cam-cap"></div></div>`;
   const note = $('#cam-note'); $('#cam-cap').appendChild(note); note.hidden = false; note.placeholder = 'Write a note…';
   $('#cam-a').innerHTML = ICON.x + '<span>Retake</span>'; $('#cam-a').onclick = () => { URL.revokeObjectURL(CAM.shot.url); camLive(); };
   if (CAM.who === 'fam'){ $('#cam-b').innerHTML = ICON.star + '<span>More</span>'; $('#cam-b').onclick = camMore; $('#cam-b').style.visibility = ''; }
   else $('#cam-b').style.visibility = 'hidden';
   $('#cam-mid').innerHTML = `<button class="sendbtn" id="cam-send" aria-label="Send">${ICON.send}</button>`;
+  $('#cam-flipmode').style.display = 'none'; const fd = $('#cam-flipdots'); if (fd) fd.innerHTML = '';
   $('#cam-send').onclick = camSend;
-  $('#cam-hint').textContent = 'Here\u2019s your picture! Write a note, then tap send.';
+  $('#cam-hint').textContent = kind === 'flip' ? 'Here\u2019s your Flip! It flips on their widget when they tap it.' : 'Here\u2019s your picture! Write a note, then tap send.';
   $('#cam-send').disabled = true; setTimeout(() => { if (CAM.shot){ CAM.busy = false; const sb = $('#cam-send'); if (sb) sb.disabled = false; } }, 800);
 }
+$('#cam-flipmode').onclick = flipToggle;
 $('#cam-file').onchange = async e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
   if (f.type.startsWith('video/')){ if (f.size > 60*1024*1024){ say('That video is too big. Try one under a minute.'); return; } review(f, 'video'); }
