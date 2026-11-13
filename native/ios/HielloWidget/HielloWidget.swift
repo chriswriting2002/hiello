@@ -159,6 +159,7 @@ struct HEntry: TimelineEntry {
     var beat: ClosedRange<Date>? = nil // while set, the widget moves 1, 2, 1, 2 by itself
     var minute: Date? = nil            // the minute this entry covers (six 10-second turns)
     var scope: String = "all"
+    var debug: String = ""              // temporary test strip: where the pictures came from
 }
 
 // MARK: - Loading (the widget fetches by itself, so it updates even when the app is closed)
@@ -254,12 +255,14 @@ enum HLoader {
         let isGP = (cfg.role ?? "gp") == "gp"
         let who = (person == nil || person == "Everyone" || person == "") ? nil : person
         var photos: [HPhoto] = []
+        var dbg = "me " + String((cfg.mid ?? "none").prefix(4))
 
         // 1) the family's server (fresh)
         if cfg.url != nil, cfg.fid != nil, cfg.sec != nil,
            let data = await feedData(cfg),
            let feed = try? JSONDecoder().decode(HFeed.self, from: data) {
             let mine = cfg.mid ?? ""
+            dbg += " · srv \((feed.posts ?? []).count) mine \((feed.posts ?? []).filter { $0.member_id == mine }.count)"
             var rows: [(HRow, Bool)] = []
             for r in feed.posts ?? [] where r.member_id != mine && (who == nil || r.from_name == who) { rows.append((r, false)) }
             for r in feed.replies ?? [] where r.member_id != mine && r.thumb_path != nil && (who == nil || r.from_name == who) { rows.append((r, true)) }
@@ -282,6 +285,8 @@ enum HLoader {
             }
         }
 
+        if photos.isEmpty { dbg += " · LOCAL \((cfg.items ?? []).count) mine \((cfg.items ?? []).filter { $0.mine == true }.count)" }
+        else { dbg += " · show " + photos.map { String($0.from.prefix(5)) + ($0.frames.count > 1 ? "(F)" : "") }.joined(separator: ",") }
         // 2) what the app left on the phone (offline, or the one-phone demo)
         if photos.isEmpty, let items = cfg.items, !items.isEmpty {
             let list = items.filter { (who == nil || $0.from == who) && (cfg.demo == true || $0.mine != true) }
@@ -320,10 +325,10 @@ enum HLoader {
             let w = now...now.addingTimeInterval(30 * 60)
             return (0..<30).map { k in
                 let m = now.addingTimeInterval(Double(k) * 60)
-                return HEntry(date: m, state: .photo(main), title: title, people: photos, beat: w, minute: m, scope: scope)
+                return HEntry(date: m, state: .photo(main), title: title, people: photos, beat: w, minute: m, scope: scope, debug: dbg)
             }
         }
-        return [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: nil, scope: scope)]
+        return [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: nil, scope: scope, debug: dbg)]
     }
 
     /// The newest hi from each person, newest first, at most 3 people (so the turns divide a minute evenly).
@@ -609,6 +614,7 @@ struct PhotoView: View {
         ZStack {
             // the pictures with their captions (in the main layer so the 1, 2 stencils stay live)
             BeatStack(entry: entry, people: people)
+            if !small { TestStrip(entry: entry) }
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     if photo.isNew {
@@ -859,6 +865,41 @@ struct LabView: View {
         .padding(10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .containerBackground(for: .widget) { HB.midnight }
+    }
+}
+
+/// TEMPORARY test strip on the Hiello widget (remove before release): source of the pictures, fonts,
+/// and two tiny every-second tests (S = the stencil method, T = a plain timer).
+struct TestStrip: View {
+    var entry: HEntry
+    var fontsOK: Bool { UIFont(name: "HielloOdd", size: 12) != nil && UIFont(name: "HielloNZ", size: 12) != nil }
+    var body: some View {
+        let start = entry.beat?.lowerBound ?? entry.date
+        VStack {
+            HStack(spacing: 4) {
+                ZStack {
+                    Color.red
+                    ForEach(0..<6, id: \.self) { j in
+                        let s = (entry.minute ?? entry.date).addingTimeInterval(Double(j) * 10)
+                        Color.blue.inTurn(s, second: false)
+                        Color.green.inTurn(s, second: true)
+                    }
+                }
+                .frame(width: 14, height: 14).clipShape(RoundedRectangle(cornerRadius: 3))
+                Text(timerInterval: start...start.addingTimeInterval(3600), countsDown: false)
+                    .font(.system(size: 9, weight: .bold).monospacedDigit())
+                    .environment(\.locale, Locale(identifier: "en_US_POSIX"))
+                    .frame(width: 30)
+                Text((fontsOK ? "F✓ " : "F✗ ") + entry.debug)
+                    .font(.system(size: 8, weight: .semibold))
+                    .lineLimit(2)
+            }
+            .foregroundColor(.white)
+            .padding(.horizontal, 6).padding(.vertical, 3)
+            .background(Capsule().fill(Color.black.opacity(0.7)))
+            .padding(.top, 4).padding(.horizontal, 4)
+            Spacer()
+        }
     }
 }
 
