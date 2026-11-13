@@ -9,6 +9,15 @@ enum HB {
     static let navy = Color(red: 20/255, green: 40/255, blue: 90/255)       // #14285A
     static let midnight = Color(red: 15/255, green: 30/255, blue: 69/255)   // #0F1E45 deep navy
     static let paper = Color(red: 244/255, green: 245/255, blue: 247/255)   // #F4F5F7 the icon's "hi" white
+    static let rim = Color(red: 110/255, green: 115/255, blue: 123/255)     // #6E737B the icon's rim and rivets
+    /// the icon's brushed-silver plate
+    static let metal = LinearGradient(stops: [
+        .init(color: Color(red: 246/255, green: 247/255, blue: 249/255), location: 0),
+        .init(color: Color(red: 198/255, green: 202/255, blue: 209/255), location: 0.28),
+        .init(color: Color(red: 238/255, green: 240/255, blue: 243/255), location: 0.5),
+        .init(color: Color(red: 169/255, green: 174/255, blue: 183/255), location: 0.74),
+        .init(color: Color(red: 222/255, green: 225/255, blue: 230/255), location: 1)],
+        startPoint: .leading, endPoint: .trailing)
     static let pink = Color(red: 242/255, green: 184/255, blue: 198/255)    // #F2B8C6
     static let red = Color(red: 155/255, green: 27/255, blue: 31/255)       // #9B1B1F
     static let silver = Color(red: 200/255, green: 202/255, blue: 206/255)  // #C8CACE
@@ -522,8 +531,16 @@ struct FillImage: View {
     }
 }
 
-/// One hi in the Hiello frame (Polaroid-style, top and bottom only): a thin top strip, the picture, and a
-/// slightly thicker bottom strip with who it's from and how long ago, in the icon's navy on its "hi" white.
+/// A rivet, like the two on the app icon.
+struct Rivet: View {
+    var size: CGFloat
+    var body: some View {
+        Circle().fill(HB.rim).frame(width: size, height: size)
+    }
+}
+
+/// One hi in the Hiello frame, straight from the icon: brushed-silver strips top and bottom (sides open), a
+/// rivet centered in each, a thin steel rim against the photo; who it's from and when on the bottom strip.
 struct Face: View {
     var photo: HPhoto
     var image: UIImage?
@@ -533,7 +550,8 @@ struct Face: View {
         let small = family == .systemSmall, big = family == .systemLarge
         let size: CGFloat = small ? 11 : (big ? 15 : 13)
         VStack(spacing: 0) {
-            HB.paper.frame(height: small ? 6 : 8)
+            ZStack { HB.metal; Rivet(size: small ? 4 : 5) }.frame(height: small ? 9 : 12)
+            HB.rim.frame(height: 1.5)
             ZStack(alignment: .topLeading) {
                 HB.midnight
                 if let img = image {
@@ -557,12 +575,15 @@ struct Face: View {
                 }
             }
             .clipped()
+            HB.rim.frame(height: 1.5)
             HStack(spacing: 6) {
                 Text(photo.status ?? (photo.from.isEmpty ? "From the family" : "From " + photo.from))
                     .font(.custom("Rockwell-Bold", size: size))
                     .foregroundColor(HB.navy)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
+                Spacer(minLength: 4)
+                Rivet(size: small ? 4 : 5)
                 Spacer(minLength: 4)
                 Text(agoText(photo.at, now: now))
                     .font(.system(size: size - 1, weight: .semibold))
@@ -572,7 +593,7 @@ struct Face: View {
             .padding(.horizontal, small ? 9 : 12)
             .padding(.trailing, photo.canHeart ? (small ? 34 : 48) : 0)
             .frame(height: small ? 26 : (big ? 40 : 32))
-            .background(HB.paper)
+            .background(HB.metal)
         }
     }
 }

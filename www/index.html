@@ -318,9 +318,14 @@ textarea.field{resize:none;line-height:1.35}
 .cam-to{background:var(--c-s1);border-radius:999px;padding:10px 18px;font-size:17px;font-weight:900}
 /* the Hiello frame: edge to edge, Polaroid-style strips on top and bottom only (sides open), in the icon's
    "hi" white and navy. The same frame is on the widget, so every hi reads as Hiello. */
-.cam-frame{flex:none;width:min(100vw,calc(100dvh - 360px),560px);background:#F4F5F7;padding-top:7px;box-shadow:0 10px 26px rgba(0,0,0,.28)}
-.cam-sq{position:relative;width:100%;aspect-ratio:1;border-radius:0;overflow:hidden;background:var(--c-s1);flex:none;box-shadow:none!important}
-.cam-strip{height:40px;display:flex;align-items:center;justify-content:center;gap:7px;font-family:Rockwell,'Rockwell-Bold','Roboto Slab',Georgia,serif;font-weight:800;font-size:19px;color:#14285A;letter-spacing:.2px}
+/* The Hiello frame, straight from the icon: brushed-silver strips top and bottom (sides open), a rivet
+   centered in each strip, a thin steel rim where metal meets photo. Edge to edge on every iPhone. */
+.cam-frame{flex:none;position:relative;width:min(100vw,calc(100dvh - 300px),600px);background:linear-gradient(100deg,#F6F7F9 0%,#C6CAD1 28%,#EEF0F3 50%,#A9AEB7 74%,#DEE1E6 100%);padding-top:16px;box-shadow:0 10px 26px rgba(0,0,0,.3)}
+.cam-frame::before,.rivet{content:'';position:absolute;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#6E737B;box-shadow:inset 0 1px 1px rgba(0,0,0,.4),0 1px 0 rgba(255,255,255,.8)}
+.cam-frame::before{top:4px}
+.cam-sq{position:relative;width:100%;aspect-ratio:1;border-radius:0;overflow:hidden;background:var(--c-s1);flex:none;box-shadow:none!important;border-top:2px solid #6E737B;border-bottom:2px solid #6E737B;box-sizing:border-box}
+.cam-strip{position:relative;height:54px;display:flex;align-items:center;justify-content:center;gap:7px;padding-bottom:10px;box-sizing:border-box;font-family:Rockwell,'Rockwell-Bold','Roboto Slab',Georgia,serif;font-weight:800;font-size:19px;color:#14285A;letter-spacing:.2px}
+.cam-strip .rivet{bottom:5px}
 .cam-strip span{transition:color .2s,transform .2s;display:inline-block}
 .cam-strip span.on{color:#9B1B1F;transform:scale(1.12)}
 .cam-sq video,.cam-sq img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -488,7 +493,7 @@ textarea.field{resize:none;line-height:1.35}
 .t8-h small{color:var(--c-mut);font-weight:800;font-size:14px}
 .t8-tip{margin:4px 0 10px;color:var(--c-mut);font-size:14px;font-weight:700}
 .t8-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
-.t8-c{position:relative;border:0;padding:4px 4px 0;background:#F4F5F7;border-radius:6px;display:flex;flex-direction:column;align-items:stretch;transition:transform .15s,box-shadow .15s}
+.t8-c{position:relative;border:0;padding:7px 0 0;background:linear-gradient(100deg,#F6F7F9 0%,#C6CAD1 28%,#EEF0F3 50%,#A9AEB7 74%,#DEE1E6 100%);border-radius:6px;display:flex;flex-direction:column;align-items:stretch;transition:transform .15s,box-shadow .15s}
 .t8-c>:is(img,video,.flipimg){width:100%;aspect-ratio:1;object-fit:cover;display:block;border-radius:2px;height:auto}
 .t8-c small{font-size:11px;font-weight:800;color:#14285A;padding:3px 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:Rockwell,'Rockwell-Bold',Georgia,serif}
 .t8-n{position:absolute;left:-5px;top:-6px;z-index:2;width:22px;height:22px;border-radius:50%;background:#F2B8C6;color:#14285A;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #9B1B1F}
@@ -964,7 +969,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
   </div>
   <div class="cam-frame" id="cam-frame">
     <div class="cam-sq" id="cam-sq"><video id="cam-v" playsinline muted autoplay></video><div id="cam-shot"></div><div class="cam-off" id="cam-off" hidden></div><input class="cam-note" id="cam-note" maxlength="60" hidden></div>
-    <div class="cam-strip" id="cam-strip"><span>Hi</span> · <span>Hello</span> · <span>Hiello!</span></div>
+    <div class="cam-strip" id="cam-strip"><span>Hi</span> · <span>Hello</span> · <span>Hiello!</span><i class="rivet" aria-hidden="true"></i></div>
   </div>
   <div class="cam-ctl">
     <button class="cam-side" id="cam-a"></button>
@@ -1521,15 +1526,18 @@ async function shareTop8(list, ws){
   const cw = 222, gap = 24, left = (W - cw * 4 - gap * 3) / 2, top = 270, ch = cw + 10 + 46;
   for (let i = 0; i < list.length; i++){
     const p = list[i], cx = left + (i % 4) * (cw + gap), cy = top + Math.floor(i / 4) * (ch + 56);
-    x.fillStyle = '#F4F5F7'; x.fillRect(cx, cy, cw, ch);
+    const mg = x.createLinearGradient(cx, cy, cx + cw, cy + ch); [['0','#F6F7F9'],['.28','#C6CAD1'],['.5','#EEF0F3'],['.74','#A9AEB7'],['1','#DEE1E6']].forEach(([o, c]) => mg.addColorStop(+o, c));
+    x.fillStyle = mg; x.fillRect(cx, cy, cw, ch);
+    x.fillStyle = '#6E737B'; [cy + 5, cy + ch - 7].forEach(ry => { x.beginPath(); x.arc(cx + cw / 2, ry, 3.2, 0, Math.PI * 2); x.fill(); });
+    x.fillRect(cx, cy + 9, cw, 2); x.fillRect(cx, cy + 9 + cw - 12 + 2, cw, 2);
     const src = p.media.thumb ? await keyURL(p.media.thumb) : await mediaURL(p);
     const im = src && await loadImg(src);
     if (im){
       const n = p.media.kind === 'flip' ? Math.max(1, Math.round(im.width / im.height)) : 1, sw = im.width / n, s = Math.min(sw, im.height);
-      x.drawImage(im, (sw - s) / 2, (im.height - s) / 2, s, s, cx + 6, cy + 10, cw - 12, cw - 12);
+      x.drawImage(im, (sw - s) / 2, (im.height - s) / 2, s, s, cx, cy + 11, cw, cw - 12);
     }
     x.fillStyle = '#14285A'; x.font = "800 26px Rockwell, 'Rockwell-Bold', Georgia, serif"; x.textAlign = 'center';
-    x.fillText((p.from || '').slice(0, 12), cx + cw / 2, cy + ch - 14); x.textAlign = 'left';
+    x.fillText((p.from || '').slice(0, 12), cx + cw / 2, cy + ch - 18); x.textAlign = 'left';
     x.beginPath(); x.arc(cx + 6, cy + 6, 22, 0, Math.PI * 2); x.fillStyle = '#F2B8C6'; x.fill(); x.lineWidth = 3; x.strokeStyle = '#9B1B1F'; x.stroke();
     x.fillStyle = '#14285A'; x.font = '900 24px -apple-system, Arial, sans-serif'; x.textAlign = 'center'; x.fillText(String(i + 1), cx + 6, cy + 14); x.textAlign = 'left';
   }
