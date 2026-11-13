@@ -313,16 +313,15 @@ enum HLoader {
         let main = photos[0]
         let scope = who ?? "all"
         let moving = photos.count > 1 || main.beat.count > 1
-        if moving, let w = HStore.beatWindow(scope: scope, key: photos.map(\.id).joined(separator: ","), now: now) {
-            // one entry per minute while it moves (each holds six 10-second turns), then it rests
-            var out: [HEntry] = []
-            var m = w.lowerBound.addingTimeInterval((now.timeIntervalSince(w.lowerBound) / 60).rounded(.down) * 60)
-            while m < w.upperBound {
-                out.append(HEntry(date: out.isEmpty ? now : m, state: .photo(main), title: title, people: photos, beat: w, minute: m, scope: scope))
-                m = m.addingTimeInterval(60)
+        if moving {
+            // Always moving while it's on screen: one entry per minute (each holds six 10-second turns and
+            // refreshes "3 min ago"), for 30 minutes; then iOS asks for a fresh timeline. If iOS is slow to
+            // ask, the last face stays: the newest hi with its caption.
+            let w = now...now.addingTimeInterval(30 * 60)
+            return (0..<30).map { k in
+                let m = now.addingTimeInterval(Double(k) * 60)
+                return HEntry(date: m, state: .photo(main), title: title, people: photos, beat: w, minute: m, scope: scope)
             }
-            out.append(HEntry(date: w.upperBound, state: .photo(main), title: title, people: photos, beat: nil, scope: scope))
-            return out
         }
         return [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: nil, scope: scope)]
     }
@@ -431,7 +430,8 @@ struct Provider: AppIntentTimelineProvider {
     func timeline(for configuration: PickPersonIntent, in context: Context) async -> Timeline<HEntry> {
         let list = await HLoader.entries(person: configuration.person, family: context.family)
         // Check the family's server again in about 15 minutes (iOS decides the exact moment).
-        return Timeline(entries: list, policy: .after(Date().addingTimeInterval(15 * 60)))
+        let moving = list.contains { $0.beat != nil }
+        return Timeline(entries: list, policy: moving ? .atEnd : .after(Date().addingTimeInterval(15 * 60)))
     }
 }
 
@@ -515,7 +515,7 @@ struct Face: View {
             VStack(spacing: 0) {
                 Spacer()
                 LinearGradient(colors: [.clear, Color.black.opacity(0.62)], startPoint: .top, endPoint: .bottom)
-                    .frame(height: small ? 70 : (big ? 130 : 90))
+                    .frame(height: small ? 44 : (big ? 80 : 56))
             }
             Caption(photo: photo, now: now, heartRoom: photo.canHeart)
         }
@@ -572,28 +572,26 @@ struct Caption: View {
                     .padding(.trailing, 70)
             }
             Spacer(minLength: 0)
-            VStack(alignment: .leading, spacing: 1) {
-                if let st = photo.status {
-                    Text(st)
-                        .font(.system(size: small ? 12 : 14, weight: .heavy))
-                        .foregroundColor(.white)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.8)
-                } else {
-                    Text(photo.from.isEmpty ? "From the family" : "From " + photo.from)
-                        .font(.system(size: small ? 15 : (big ? 22 : 18), weight: .heavy))
-                        .foregroundColor(.white)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                }
+            // one low line: who it's from on the left, how long ago on the right
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Text(photo.status ?? (photo.from.isEmpty ? "From the family" : "From " + photo.from))
+                    .font(.system(size: small ? 11 : (big ? 15 : 13), weight: .bold))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                Spacer(minLength: 4)
                 Text(agoText(photo.at, now: now))
-                    .font(.system(size: small ? 11 : 13, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.85))
+                    .font(.system(size: small ? 11 : (big ? 15 : 13), weight: .semibold))
+                    .foregroundColor(.white.opacity(0.9))
+                    .lineLimit(1)
             }
-            .padding(.trailing, heartRoom ? (small ? 44 : 64) : 0)
+            .shadow(color: .black.opacity(0.5), radius: 2, y: 1)
+            .padding(.trailing, heartRoom ? (small ? 40 : 56) : 0)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding(small ? 11 : 14)
+        .padding(.horizontal, small ? 10 : 13)
+        .padding(.top, small ? 10 : 13)
+        .padding(.bottom, small ? 7 : 9)
     }
 }
 
@@ -623,7 +621,7 @@ struct PhotoView: View {
                             .overlay(Capsule().stroke(HB.red, lineWidth: 1.5))
                     }
                     Spacer()
-                    if entry.beat == nil && canMove {
+                    if false && canMove {
                         // resting: Play starts the 1, 2 again
                         Button(intent: PlayIntent(scope: entry.scope)) {
                             HStack(spacing: 5) {
