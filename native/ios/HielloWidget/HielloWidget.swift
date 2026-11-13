@@ -106,7 +106,7 @@ enum HStore {
     static func clearPendingHeart(_ id: String) { defaults?.removeObject(forKey: "hiello.heart." + id) }
 
     /// The 1, 2 beat: a widget moves for a while when something new lands (or when Play is tapped), then rests.
-    static let beatLength: TimeInterval = 60 * 60
+    static let beatLength: TimeInterval = 10 * 60
     static func beatWindow(scope: String, key: String, now: Date) -> ClosedRange<Date>? {
         let d = defaults
         if d?.string(forKey: "hiello.beatkey." + scope) != key {
@@ -157,6 +157,7 @@ struct HEntry: TimelineEntry {
     var title: String = "Hiello"
     var people: [HPhoto] = []          // whose hi's take turns on the widget (newest first, up to 3)
     var beat: ClosedRange<Date>? = nil // while set, the widget moves 1, 2, 1, 2 by itself
+    var minute: Date? = nil            // the minute this entry covers (six 10-second turns)
     var scope: String = "all"
 }
 
@@ -313,8 +314,15 @@ enum HLoader {
         let scope = who ?? "all"
         let moving = photos.count > 1 || main.beat.count > 1
         if moving, let w = HStore.beatWindow(scope: scope, key: photos.map(\.id).joined(separator: ","), now: now) {
-            return [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: w, scope: scope),
-                    HEntry(date: w.upperBound, state: .photo(main), title: title, people: photos, beat: nil, scope: scope)]
+            // one entry per minute while it moves (each holds six 10-second turns), then it rests
+            var out: [HEntry] = []
+            var m = w.lowerBound.addingTimeInterval((now.timeIntervalSince(w.lowerBound) / 60).rounded(.down) * 60)
+            while m < w.upperBound {
+                out.append(HEntry(date: out.isEmpty ? now : m, state: .photo(main), title: title, people: photos, beat: w, minute: m, scope: scope))
+                m = m.addingTimeInterval(60)
+            }
+            out.append(HEntry(date: w.upperBound, state: .photo(main), title: title, people: photos, beat: nil, scope: scope))
+            return out
         }
         return [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: nil, scope: scope)]
     }
@@ -442,18 +450,24 @@ func agoText(_ d: Date, now: Date) -> String {
 // MARK: - The 1, 2 beat
 //
 // A widget can't play video or GIFs, but a timer label ticks by itself every second while the widget is on
-// screen. Hiello's stencil fonts (HielloB…, HielloC…; see scripts/make_mask_fonts.py) turn each whole timer
-// reading ("0:07", "12:31", …) into a single glyph that is either a huge solid block or nothing, so a timer
-// drawn in one of them is a stencil that is fully open or fully shut each second. Where the text lands doesn't
-// matter, so a picture is never cut in half. Only public SwiftUI/WidgetKit is used.
+// screen. iOS draws that timer character by character in whatever font we give it. Hiello's two stencil
+// fonts (scripts/make_mask_fonts.py) draw each digit as either a block far bigger than the widget or nothing,
+// so a timer in one of them is a stencil that is open whenever ANY of its characters is a solid one.
+// Using only short 10-second timers, whose text only ever holds 0, 1 and one changing digit:
+//   HielloOdd on a count-up  -> open on odd seconds          (picture 2's beat)
+//   HielloNZ  on a count-up  -> open once that timer started (this turn has begun)
+//   HielloNZ  on a countdown -> open until that timer ends   (this turn isn't over)
+// Each 10-second turn is a picture-1 layer and a picture-2 layer, later turns stacked on top of earlier ones.
+// Every layer carries its own picture AND caption, so if anything ever failed you'd still see the newest hi.
+// Only public SwiftUI/WidgetKit is used.
 
-/// A stencil that opens and shuts with the beat. The font decides on which seconds it's open.
 struct StencilMask: View {
     var font: String
-    var beat: ClosedRange<Date>
+    var range: ClosedRange<Date>
+    var down: Bool = false
     var body: some View {
         GeometryReader { g in
-            Text(timerInterval: beat, countsDown: false)
+            Text(timerInterval: range, countsDown: down)
                 .font(.custom(font, fixedSize: max(g.size.width, g.size.height, 1)))
                 .environment(\.locale, Locale(identifier: "en_US_POSIX"))
                 .lineLimit(1)
@@ -465,14 +479,11 @@ struct StencilMask: View {
 }
 
 extension View {
-    /// Shows this only on person `p`'s turn (of `n` taking turns, 10 seconds each) and on beat `f`
-    /// (0 = picture 1 on even seconds, 1 = picture 2 on odd seconds).
-    func onBeat(_ p: Int, of n: Int, frame f: Int, beat: ClosedRange<Date>) -> some View {
-        self.mask(StencilMask(font: "HielloB\(n)\(p)\(f)", beat: beat))
-    }
-    /// Shows this on person `p`'s whole turn.
-    func onTurn(_ p: Int, of n: Int, beat: ClosedRange<Date>) -> some View {
-        self.mask(StencilMask(font: "HielloC\(n)\(p)", beat: beat))
+    /// Visible only during the 10-second turn starting at `s`; `second` = only on its odd seconds (picture 2).
+    func inTurn(_ s: Date, second: Bool) -> some View {
+        self.mask(second ? StencilMask(font: "HielloOdd", range: s...s.addingTimeInterval(10))
+                         : StencilMask(font: "HielloNZ", range: s.addingTimeInterval(-1)...s.addingTimeInterval(9)))
+            .mask(StencilMask(font: "HielloNZ", range: s...s.addingTimeInterval(11), down: true))
     }
 }
 
@@ -485,21 +496,51 @@ struct FillImage: View {
     }
 }
 
-/// Every picture stacked; the stencils decide which one shows: person by person, 1, 2, 1, 2.
-struct BeatStack: View {
-    var people: [HPhoto]
-    var beat: ClosedRange<Date>
+/// One picture with its own shade and caption: a whole, ready-to-show widget face.
+struct Face: View {
+    var photo: HPhoto
+    var image: UIImage?
+    var now: Date
+    @Environment(\.widgetFamily) var family
     var body: some View {
-        let n = people.count
+        let small = family == .systemSmall, big = family == .systemLarge
         ZStack {
-            ForEach(0..<n, id: \.self) { p in
-                let pics = people[p].beat
-                ForEach(0..<2, id: \.self) { f in
-                    if p == 0 && f == 0 {
-                        if let first = pics.first { FillImage(image: first) }   // underneath everything, and where it rests
-                    } else if !pics.isEmpty {
-                        // a plain photo shows on both beats of its turn
-                        FillImage(image: pics[min(f, pics.count - 1)]).onBeat(p, of: n, frame: f, beat: beat)
+            HB.midnight
+            if let img = image {
+                FillImage(image: img)
+            } else {
+                LinearGradient(colors: [Color(red: 27/255, green: 49/255, blue: 102/255), HB.midnight], startPoint: .top, endPoint: .bottom)
+                HeartBadge(size: 54).opacity(0.5)
+            }
+            VStack(spacing: 0) {
+                Spacer()
+                LinearGradient(colors: [.clear, Color.black.opacity(0.62)], startPoint: .top, endPoint: .bottom)
+                    .frame(height: small ? 70 : (big ? 130 : 90))
+            }
+            Caption(photo: photo, now: now, heartRoom: photo.canHeart)
+        }
+    }
+}
+
+/// The newest hi underneath (where it rests), then each 10-second turn of this minute on top: 1, 2, 1, 2.
+struct BeatStack: View {
+    var entry: HEntry
+    var people: [HPhoto]
+    var body: some View {
+        let n = max(people.count, 1)
+        let start = entry.beat?.lowerBound ?? entry.date
+        let minute = entry.minute ?? entry.date
+        let firstTurn = Int((minute.timeIntervalSince(start) / 10).rounded())
+        ZStack {
+            Face(photo: people[0], image: people[0].beat.first, now: entry.date)
+            if entry.beat != nil {
+                ForEach(0..<6, id: \.self) { j in
+                    let s = minute.addingTimeInterval(Double(j) * 10)
+                    let who = people[(firstTurn + j) % n]
+                    let pics = who.beat
+                    Face(photo: who, image: pics.first, now: entry.date).inTurn(s, second: false)
+                    if pics.count > 1 {
+                        Face(photo: who, image: pics[1], now: entry.date).inTurn(s, second: true)
                     }
                 }
             }
@@ -507,28 +548,7 @@ struct BeatStack: View {
     }
 }
 
-struct PhotoBackground: View {
-    var entry: HEntry
-    var mainPhoto: HPhoto? { if case .photo(let p) = entry.state { return p } else { return nil } }
-    var body: some View {
-        ZStack {
-            HB.midnight
-            if let main = mainPhoto {
-                let people = entry.people.isEmpty ? [main] : entry.people
-                if let b = entry.beat {
-                    BeatStack(people: people, beat: b)
-                } else if let img = main.beat.first {
-                    FillImage(image: img)
-                } else {
-                    LinearGradient(colors: [Color(red: 27/255, green: 49/255, blue: 102/255), HB.midnight], startPoint: .top, endPoint: .bottom)
-                    HeartBadge(size: 54).opacity(0.5)
-                }
-            }
-        }
-    }
-}
-
-/// Who sent it, when, and their note: changes along with whose turn it is.
+/// Who sent it, when, and their note.
 struct Caption: View {
     var photo: HPhoto
     var now: Date
@@ -589,24 +609,8 @@ struct PhotoView: View {
 
     var body: some View {
         ZStack {
-            // the pictures themselves (in the main layer so the 1, 2 stencils stay live)
-            PhotoBackground(entry: entry)
-            // bottom shade so the words are readable on any photo
-            VStack(spacing: 0) {
-                Spacer()
-                LinearGradient(colors: [.clear, Color.black.opacity(0.62)], startPoint: .top, endPoint: .bottom)
-                    .frame(height: small ? 70 : (big ? 130 : 90))
-            }
-            if let b = entry.beat, people.count > 1 {
-                ZStack {
-                    ForEach(0..<people.count, id: \.self) { p in
-                        Caption(photo: people[p], now: entry.date, heartRoom: photo.canHeart)
-                            .onTurn(p, of: people.count, beat: b)
-                    }
-                }
-            } else {
-                Caption(photo: photo, now: entry.date, heartRoom: photo.canHeart)
-            }
+            // the pictures with their captions (in the main layer so the 1, 2 stencils stay live)
+            BeatStack(entry: entry, people: people)
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     if photo.isNew {
@@ -785,13 +789,23 @@ struct LabProvider: TimelineProvider {
 
 struct LabTile: View {
     var label: String
-    var font: String
     var start: Date
+    var turns: Bool
     var body: some View {
         VStack(spacing: 2) {
             ZStack {
                 Color.red
-                Color.green.mask(StencilMask(font: font, beat: start...start.addingTimeInterval(3600)))
+                if turns {
+                    // the real method: blue, green, blue, green… for two minutes
+                    ForEach(0..<12, id: \.self) { j in
+                        let s = start.addingTimeInterval(Double(j) * 10)
+                        Color.blue.inTurn(s, second: false)
+                        Color.green.inTurn(s, second: true)
+                    }
+                } else {
+                    // one long timer: flickers green whenever any digit is odd
+                    Color.green.mask(StencilMask(font: "HielloOdd", range: start...start.addingTimeInterval(3600)))
+                }
             }
             .frame(width: 34, height: 34)
             .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -803,7 +817,7 @@ struct LabTile: View {
 struct LabView: View {
     var entry: LabEntry
     var range: ClosedRange<Date> { entry.start...entry.start.addingTimeInterval(3600) }
-    var fontsOK: Bool { UIFont(name: "HielloProbe", size: 12) != nil && UIFont(name: "HielloB101", size: 12) != nil }
+    var fontsOK: Bool { UIFont(name: "HielloOdd", size: 12) != nil && UIFont(name: "HielloNZ", size: 12) != nil }
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 6) {
@@ -816,15 +830,15 @@ struct LabView: View {
                 Text("E\(entry.tick)").font(.system(size: 11, weight: .black)).foregroundColor(.white)
             }
             HStack(spacing: 6) {
-                LabTile(label: "A", font: "HielloProbe", start: entry.start)
-                LabTile(label: "B", font: "HielloB101", start: entry.start)
+                LabTile(label: "A", start: entry.start, turns: false)
+                LabTile(label: "B", start: entry.start, turns: true)
                 VStack(spacing: 2) {
                     // the timer drawn straight in the test font: a green square on odd seconds if the font works,
                     // plain digits if iOS isn't using the font at all
                     ZStack {
                         Color.red
                         Text(timerInterval: range, countsDown: false)
-                            .font(.custom("HielloProbe", fixedSize: 34))
+                            .font(.custom("HielloOdd", fixedSize: 34))
                             .environment(\.locale, Locale(identifier: "en_US_POSIX"))
                             .lineLimit(1).fixedSize()
                             .foregroundColor(.green)
