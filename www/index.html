@@ -489,6 +489,18 @@ textarea.field{resize:none;line-height:1.35}
 .t8-n{position:absolute;left:-5px;top:-6px;z-index:2;width:22px;height:22px;border-radius:50%;background:#F2B8C6;color:#14285A;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #9B1B1F}
 .t8-c.pick{transform:scale(1.06);box-shadow:0 0 0 3px #F2B8C6}
 .t8-beats{margin-bottom:12px}
+.ct{background:var(--c-s1);border-radius:22px;padding:12px 12px 14px;margin:8px 16px 16px;scroll-snap-align:start;scroll-margin-top:70px}
+#fd-list>.ct-h{margin:4px 20px 10px!important}
+.ct-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:4px 2px 8px}
+.ct-h b{font-size:18px;font-weight:900;color:var(--c-text)}
+.ct-h small{font-size:13px;font-weight:700;color:var(--c-mut)}
+.ct-t8{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
+.ct-t8 button{position:relative;border:0;padding:0;background:var(--c-s2);border-radius:12px;aspect-ratio:1;overflow:visible}
+.ct-t8 button>:is(img,video,.flipimg){width:100%;height:100%;object-fit:cover;display:block;border-radius:12px}
+.ct-pp{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 4px;scrollbar-width:none}.ct-pp::-webkit-scrollbar{display:none}
+.ct-pp button{flex:none;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:5px;width:64px;color:var(--c-text)}
+.ct-pp .av{width:56px;height:56px;border-radius:50%;background:var(--metal);color:#0F1E45;display:flex;align-items:center;justify-content:center;font-family:Baskerville,'Libre Baskerville',Georgia,serif;font-weight:800;font-size:20px;box-shadow:0 0 0 2px #F2B8C6}
+.ct-pp small{font-size:12px;font-weight:800;max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vo-resp{display:flex;flex-direction:column;gap:8px;margin:10px 0 2px;padding:12px;border-radius:16px;background:var(--c-s1)}
 .vo-r{display:flex;align-items:center;gap:10px;font-size:16px;color:var(--c-text)}
 .vo-r .av{width:30px;height:30px;border-radius:50%;background:var(--c-s2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex:none}
@@ -661,6 +673,9 @@ html[data-look="pink"] #s-gp .gpbtn.send{color:#34302D!important;box-shadow:inse
 #fnav button{color:#3A4F80}
 #fnav button.on{background:#0F1E45;color:#F2B8C6;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.18)}
 #fnav b{background:#F2B8C6;color:#0F1E45;box-shadow:0 0 0 2px #FFFFFF}
+#fnav button.flip{background:#F2B8C6!important;color:#0F1E45!important;box-shadow:inset 0 0 0 2px #9B1B1F!important}
+#fnav .fl-badge{position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-style:normal;font-size:10px;font-weight:900;letter-spacing:.3px;line-height:1;padding:3px 6px;border-radius:999px;background:#F2B8C6;color:#0F1E45;box-shadow:0 0 0 1.5px #FFFFFF;white-space:nowrap;pointer-events:none}
+#fnav button.flip .fl-badge{background:#0F1E45;color:#F2B8C6}
 .cam-sq{box-shadow:0 0 0 6px #D3D6DC,0 0 0 7px #9BA0A9,0 10px 24px rgba(0,0,0,.4)}
 #gp-frame{box-shadow:0 0 0 6px #D3D6DC,0 0 0 7px #9BA0A9,0 10px 24px rgba(0,0,0,.4)!important}
 .gs-grab{background:var(--metal)}
@@ -1762,11 +1777,49 @@ $('#fd-back').onclick = () => { CAM.who = 'fam'; go('cam'); };
   sc.addEventListener('pointerdown', e => { if (CAM.who !== 'fam' || CAM.shot || e.target.closest('button,input,#cam-sq')) { y0 = null; return; } y0 = e.clientY; x0 = e.clientX; });
   sc.addEventListener('pointerup', e => { if (y0 === null) return; const dy = e.clientY - y0, dx = Math.abs(e.clientX - x0); y0 = null; if (dy < -70 && dx < 60) openFeed(); });
 })();
+/* the people you trade the most hi's with (last 30 days), best first */
+function topPeople(n = 10){
+  const since = Date.now() - 30 * DAY, me = S.cloud && S.cloud.mid, score = new Map();
+  const add = (key, name, k) => { if (!key || key === me || key === 'local-me') return; const v = score.get(key) || { name, n:0 }; v.n += k; if (name) v.name = name; score.set(key, v); };
+  (S.members || []).forEach(m => add(m.id, m.name, 0));
+  S.posts.filter(p => p.at >= since).forEach(p => add(p.mid || p.from, p.from, 2));
+  (S.replies || []).filter(r => r.at >= since).forEach(r => add(r.mid || r.from, r.from, 1));
+  return [...score.values()].filter(v => v.name && v.name !== meName()).sort((a, b) => b.n - a.n).slice(0, n);
+}
+async function circleTop(){
+  const ws = weekStart(), t8 = top8For(ws), people = topPeople(10);
+  let h = '';
+  if (t8.length){
+    const th = await Promise.all(t8.map(p => thumbHTML(p)));
+    h += `<div class="ct-h"><b>This week’s Top 8</b><button class="linkbtn" id="ct-t8all">See all</button></div>
+      <div class="ct-t8">${t8.map((p, i) => `<button data-ct8="${i}" aria-label="Number ${i + 1} from ${esc(p.from || '')}"><span class="t8-n">${i + 1}</span>${th[i]}</button>`).join('')}</div>`;
+  }
+  if (people.length){
+    h += `<div class="ct-h"><b>${people.length >= 3 ? `Your Top ${people.length}` : 'Your people'}</b><small>Tap one to give them their own widget</small></div>
+      <div class="ct-pp">${people.map((v, i) => `<button data-cpp="${esc(v.name)}"><span class="av">${esc(initials(v.name))}</span><small>${esc(v.name)}</small></button>`).join('')}</div>`;
+  }
+  return h ? `<div class="ct">${h}</div><div class="ct-h" style="margin:4px 4px 10px"><b>All hi’s</b></div>` : '';
+}
+function personWidgetSheet(name){
+  gsOpen(`<div class="gs-h">${esc(name)}’s own widget</div><p class="gs-sub">A widget that shows only ${esc(name)}’s hi’s. Add as many as you like: one for your partner, your bestie, grandma…</p>
+    <div class="ob-steps" style="margin:6px 4px 12px">
+      <div><b>1</b><span>Add a Hiello widget: press and hold your Home Screen › <u>Edit</u> › <u>Add Widget</u> › <u>Hiello</u>.</span></div>
+      <div><b>2</b><span>Press and hold the new widget › <u>Edit Widget</u>.</span></div>
+      <div><b>3</b><span>For “Show hi’s from”, pick <u>${esc(name)}</u>.</span></div></div>
+    <button class="btn primary" data-gsx style="width:100%;background:var(--c-acc);color:var(--c-ink)">Got it</button>`);
+}
 async function renderFeed(){
   $$('[data-prof]').forEach(b => b.textContent = initials(meName()));
   const items = feedItems(), list = $('#fd-list');
-  if (!items.length){ list.innerHTML = `<div class="fd-empty"><svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#6E6761" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="15" height="13" rx="2"/><path d="M7 21h12a2 2 0 0 0 2-2V8"/></svg><b>Nothing here yet</b>When anyone in your Circle sends a hi, it shows up here, newest first.<button class="btn primary" id="fd-invite" style="background:var(--c-acc);color:var(--c-ink);margin-top:8px">Invite your Circle</button></div>`;
-    $('#fd-invite').onclick = familySheet; return; }
+  const top = await circleTop();
+  const wireTop = () => {
+    const ws = weekStart(), t8 = top8For(ws);
+    $$('[data-ct8]', list).forEach(b => b.onclick = () => openPlayer(t8.slice(+b.dataset.ct8).concat(t8.slice(0, +b.dataset.ct8)), 'feed'));
+    $$('[data-cpp]', list).forEach(b => b.onclick = () => { haptic(); personWidgetSheet(b.dataset.cpp); });
+    const all = $('#ct-t8all'); if (all) all.onclick = () => { MEM.tab = 'recaps'; go('mem'); };
+  };
+  if (!items.length){ list.innerHTML = top + `<div class="fd-empty"><svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#6E6761" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="15" height="13" rx="2"/><path d="M7 21h12a2 2 0 0 0 2-2V8"/></svg><b>Nothing here yet</b>When anyone in your Circle sends a hi, it shows up here, newest first.<button class="btn primary" id="fd-invite" style="background:var(--c-acc);color:var(--c-ink);margin-top:8px">Invite your Circle</button></div>`;
+    $('#fd-invite').onclick = familySheet; wireTop(); return; }
   const html = await Promise.all(items.map(async (it, k) => {
     const x = it.o, u = await mediaURL(x);
     const media = !u ? '' : x.media.kind === 'video' ? `<video src="${u}" muted loop playsinline preload="metadata"></video>` : mediaImg(u, x.media.kind, ' loading="lazy"');
@@ -1775,7 +1828,8 @@ async function renderFeed(){
       <div class="fd-who"><span class="av">${esc(initials(x.from))}</span>${esc(x.from || '')} <small>${ago(x.at)}</small></div>
       <div class="fd-bar"><input maxlength="80" placeholder="Send a reply…" data-fr="${k}" enterkeyhint="send"><button data-fl="${k}" aria-label="Send love">${heartSVG(24)}</button></div></div>`;
   }));
-  list.innerHTML = html.join('');
+  list.innerHTML = top + html.join('');
+  wireTop();
   const io = new IntersectionObserver(es => es.forEach(en => {
     const v = en.target.querySelector('video'); if (v){ if (en.isIntersecting) v.play().catch(()=>{}); else v.pause(); }
     if (en.isIntersecting){ const it = items[+en.target.dataset.fi]; if (it && it.k === 'p'){ it.o.seenByMe = true; markWatched(it.o); } if (it && it.k === 'r' && !it.o.seen){ it.o.seen = true; } save(); }
@@ -2058,6 +2112,8 @@ function go(name){
   const famTab = S.setup && S.mode !== 'gp' && (name === 'mem' || name === 'fam' || (name === 'cam' && CAM.who === 'fam'));
   $('#fnav').classList.toggle('on', famTab);
   $$('#fnav button').forEach(b => b.classList.toggle('on', b.dataset.tab === name));
+  navCamState();
+  if (name === 'cam' && famTab && S.setup && !did('flipnavtip')) setTimeout(() => { if (current === 'cam') { did('flipnavtip'); say('Tip: tap the camera button again for Flip (Hi \u00b7 Hello \u00b7 Hiello!).'); } }, 2500);
   $('#gs').hidden = true;
   const rx = document.getElementById('react'); if (rx) rx.hidden = true;
   ({gp:renderGP, fam:renderFam, week:renderWeek, make:resetMake, cam:enterCam, codes:renderCodes, game:enterGame, golf:enterGolf, trivia:enterTrivia, photos:renderPhotos, rsvp:renderRsvp, story:showStory, settings:renderSettings, mem:renderMem, feed:renderFeed, gpready:() => { $('#gr-wt').innerHTML = wtHTML(); wtStart($('#gr-wt')); }}[name] || (()=>{}))();
@@ -2066,7 +2122,11 @@ function go(name){
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (g) { go(g.dataset.go); return; }
   if (e.target.closest('[data-prof]')) { openProfile(); return; }
-  const tb = e.target.closest('#fnav [data-tab]'); if (tb) { haptic(); if (tb.dataset.tab === 'cam') CAM.who = 'fam'; go(tb.dataset.tab); return; }
+  const tb = e.target.closest('#fnav [data-tab]');
+  if (tb){
+    if (tb.dataset.tab === 'cam' && current === 'cam' && CAM.who === 'fam' && !CAM.shot){ flipToggle(); return; }   /* tap the camera again: Flip */
+    haptic(); if (tb.dataset.tab === 'cam') CAM.who = 'fam'; go(tb.dataset.tab); return;
+  }
   const b = e.target.closest('[data-back]'); if (b) { go(b.dataset.back); return; }
 });
 $$('#demobar button').forEach(b => b.onclick = () => { S.mode = b.dataset.mode; save(); if (S.mode === 'fam') CAM.who = 'fam'; go(S.mode === 'gp' ? 'gp' : 'cam'); });
@@ -2729,8 +2789,8 @@ function enterCam(){
   const fam = CAM.who === 'fam';
   const rp = CAM.replyTo && S.posts.find(x => x.id === CAM.replyTo);
   $('#cam-to').textContent = fam ? 'To Fam' : rp ? `Reply to ${rp.from}` : 'To Fam';
-  $('#cam-left').innerHTML = fam ? ICON.recap : ICON.home; $('#cam-left').setAttribute('aria-label', fam ? 'Sunday Recap' : 'Back');
-  $('#cam-left').onclick = () => fam ? openRecap() : camBack();
+  $('#cam-left').innerHTML = fam ? ICON.recap : ICON.home; $('#cam-left').setAttribute('aria-label', fam ? 'Top 8' : 'Back');
+  $('#cam-left').onclick = () => { if (!fam) return camBack(); haptic(); MEM.tab = 'recaps'; go('mem'); };
   $('#cam-right').innerHTML = esc(initials(meName())); $('#cam-right').classList.add('avbtn'); $('#cam-right').setAttribute('aria-label','Your profile');
   $('#cam-right').onclick = () => openProfile();
   $('#cam-right').style.visibility = fam ? '' : 'hidden';
@@ -2825,8 +2885,20 @@ function flipDots(){
   el.innerHTML = CAM.flipMode ? Array.from({length:FLIP_N}, (_,i) => `<i class="${i < CAM.frames.length ? 'on' : ''}"></i>`).join('') : '';
   if (CAM.flipMode) $('#cam-hint').textContent = ['Flip: tap 1 for \u201cHi\u201d', 'Tap 2 for \u201cHello\u201d: a new pose!', 'Tap 3 for \u201cHiello!\u201d: big smile!'][CAM.frames.length] || '';
 }
+const NAV_CAM = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg>';
+const NAV_FLIP = '<svg width="28" height="26" viewBox="0 0 28 24" fill="currentColor" aria-hidden="true"><rect x="2" y="5" width="7" height="14" rx="2" opacity=".55"/><rect x="10.5" y="4" width="7" height="16" rx="2" opacity=".8"/><rect x="19" y="3" width="7" height="18" rx="2"/></svg>';
+/* the camera button: shows it's in Flip (inverted, Flip icon), and when you're on the camera a small badge
+   says tapping it again switches to Flip */
+function navCamState(){
+  const b = $('#fnav [data-tab="cam"]'); if (!b) return;
+  const flip = current === 'cam' && CAM.flipMode, onCam = current === 'cam' && CAM.who === 'fam';
+  b.classList.toggle('flip', flip);
+  b.innerHTML = (flip ? NAV_FLIP : NAV_CAM) + (onCam ? `<i class="fl-badge">${flip ? 'Photo' : 'Flip'}</i>` : '');
+  b.setAttribute('aria-label', flip ? 'Flip mode on. Tap for a regular photo' : onCam ? 'Camera. Tap again for Flip' : 'Camera');
+}
 function flipToggle(){
   CAM.flipMode = !CAM.flipMode; CAM.frames = []; flipGhost(null); haptic();
+  setTimeout(navCamState, 0);
   $('#cam-flipmode').classList.toggle('on', CAM.flipMode);
   $('#cam-flipmode').setAttribute('aria-pressed', CAM.flipMode ? 'true' : 'false');
   if (!CAM.flipMode) $('#cam-hint').textContent = 'Tap for a photo · hold for a video';
