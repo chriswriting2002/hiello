@@ -325,12 +325,12 @@ enum HLoader {
         let moving = photos.count > 1 || main.beat.count > 1
         if moving {
             // The flip, the way Apple supports: one long timeline of separate frames, each on an exact whole
-            // second so every widget size stays on the same beat. Hi · Hello · Hiello! one per second for 15
+            // second so every widget size stays on the same beat. Hi · Hello · Hiello! one per second for 3
             // minutes; a few people's hi's take turns every 12 frames. Then it rests on the newest. One long
             // timeline means iOS rarely has to rebuild it; it reloads when a new hi arrives (app or notification).
             if let e = cfg.err, !e.isEmpty { dbg += " · err " + e }
             let start = Date(timeIntervalSince1970: now.timeIntervalSince1970.rounded(.up))
-            let count = 15 * 60
+            let count = 3 * 60     // the size of timeline iOS kept at a true 1-second pace on a real iPhone
             let w = start...start.addingTimeInterval(Double(count))
             let fresh = now.timeIntervalSince(main.at) < 5 * 60      // a hi that just landed gets a pink pulse
             var out: [HEntry] = [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: w,
@@ -456,7 +456,9 @@ struct Provider: AppIntentTimelineProvider {
         // Check the family's server again in about 15 minutes (iOS decides the exact moment).
         let moving = list.contains { $0.beat != nil }
         // a flipping timeline lasts 15 minutes; after that ask again in 30 (new hi's reload it right away anyway)
-        return Timeline(entries: list, policy: .after(Date().addingTimeInterval(moving ? 30 * 60 : 15 * 60)))
+        // a flipping timeline asks for the next one as soon as it ends, so the flip keeps going (iOS decides
+        // how often it agrees); otherwise check again in 15 minutes
+        return Timeline(entries: list, policy: moving ? .atEnd : .after(Date().addingTimeInterval(15 * 60)))
     }
 }
 
