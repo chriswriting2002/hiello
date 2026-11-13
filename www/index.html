@@ -1236,7 +1236,7 @@ async function widgetPush(force){
       const file = 'p_' + String(p.id).replace(/[^\w-]/g, '') + '.jpg';
       const b = await widgetJpeg(p); if (!b) continue;
       await W.saveFile({ name: file, base64: await blobToB64(b) });
-      items.push({ id: String(p.id), from: p.from || '', note: p.note || '', at: p.at, watched: !!p.watched, hearts: p.hearts || 0, file, video: p.media && p.media.kind === 'video', flip: !!(p.media && p.media.kind === 'flip') });
+      items.push({ id: String(p.id), from: p.from || '', note: p.note || '', at: p.at, watched: !!p.watched, hearts: p.hearts || 0, file, video: p.media && p.media.kind === 'video', flip: !!(p.media && p.media.kind === 'flip'), mine: !!(S.cloud && p.mid === S.cloud.mid) });
     }
     cfg.items = items;
     await W.save({ json: JSON.stringify(cfg) });
@@ -1272,6 +1272,7 @@ async function openLink(url){
   /* from the widget or a notification: show that exact picture */
   if (S.mode === 'gp' && S.posts.includes(p)) openPhotos(p);
   else if (!p.media) go('fam');
+  else if (!feedItems().some(it => it.o.id === p.id)) viewOne(p);   /* e.g. your own hi: show that exact picture */
   else { FEED.focus = p.id; go('feed'); }
 }
 (() => { const C = window.Capacitor, A = C && C.Plugins && C.Plugins.App; if (!A) return;

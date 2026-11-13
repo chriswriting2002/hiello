@@ -69,6 +69,7 @@ struct HLocalItem: Decodable {
     var file: String
     var video: Bool?
     var flip: Bool?
+    var mine: Bool?     // you sent it (your own hi's don't show on your widget)
 }
 
 struct HRow: Decodable {
@@ -239,6 +240,13 @@ enum HLoader {
         return UIGraphicsImageRenderer(size: size, format: fmt).image { _ in img.draw(in: CGRect(origin: .zero, size: size)) }
     }
 
+    /// Newer servers leave out your own hi's (backend/circle.sql); older ones send everything.
+    static func feedData(_ cfg: HConfig) async -> Data? {
+        let args: [String: Any] = ["p_fid": cfg.fid ?? "", "p_sec": cfg.sec ?? ""]
+        if let mid = cfg.mid, !mid.isEmpty, let d = await rpc(cfg, "hi_widget_feed", args.merging(["p_member": mid]) { a, _ in a }) { return d }
+        return await rpc(cfg, "hi_widget_feed", args)
+    }
+
     static func entries(person: String?, family: WidgetFamily) async -> [HEntry] {
         let now = Date()
         guard let cfg = HStore.config() else { return [HEntry(date: now, state: .notSetUp)] }
@@ -248,7 +256,7 @@ enum HLoader {
 
         // 1) the family's server (fresh)
         if cfg.url != nil, cfg.fid != nil, cfg.sec != nil,
-           let data = await rpc(cfg, "hi_widget_feed", ["p_fid": cfg.fid ?? "", "p_sec": cfg.sec ?? ""]),
+           let data = await feedData(cfg),
            let feed = try? JSONDecoder().decode(HFeed.self, from: data) {
             let mine = cfg.mid ?? ""
             var rows: [(HRow, Bool)] = []
@@ -275,7 +283,7 @@ enum HLoader {
 
         // 2) what the app left on the phone (offline, or the one-phone demo)
         if photos.isEmpty, let items = cfg.items, !items.isEmpty {
-            let list = items.filter { who == nil || $0.from == who }
+            let list = items.filter { (who == nil || $0.from == who) && (cfg.demo == true || $0.mine != true) }
             let unseen = list.filter { !$0.watched }.count
             for it in turns(list, by: { $0.from }) {
                 let isFlip = it.flip ?? false
@@ -565,6 +573,8 @@ struct PhotoView: View {
 
     var body: some View {
         ZStack {
+            // the pictures themselves (in the main layer so the 1, 2 stencils stay live)
+            PhotoBackground(entry: entry)
             // bottom shade so the words are readable on any photo
             VStack(spacing: 0) {
                 Spacer()
@@ -714,7 +724,7 @@ struct HielloWidgetView: View {
                 }
             }
             // The photo is the widget's background, so it fills edge to edge (and in StandBy on the nightstand).
-            .containerBackground(for: .widget) { PhotoBackground(entry: entry) }
+            .containerBackground(for: .widget) { HB.midnight }
         }
     }
 }
@@ -734,9 +744,105 @@ struct HielloWidget: Widget {
     }
 }
 
+// MARK: - Hiello Lab: a test widget that shows which way of moving works on this iPhone
+
+struct LabEntry: TimelineEntry {
+    let date: Date
+    let start: Date
+    let tick: Int
+}
+
+struct LabProvider: TimelineProvider {
+    func placeholder(in context: Context) -> LabEntry { LabEntry(date: Date(), start: Date(), tick: 0) }
+    func getSnapshot(in context: Context, completion: @escaping (LabEntry) -> Void) { completion(placeholder(in: context)) }
+    func getTimeline(in context: Context, completion: @escaping (Timeline<LabEntry>) -> Void) {
+        let now = Date()
+        // a new entry every 5 seconds for 2 minutes: shows how closely iOS keeps to a quick schedule
+        let list = (0..<24).map { LabEntry(date: now.addingTimeInterval(Double($0) * 5), start: now, tick: $0) }
+        completion(Timeline(entries: list, policy: .atEnd))
+    }
+}
+
+struct LabTile: View {
+    var label: String
+    var font: String
+    var start: Date
+    var body: some View {
+        VStack(spacing: 2) {
+            ZStack {
+                Color.red
+                Color.green.mask(StencilMask(font: font, beat: start...start.addingTimeInterval(3600)))
+            }
+            .frame(width: 34, height: 34)
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+            Text(label).font(.system(size: 9, weight: .bold)).foregroundColor(.white)
+        }
+    }
+}
+
+struct LabView: View {
+    var entry: LabEntry
+    var range: ClosedRange<Date> { entry.start...entry.start.addingTimeInterval(3600) }
+    var fontsOK: Bool { UIFont(name: "HielloProbe", size: 12) != nil && UIFont(name: "HielloB101", size: 12) != nil }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                Text("Lab").font(.system(size: 12, weight: .black)).foregroundColor(HB.pink)
+                Text(timerInterval: range, countsDown: false)
+                    .font(.system(size: 12, weight: .bold).monospacedDigit())
+                    .environment(\.locale, Locale(identifier: "en_US_POSIX"))
+                    .foregroundColor(.white)
+                Text(fontsOK ? "F✓" : "F✗").font(.system(size: 11, weight: .black)).foregroundColor(fontsOK ? .green : .red)
+                Text("E\(entry.tick)").font(.system(size: 11, weight: .black)).foregroundColor(.white)
+            }
+            HStack(spacing: 6) {
+                LabTile(label: "A", font: "HielloProbe", start: entry.start)
+                LabTile(label: "B", font: "HielloB101", start: entry.start)
+                VStack(spacing: 2) {
+                    // the timer drawn straight in the test font: a green square on odd seconds if the font works,
+                    // plain digits if iOS isn't using the font at all
+                    ZStack {
+                        Color.red
+                        Text(timerInterval: range, countsDown: false)
+                            .font(.custom("HielloProbe", fixedSize: 34))
+                            .environment(\.locale, Locale(identifier: "en_US_POSIX"))
+                            .lineLimit(1).fixedSize()
+                            .foregroundColor(.green)
+                    }
+                    .frame(width: 34, height: 34)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    Text("C").font(.system(size: 9, weight: .bold)).foregroundColor(.white)
+                }
+                VStack(spacing: 2) {
+                    ZStack { Color.red; Color.green.opacity(entry.tick % 2 == 1 ? 1 : 0) }
+                        .frame(width: 34, height: 34)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                    Text("D").font(.system(size: 9, weight: .bold)).foregroundColor(.white)
+                }
+            }
+            ProgressView(timerInterval: entry.start...entry.start.addingTimeInterval(60), countsDown: false) { EmptyView() } currentValueLabel: { EmptyView() }
+                .tint(HB.pink)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .containerBackground(for: .widget) { HB.midnight }
+    }
+}
+
+struct HielloLab: Widget {
+    let kind = "HielloLab"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: LabProvider()) { entry in LabView(entry: entry) }
+            .configurationDisplayName("Hiello Lab (test)")
+            .description("A test of how widgets can move on this iPhone.")
+            .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
+
 @main
 struct HielloWidgetBundle: WidgetBundle {
     var body: some Widget {
         HielloWidget()
+        HielloLab()
     }
 }
