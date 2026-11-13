@@ -614,7 +614,7 @@ struct PhotoView: View {
         ZStack {
             // the pictures with their captions (in the main layer so the 1, 2 stencils stay live)
             BeatStack(entry: entry, people: people)
-            if !small { TestStrip(entry: entry) }
+            TestStrip(entry: entry)
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     if photo.isNew {
