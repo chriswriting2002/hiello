@@ -7,7 +7,8 @@ import UIKit
 
 enum HB {
     static let navy = Color(red: 20/255, green: 40/255, blue: 90/255)       // #14285A
-    static let midnight = Color(red: 15/255, green: 30/255, blue: 69/255)   // #0F1E45 icon navy
+    static let midnight = Color(red: 15/255, green: 30/255, blue: 69/255)   // #0F1E45 deep navy
+    static let paper = Color(red: 244/255, green: 245/255, blue: 247/255)   // #F4F5F7 the icon's "hi" white
     static let pink = Color(red: 242/255, green: 184/255, blue: 198/255)    // #F2B8C6
     static let red = Color(red: 155/255, green: 27/255, blue: 31/255)       // #9B1B1F
     static let silver = Color(red: 200/255, green: 202/255, blue: 206/255)  // #C8CACE
@@ -163,7 +164,8 @@ struct HEntry: TimelineEntry {
     var debug: String = ""              // temporary test strip: where the pictures came from
     var turn: Int = 0                   // which person's hi this entry shows
     var frame: Int = 0                  // picture 1 (0) or picture 2 (1) of a Flip
-    var tick: Int = 0                   // entry number (test strip)
+    var tick: Int = 0                   // entry number
+    var pulse: Bool = false             // a pink ring: a new hi just landed
 }
 
 // MARK: - Loading (the widget fetches by itself, so it updates even when the app is closed)
@@ -323,23 +325,26 @@ enum HLoader {
         let scope = who ?? "all"
         let moving = photos.count > 1 || main.beat.count > 1
         if moving {
-            // The flip, the way Apple supports: a timeline of separate frames. Picture 1, picture 2, … one
-            // per second for the first minute, then one every 3 seconds for the next 6 minutes; a few people's
-            // hi's take turns every 10 frames. Then it rests on the newest and iOS asks for a fresh timeline.
+            // The flip, the way Apple supports: one long timeline of separate frames, each on an exact whole
+            // second so every widget size stays on the same beat. Hi · Hello · Hiello! one per second for 15
+            // minutes; a few people's hi's take turns every 12 frames. Then it rests on the newest. One long
+            // timeline means iOS rarely has to rebuild it; it reloads when a new hi arrives (app or notification).
             if let e = cfg.err, !e.isEmpty { dbg += " · err " + e }
-            let w = now...now.addingTimeInterval(7 * 60)
-            var out: [HEntry] = []
-            var t = 0.0
-            for k in 0..<180 {
-                let n = photos.count
-                let who = (k / 12) % n          // 12 frames a turn: whole loops of 2- and 3-picture Flips
+            let start = Date(timeIntervalSince1970: now.timeIntervalSince1970.rounded(.up))
+            let count = 15 * 60
+            let w = start...start.addingTimeInterval(Double(count))
+            let fresh = now.timeIntervalSince(main.at) < 5 * 60      // a hi that just landed gets a pink pulse
+            var out: [HEntry] = [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: w,
+                                        minute: nil, scope: scope, debug: dbg, pulse: fresh)]
+            for k in 0..<count {
+                let who = (k / 12) % photos.count        // 12 frames a turn: whole loops of 2- and 3-picture Flips
                 let frames = Swift.max(photos[who].beat.count, 1)
-                out.append(HEntry(date: now.addingTimeInterval(t), state: .photo(photos[who]), title: title, people: photos,
-                                  beat: w, minute: nil, scope: scope, debug: dbg, turn: who, frame: k % frames, tick: k))
-                t += k < 60 ? 1 : 3
+                out.append(HEntry(date: start.addingTimeInterval(Double(k)), state: .photo(photos[who]), title: title,
+                                  people: photos, beat: w, minute: nil, scope: scope, debug: dbg, turn: who,
+                                  frame: k % frames, tick: k, pulse: fresh && k < 6 && k % 2 == 0))
             }
-            out.append(HEntry(date: now.addingTimeInterval(t), state: .photo(main), title: title, people: photos,
-                              beat: nil, scope: scope, debug: dbg, tick: 180))
+            out.append(HEntry(date: w.upperBound, state: .photo(main), title: title, people: photos,
+                              beat: nil, scope: scope, debug: dbg, tick: count))
             return out
         }
         return [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: nil, scope: scope, debug: dbg)]
@@ -378,20 +383,21 @@ enum HLoader {
     }
 }
 
-// MARK: - Choosing whose photos (one widget per grandkid, like Locket's best-friend widgets)
+// MARK: - Choosing whose hi's (a widget just for your partner, your bestie, grandma…)
 
 struct PeopleOptions: DynamicOptionsProvider {
     func results() async throws -> [String] {
-        ["Everyone"] + (HStore.config()?.people ?? [])
+        let cfg = HStore.config()
+        return ["Everyone"] + (cfg?.people ?? []).filter { $0 != cfg?.me }
     }
     func defaultResult() async -> String? { "Everyone" }
 }
 
 struct PickPersonIntent: WidgetConfigurationIntent {
-    static var title: LocalizedStringResource = "Whose photos?"
-    static var description = IntentDescription("Show everyone's Hiellos, or just one person's.")
+    static var title: LocalizedStringResource = "Whose hi's?"
+    static var description = IntentDescription("Show hi's from everyone in your Circle, or just one person.")
 
-    @Parameter(title: "Show photos from", optionsProvider: PeopleOptions())
+    @Parameter(title: "Show hi's from", optionsProvider: PeopleOptions())
     var person: String?
 
     init() {}
@@ -450,7 +456,8 @@ struct Provider: AppIntentTimelineProvider {
         let list = await HLoader.entries(person: configuration.person, family: context.family)
         // Check the family's server again in about 15 minutes (iOS decides the exact moment).
         let moving = list.contains { $0.beat != nil }
-        return Timeline(entries: list, policy: moving ? .atEnd : .after(Date().addingTimeInterval(15 * 60)))
+        // a flipping timeline lasts 15 minutes; after that ask again in 30 (new hi's reload it right away anyway)
+        return Timeline(entries: list, policy: .after(Date().addingTimeInterval(moving ? 30 * 60 : 15 * 60)))
     }
 }
 
@@ -515,7 +522,8 @@ struct FillImage: View {
     }
 }
 
-/// One picture with its own shade and caption: a whole, ready-to-show widget face.
+/// One hi in the Hiello frame (Polaroid-style, top and bottom only): a thin top strip, the picture, and a
+/// slightly thicker bottom strip with who it's from and how long ago, in the icon's navy on its "hi" white.
 struct Face: View {
     var photo: HPhoto
     var image: UIImage?
@@ -523,20 +531,48 @@ struct Face: View {
     @Environment(\.widgetFamily) var family
     var body: some View {
         let small = family == .systemSmall, big = family == .systemLarge
-        ZStack {
-            HB.midnight
-            if let img = image {
-                FillImage(image: img)
-            } else {
-                LinearGradient(colors: [Color(red: 27/255, green: 49/255, blue: 102/255), HB.midnight], startPoint: .top, endPoint: .bottom)
-                HeartBadge(size: 54).opacity(0.5)
+        let size: CGFloat = small ? 11 : (big ? 15 : 13)
+        VStack(spacing: 0) {
+            HB.paper.frame(height: small ? 6 : 8)
+            ZStack(alignment: .topLeading) {
+                HB.midnight
+                if let img = image {
+                    FillImage(image: img)
+                } else {
+                    LinearGradient(colors: [Color(red: 27/255, green: 49/255, blue: 102/255), HB.midnight], startPoint: .top, endPoint: .bottom)
+                    HeartBadge(size: 54).opacity(0.5).frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                if !photo.note.isEmpty && !small {
+                    Text(photo.note)
+                        .font(.custom("Rockwell-Bold", size: big ? 20 : 15))
+                        .foregroundColor(HB.navy)
+                        .lineLimit(big ? 3 : 2)
+                        .padding(.horizontal, 10).padding(.vertical, 6)
+                        .background(RoundedRectangle(cornerRadius: 10).fill(HB.paper))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(HB.navy, lineWidth: 2))
+                        .rotationEffect(.degrees(-3))
+                        .shadow(color: .black.opacity(0.25), radius: 4, y: 2)
+                        .padding(10)
+                        .padding(.trailing, 50)
+                }
             }
-            VStack(spacing: 0) {
-                Spacer()
-                LinearGradient(colors: [.clear, Color.black.opacity(0.62)], startPoint: .top, endPoint: .bottom)
-                    .frame(height: small ? 44 : (big ? 80 : 56))
+            .clipped()
+            HStack(spacing: 6) {
+                Text(photo.status ?? (photo.from.isEmpty ? "From the family" : "From " + photo.from))
+                    .font(.custom("Rockwell-Bold", size: size))
+                    .foregroundColor(HB.navy)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                Spacer(minLength: 4)
+                Text(agoText(photo.at, now: now))
+                    .font(.system(size: size - 1, weight: .semibold))
+                    .foregroundColor(HB.navy.opacity(0.7))
+                    .lineLimit(1)
             }
-            Caption(photo: photo, now: now, heartRoom: photo.canHeart)
+            .padding(.horizontal, small ? 9 : 12)
+            .padding(.trailing, photo.canHeart ? (small ? 34 : 48) : 0)
+            .frame(height: small ? 26 : (big ? 40 : 32))
+            .background(HB.paper)
         }
     }
 }
@@ -566,7 +602,7 @@ struct Caption: View {
         VStack(alignment: .leading, spacing: 0) {
             if !photo.note.isEmpty && !small {
                 Text(photo.note)
-                    .font(.custom("Baskerville-Bold", size: big ? 22 : 16))
+                    .font(.custom("Rockwell-Bold", size: big ? 22 : 16))
                     .foregroundColor(HB.navy)
                     .lineLimit(big ? 3 : 2)
                     .padding(.horizontal, 10).padding(.vertical, 6)
@@ -615,6 +651,10 @@ struct PhotoView: View {
         ZStack {
             // the pictures with their captions (in the main layer so the 1, 2 stencils stay live)
             BeatStack(entry: entry, people: people)
+            if entry.pulse {
+                ContainerRelativeShape().strokeBorder(HB.pink, lineWidth: 6)
+                ContainerRelativeShape().inset(by: 6).strokeBorder(HB.red.opacity(0.8), lineWidth: 1.5)
+            }
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     if photo.isNew {
@@ -686,7 +726,7 @@ struct MessageView: View {
         VStack(spacing: 8) {
             HStack(spacing: 6) {
                 HeartBadge(size: family == .systemSmall ? 18 : 22)
-                Text("Hiello").font(.custom("Baskerville-Bold", size: family == .systemSmall ? 18 : 22)).foregroundColor(.white)
+                Text("Hiello").font(.custom("Rockwell-Bold", size: family == .systemSmall ? 18 : 22)).foregroundColor(.white)
             }
             Text(setUp ? text : "Open Hiello to connect your family.")
                 .font(.system(size: family == .systemSmall ? 13 : 15, weight: .semibold))
