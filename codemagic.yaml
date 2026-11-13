@@ -27,6 +27,8 @@ workflows:
           if [ ! -d ios ]; then npx cap add ios; fi
       - name: App icon and launch screen
         script: npx capacitor-assets generate --ios --iconBackgroundColor '#14285A' --splashBackgroundColor '#0F1E45'
+      - name: Dark and Tinted app icons
+        script: python3 scripts/add_dark_icon.py
       - name: iPhone only, portrait only, app settings
         script: |
           PLIST=ios/App/App/Info.plist
@@ -98,6 +100,8 @@ workflows:
           if [ ! -d ios ]; then npx cap add ios; fi
       - name: App icon and launch screen
         script: npx capacitor-assets generate --ios --iconBackgroundColor '#14285A' --splashBackgroundColor '#0F1E45'
+      - name: Dark and Tinted app icons
+        script: python3 scripts/add_dark_icon.py
       - name: iPhone only, portrait only, app settings
         script: |
           PLIST=ios/App/App/Info.plist
