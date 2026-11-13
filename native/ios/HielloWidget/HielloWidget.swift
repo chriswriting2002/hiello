@@ -324,22 +324,32 @@ enum HLoader {
         let scope = who ?? "all"
         let moving = photos.count > 1 || main.beat.count > 1
         if moving {
-            // The flip, the way Apple supports: one long timeline of separate frames, each on an exact whole
-            // second so every widget size stays on the same beat. Hi · Hello · Hiello! one per second for 3
-            // minutes; a few people's hi's take turns every 12 frames. Then it rests on the newest. One long
-            // timeline means iOS rarely has to rebuild it; it reloads when a new hi arrives (app or notification).
+            // The flip, the way that worked on the phone: a timeline of separate frames, one per second
+            // (Hi · Hello · Hiello!), 180 frames (3 minutes); a few people's hi's take turns every 12 frames.
+            // If iOS rebuilds the widget mid-run (resizing, a refresh), it picks up the SAME run where it is,
+            // instead of starting over, so the beat isn't knocked off. A new hi starts a fresh run.
             if let e = cfg.err, !e.isEmpty { dbg += " · err " + e }
-            let start = Date(timeIntervalSince1970: now.timeIntervalSince1970.rounded(.up))
-            let count = 3 * 60     // the size of timeline iOS kept at a true 1-second pace on a real iPhone
+            let count = 180
+            let key = photos.map(\.id).joined(separator: ",")
+            let d = HStore.defaults
+            var start = now
+            let savedStart = d?.double(forKey: "hiello.run.start." + scope) ?? 0
+            if d?.string(forKey: "hiello.run.key." + scope) == key, savedStart > 0,
+               now.timeIntervalSince1970 - savedStart < Double(count) - 5 {
+                start = Date(timeIntervalSince1970: savedStart)          // same run: keep its beat
+            } else {
+                d?.set(key, forKey: "hiello.run.key." + scope)
+                d?.set(now.timeIntervalSince1970, forKey: "hiello.run.start." + scope)
+            }
             let w = start...start.addingTimeInterval(Double(count))
-            let fresh = now.timeIntervalSince(main.at) < 5 * 60      // a hi that just landed gets a pink pulse
-            var out: [HEntry] = [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: w,
-                                        minute: nil, scope: scope, debug: dbg, pulse: fresh)]
-            for k in 0..<count {
-                let who = (k / 12) % photos.count        // 12 frames a turn: whole loops of 2- and 3-picture Flips
+            let fresh = now.timeIntervalSince(main.at) < 5 * 60
+            let first = Swift.max(0, Int(now.timeIntervalSince(start)))
+            var out: [HEntry] = []
+            for k in first..<count {
+                let who = (k / 12) % photos.count
                 let frames = Swift.max(photos[who].beat.count, 1)
-                out.append(HEntry(date: start.addingTimeInterval(Double(k)), state: .photo(photos[who]), title: title,
-                                  people: photos, beat: w, minute: nil, scope: scope, debug: dbg, turn: who,
+                out.append(HEntry(date: k == first ? now : start.addingTimeInterval(Double(k)), state: .photo(photos[who]),
+                                  title: title, people: photos, beat: w, minute: nil, scope: scope, debug: dbg, turn: who,
                                   frame: k % frames, tick: k, pulse: fresh && k < 6 && k % 2 == 0))
             }
             out.append(HEntry(date: w.upperBound, state: .photo(main), title: title, people: photos,
