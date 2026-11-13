@@ -139,9 +139,9 @@ struct HPhoto {
     var status: String?
     var frames: [UIImage] = []   // a Flip: quick pictures taken one after another
 
-    /// What the widget beats between: picture 1, picture 2 (older 3-picture Flips use their first and last).
+    /// What the widget flips through: every picture of a Flip (Hi · Hello · Hiello!), or the one photo.
     var beat: [UIImage] {
-        if frames.count >= 2 { return [frames[0], frames[frames.count - 1]] }
+        if frames.count >= 2 { return frames }
         return image.map { [$0] } ?? []
     }
 }
@@ -332,7 +332,7 @@ enum HLoader {
             var t = 0.0
             for k in 0..<180 {
                 let n = photos.count
-                let who = (k / 10) % n
+                let who = (k / 12) % n          // 12 frames a turn: whole loops of 2- and 3-picture Flips
                 let frames = Swift.max(photos[who].beat.count, 1)
                 out.append(HEntry(date: now.addingTimeInterval(t), state: .photo(photos[who]), title: title, people: photos,
                                   beat: w, minute: nil, scope: scope, debug: dbg, turn: who, frame: k % frames, tick: k))
@@ -615,7 +615,6 @@ struct PhotoView: View {
         ZStack {
             // the pictures with their captions (in the main layer so the 1, 2 stencils stay live)
             BeatStack(entry: entry, people: people)
-            TestStrip(entry: entry)
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     if photo.isNew {
@@ -909,6 +908,5 @@ struct HielloLab: Widget {
 struct HielloWidgetBundle: WidgetBundle {
     var body: some Widget {
         HielloWidget()
-        HielloLab()
     }
 }
