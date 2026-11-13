@@ -320,13 +320,29 @@ enum HLoader {
     }
 
     /// The newest hi from each person, newest first, at most 3 people (so the turns divide a minute evenly).
+    /// Who takes turns on the widget (3 at most, so the turns divide a minute evenly): the newest hi from each
+    /// person first; if fewer than 3 people sent one, their next most recent hi's fill the turns.
     static func turns<T>(_ list: [T], by key: (T) -> String) -> [T] {
-        var seen = Set<String>(), out: [T] = []
-        for x in list where !seen.contains(key(x)) {
-            seen.insert(key(x)); out.append(x)
-            if out.count == 3 { break }
+        var seen = Set<String>(), out: [T] = [], rest: [T] = []
+        for x in list {
+            if seen.contains(key(x)) { rest.append(x) } else { seen.insert(key(x)); out.append(x) }
         }
+        out = Array(out.prefix(3))
+        for x in rest where out.count < 3 { out.append(x) }
         return out
+    }
+
+    /// For the Hiello Lab widget: where the pictures come from.
+    static func sourceReport() async -> String {
+        guard let cfg = HStore.config() else { return "no setup" }
+        let mine = cfg.mid ?? ""
+        var srv = "srv ✗"
+        if cfg.url != nil, let data = await feedData(cfg), let feed = try? JSONDecoder().decode(HFeed.self, from: data) {
+            let posts = feed.posts ?? []
+            srv = "srv \(posts.count) others \(posts.filter { $0.member_id != mine }.count)"
+        }
+        let items = cfg.items ?? []
+        return srv + " · local \(items.count) mine \(items.filter { $0.mine == true }.count) · id \(mine.prefix(4))"
     }
 
     static func sendHeart(_ id: String) async {
@@ -750,16 +766,20 @@ struct LabEntry: TimelineEntry {
     let date: Date
     let start: Date
     let tick: Int
+    var source: String = ""
 }
 
 struct LabProvider: TimelineProvider {
     func placeholder(in context: Context) -> LabEntry { LabEntry(date: Date(), start: Date(), tick: 0) }
     func getSnapshot(in context: Context, completion: @escaping (LabEntry) -> Void) { completion(placeholder(in: context)) }
     func getTimeline(in context: Context, completion: @escaping (Timeline<LabEntry>) -> Void) {
-        let now = Date()
-        // a new entry every 5 seconds for 2 minutes: shows how closely iOS keeps to a quick schedule
-        let list = (0..<24).map { LabEntry(date: now.addingTimeInterval(Double($0) * 5), start: now, tick: $0) }
-        completion(Timeline(entries: list, policy: .atEnd))
+        Task {
+            let now = Date()
+            let src = await HLoader.sourceReport()
+            // a new entry every 5 seconds for 2 minutes: shows how closely iOS keeps to a quick schedule
+            let list = (0..<24).map { LabEntry(date: now.addingTimeInterval(Double($0) * 5), start: now, tick: $0, source: src) }
+            completion(Timeline(entries: list, policy: .atEnd))
+        }
     }
 }
 
@@ -822,6 +842,7 @@ struct LabView: View {
             }
             ProgressView(timerInterval: entry.start...entry.start.addingTimeInterval(60), countsDown: false) { EmptyView() } currentValueLabel: { EmptyView() }
                 .tint(HB.pink)
+            Text(entry.source).font(.system(size: 9, weight: .semibold)).foregroundColor(.white.opacity(0.8)).lineLimit(2)
         }
         .padding(10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

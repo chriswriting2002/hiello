@@ -2,6 +2,7 @@ import UserNotifications
 import UIKit
 import ImageIO
 import UniformTypeIdentifiers
+import WidgetKit
 
 /// Puts the family's photo right inside the notification (lock screen, banner, and when you press on it).
 /// The server sends a one-day link to the small picture in "image"; this downloads it before the alert shows.
@@ -13,6 +14,8 @@ class NotificationService: UNNotificationServiceExtension {
         self.contentHandler = contentHandler
         let content = (request.content.mutableCopy() as? UNMutableNotificationContent) ?? UNMutableNotificationContent()
         best = content
+        // a new hi just arrived: refresh the home screen widget right away (don't wait for iOS's next check)
+        WidgetCenter.shared.reloadAllTimelines()
         guard let s = request.content.userInfo["image"] as? String, let url = URL(string: s) else {
             contentHandler(content); return
         }
