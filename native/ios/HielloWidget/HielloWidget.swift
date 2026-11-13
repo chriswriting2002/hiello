@@ -8,16 +8,6 @@ import UIKit
 enum HB {
     static let navy = Color(red: 20/255, green: 40/255, blue: 90/255)       // #14285A
     static let midnight = Color(red: 15/255, green: 30/255, blue: 69/255)   // #0F1E45 deep navy
-    static let paper = Color(red: 244/255, green: 245/255, blue: 247/255)   // #F4F5F7 the icon's "hi" white
-    static let rim = Color(red: 110/255, green: 115/255, blue: 123/255)     // #6E737B the icon's rim and rivets
-    /// the icon's brushed-silver plate
-    static let metal = LinearGradient(stops: [
-        .init(color: Color(red: 246/255, green: 247/255, blue: 249/255), location: 0),
-        .init(color: Color(red: 198/255, green: 202/255, blue: 209/255), location: 0.28),
-        .init(color: Color(red: 238/255, green: 240/255, blue: 243/255), location: 0.5),
-        .init(color: Color(red: 169/255, green: 174/255, blue: 183/255), location: 0.74),
-        .init(color: Color(red: 222/255, green: 225/255, blue: 230/255), location: 1)],
-        startPoint: .leading, endPoint: .trailing)
     static let pink = Color(red: 242/255, green: 184/255, blue: 198/255)    // #F2B8C6
     static let red = Color(red: 155/255, green: 27/255, blue: 31/255)       // #9B1B1F
     static let silver = Color(red: 200/255, green: 202/255, blue: 206/255)  // #C8CACE
@@ -531,16 +521,7 @@ struct FillImage: View {
     }
 }
 
-/// A rivet, like the two on the app icon.
-struct Rivet: View {
-    var size: CGFloat
-    var body: some View {
-        Circle().fill(HB.rim).frame(width: size, height: size)
-    }
-}
-
-/// One hi in the Hiello frame, straight from the icon: brushed-silver strips top and bottom (sides open), a
-/// rivet centered in each, a thin steel rim against the photo; who it's from and when on the bottom strip.
+/// One picture with its own shade and caption: a whole, ready-to-show widget face.
 struct Face: View {
     var photo: HPhoto
     var image: UIImage?
@@ -548,52 +529,20 @@ struct Face: View {
     @Environment(\.widgetFamily) var family
     var body: some View {
         let small = family == .systemSmall, big = family == .systemLarge
-        let size: CGFloat = small ? 11 : (big ? 15 : 13)
-        VStack(spacing: 0) {
-            ZStack { HB.metal; Rivet(size: small ? 4 : 5) }.frame(height: small ? 9 : 12)
-            HB.rim.frame(height: 1.5)
-            ZStack(alignment: .topLeading) {
-                HB.midnight
-                if let img = image {
-                    FillImage(image: img)
-                } else {
-                    LinearGradient(colors: [Color(red: 27/255, green: 49/255, blue: 102/255), HB.midnight], startPoint: .top, endPoint: .bottom)
-                    HeartBadge(size: 54).opacity(0.5).frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-                if !photo.note.isEmpty && !small {
-                    Text(photo.note)
-                        .font(.custom("Rockwell-Bold", size: big ? 20 : 15))
-                        .foregroundColor(HB.navy)
-                        .lineLimit(big ? 3 : 2)
-                        .padding(.horizontal, 10).padding(.vertical, 6)
-                        .background(RoundedRectangle(cornerRadius: 10).fill(HB.paper))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(HB.navy, lineWidth: 2))
-                        .rotationEffect(.degrees(-3))
-                        .shadow(color: .black.opacity(0.25), radius: 4, y: 2)
-                        .padding(10)
-                        .padding(.trailing, 50)
-                }
+        ZStack {
+            HB.midnight
+            if let img = image {
+                FillImage(image: img)
+            } else {
+                LinearGradient(colors: [Color(red: 27/255, green: 49/255, blue: 102/255), HB.midnight], startPoint: .top, endPoint: .bottom)
+                HeartBadge(size: 54).opacity(0.5)
             }
-            .clipped()
-            HB.rim.frame(height: 1.5)
-            HStack(spacing: 6) {
-                Text(photo.status ?? (photo.from.isEmpty ? "From the family" : "From " + photo.from))
-                    .font(.custom("Rockwell-Bold", size: size))
-                    .foregroundColor(HB.navy)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.75)
-                Spacer(minLength: 4)
-                Rivet(size: small ? 4 : 5)
-                Spacer(minLength: 4)
-                Text(agoText(photo.at, now: now))
-                    .font(.system(size: size - 1, weight: .semibold))
-                    .foregroundColor(HB.navy.opacity(0.7))
-                    .lineLimit(1)
+            VStack(spacing: 0) {
+                Spacer()
+                LinearGradient(colors: [.clear, Color.black.opacity(0.62)], startPoint: .top, endPoint: .bottom)
+                    .frame(height: small ? 44 : (big ? 80 : 56))
             }
-            .padding(.horizontal, small ? 9 : 12)
-            .padding(.trailing, photo.canHeart ? (small ? 34 : 48) : 0)
-            .frame(height: small ? 26 : (big ? 40 : 32))
-            .background(HB.metal)
+            Caption(photo: photo, now: now, heartRoom: photo.canHeart)
         }
     }
 }
@@ -623,7 +572,7 @@ struct Caption: View {
         VStack(alignment: .leading, spacing: 0) {
             if !photo.note.isEmpty && !small {
                 Text(photo.note)
-                    .font(.custom("Rockwell-Bold", size: big ? 22 : 16))
+                    .font(.custom("Baskerville-Bold", size: big ? 22 : 16))
                     .foregroundColor(HB.navy)
                     .lineLimit(big ? 3 : 2)
                     .padding(.horizontal, 10).padding(.vertical, 6)
@@ -747,7 +696,7 @@ struct MessageView: View {
         VStack(spacing: 8) {
             HStack(spacing: 6) {
                 HeartBadge(size: family == .systemSmall ? 18 : 22)
-                Text("Hiello").font(.custom("Rockwell-Bold", size: family == .systemSmall ? 18 : 22)).foregroundColor(.white)
+                Text("Hiello").font(.custom("Baskerville-Bold", size: family == .systemSmall ? 18 : 22)).foregroundColor(.white)
             }
             Text(setUp ? text : "Open Hiello to connect your family.")
                 .font(.system(size: family == .systemSmall ? 13 : 15, weight: .semibold))
