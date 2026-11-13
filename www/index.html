@@ -1223,26 +1223,32 @@ function nativeWidget(){
 let lastWidget = '';
 async function widgetPush(force){
   const W = nativeWidget(); if (!W) return;
+  let cfg;
   try {
-    const cfg = S.cloud && CLOUD()
+    cfg = S.cloud && CLOUD()
       ? { url: HIELLO_CLOUD.url, key: HIELLO_CLOUD.key, fid: S.cloud.fid, sec: S.cloud.sec, mid: S.cloud.mid, role: S.cloud.role, me: S.me, gp: gpName(),
           people: [...new Set(S.posts.map(p => p.from).filter(Boolean))] }
       : { demo: true, role: S.mode === 'gp' ? 'gp' : 'family', me: S.me, gp: gpName(), people: [...new Set(S.posts.map(p => p.from).filter(Boolean))] };
-    /* also leave the newest few pictures on the phone, so the widget can show them instantly (and in the demo) */
-    const latest = [...S.posts].sort((a,b) => b.at - a.at).slice(0, 6);
-    const sig = JSON.stringify(cfg) + latest.map(p => p.id + (p.watched ? 1 : 0) + (p.hearts || 0) + (p.gpNote ? p.gpNote.text : '')).join();
-    if (!force && sig === lastWidget) return; lastWidget = sig;
-    const items = [];
-    for (const p of latest){
+  } catch(e){ return; }
+  const latest = [...S.posts].sort((a,b) => b.at - a.at).slice(0, 6);
+  const sig = JSON.stringify(cfg) + latest.map(p => p.id + (p.watched ? 1 : 0) + (p.hearts || 0) + (p.gpNote ? p.gpNote.text : '')).join();
+  if (!force && sig === lastWidget) return; lastWidget = sig;
+  /* 1) the connection first, on its own, so the widget always knows the Circle's server */
+  try { await W.save({ json: JSON.stringify({ ...cfg, items: widgetItems }) }); } catch(e){}
+  /* 2) then the newest few pictures, one at a time (one bad picture can't block the rest) */
+  const items = [], errs = [];
+  for (const p of latest){
+    try {
       const file = 'p_' + String(p.id).replace(/[^\w-]/g, '') + '.jpg';
       const b = await widgetJpeg(p); if (!b) continue;
       await W.saveFile({ name: file, base64: await blobToB64(b) });
       items.push({ id: String(p.id), from: p.from || '', note: p.note || '', at: p.at, watched: !!p.watched, hearts: p.hearts || 0, file, video: p.media && p.media.kind === 'video', flip: !!(p.media && p.media.kind === 'flip'), mine: !!(S.cloud && p.mid === S.cloud.mid) });
-    }
-    cfg.items = items;
-    await W.save({ json: JSON.stringify(cfg) });
-  } catch(e){}
+    } catch(e){ errs.push(String(e && e.message || e).slice(0, 40)); }
+  }
+  widgetItems = items;
+  try { await W.save({ json: JSON.stringify({ ...cfg, items, err: errs[0] || '' }) }); } catch(e){}
 }
+let widgetItems = [];
 async function widgetJpeg(p){
   if (!p.media) return null;
   let b = p.media.thumb ? await getMedia(p.media.thumb) : null;

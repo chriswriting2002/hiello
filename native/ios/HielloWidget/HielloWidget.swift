@@ -57,6 +57,7 @@ struct HConfig: Decodable {
     var people: [String]?
     var demo: Bool?
     var items: [HLocalItem]?
+    var err: String?
 }
 
 struct HLocalItem: Decodable {
@@ -160,6 +161,9 @@ struct HEntry: TimelineEntry {
     var minute: Date? = nil            // the minute this entry covers (six 10-second turns)
     var scope: String = "all"
     var debug: String = ""              // temporary test strip: where the pictures came from
+    var turn: Int = 0                   // which person's hi this entry shows
+    var frame: Int = 0                  // picture 1 (0) or picture 2 (1) of a Flip
+    var tick: Int = 0                   // entry number (test strip)
 }
 
 // MARK: - Loading (the widget fetches by itself, so it updates even when the app is closed)
@@ -319,14 +323,24 @@ enum HLoader {
         let scope = who ?? "all"
         let moving = photos.count > 1 || main.beat.count > 1
         if moving {
-            // Always moving while it's on screen: one entry per minute (each holds six 10-second turns and
-            // refreshes "3 min ago"), for 30 minutes; then iOS asks for a fresh timeline. If iOS is slow to
-            // ask, the last face stays: the newest hi with its caption.
-            let w = now...now.addingTimeInterval(30 * 60)
-            return (0..<30).map { k in
-                let m = now.addingTimeInterval(Double(k) * 60)
-                return HEntry(date: m, state: .photo(main), title: title, people: photos, beat: w, minute: m, scope: scope, debug: dbg)
+            // The flip, the way Apple supports: a timeline of separate frames. Picture 1, picture 2, … one
+            // per second for the first minute, then one every 3 seconds for the next 6 minutes; a few people's
+            // hi's take turns every 10 frames. Then it rests on the newest and iOS asks for a fresh timeline.
+            if let e = cfg.err, !e.isEmpty { dbg += " · err " + e }
+            let w = now...now.addingTimeInterval(7 * 60)
+            var out: [HEntry] = []
+            var t = 0.0
+            for k in 0..<180 {
+                let n = photos.count
+                let who = (k / 10) % n
+                let frames = Swift.max(photos[who].beat.count, 1)
+                out.append(HEntry(date: now.addingTimeInterval(t), state: .photo(photos[who]), title: title, people: photos,
+                                  beat: w, minute: nil, scope: scope, debug: dbg, turn: who, frame: k % frames, tick: k))
+                t += k < 60 ? 1 : 3
             }
+            out.append(HEntry(date: now.addingTimeInterval(t), state: .photo(main), title: title, people: photos,
+                              beat: nil, scope: scope, debug: dbg, tick: 180))
+            return out
         }
         return [HEntry(date: now, state: .photo(main), title: title, people: photos, beat: nil, scope: scope, debug: dbg)]
     }
@@ -527,29 +541,16 @@ struct Face: View {
     }
 }
 
-/// The newest hi underneath (where it rests), then each 10-second turn of this minute on top: 1, 2, 1, 2.
+/// The face this timeline entry shows: one person's hi, picture 1 or picture 2.
 struct BeatStack: View {
     var entry: HEntry
     var people: [HPhoto]
     var body: some View {
-        let n = max(people.count, 1)
-        let start = entry.beat?.lowerBound ?? entry.date
-        let minute = entry.minute ?? entry.date
-        let firstTurn = Int((minute.timeIntervalSince(start) / 10).rounded())
-        ZStack {
-            Face(photo: people[0], image: people[0].beat.first, now: entry.date)
-            if entry.beat != nil {
-                ForEach(0..<6, id: \.self) { j in
-                    let s = minute.addingTimeInterval(Double(j) * 10)
-                    let who = people[(firstTurn + j) % n]
-                    let pics = who.beat
-                    Face(photo: who, image: pics.first, now: entry.date).inTurn(s, second: false)
-                    if pics.count > 1 {
-                        Face(photo: who, image: pics[1], now: entry.date).inTurn(s, second: true)
-                    }
-                }
-            }
-        }
+        let who = people[Swift.min(entry.turn, people.count - 1)]
+        let pics = who.beat
+        Face(photo: who, image: pics.isEmpty ? nil : pics[Swift.min(entry.frame, pics.count - 1)], now: entry.date)
+            .transition(.identity)
+            .id(entry.tick)
     }
 }
 
@@ -675,11 +676,7 @@ struct PhotoView: View {
     }
 
     /// Tapping opens the hi that's on screen: the app works out whose turn it was from these.
-    var tapLink: URL? {
-        guard let b = entry.beat, people.count > 1 else { return URL(string: photo.link) }
-        let ids = people.map(\.id).joined(separator: ",")
-        return URL(string: photo.link + "?turns=" + ids + "&t0=" + String(Int(b.lowerBound.timeIntervalSince1970)))
-    }
+    var tapLink: URL? { URL(string: people[Swift.min(entry.turn, people.count - 1)].link) }
 }
 
 struct MessageView: View {
@@ -877,15 +874,10 @@ struct TestStrip: View {
         let start = entry.beat?.lowerBound ?? entry.date
         VStack {
             HStack(spacing: 4) {
-                ZStack {
-                    Color.red
-                    ForEach(0..<6, id: \.self) { j in
-                        let s = (entry.minute ?? entry.date).addingTimeInterval(Double(j) * 10)
-                        Color.blue.inTurn(s, second: false)
-                        Color.green.inTurn(s, second: true)
-                    }
-                }
-                .frame(width: 14, height: 14).clipShape(RoundedRectangle(cornerRadius: 3))
+                Text("E\(entry.tick)")
+                    .font(.system(size: 9, weight: .black).monospacedDigit())
+                    .padding(.horizontal, 3)
+                    .background(RoundedRectangle(cornerRadius: 3).fill(entry.frame == 1 ? Color.green : Color.blue))
                 Text(timerInterval: start...start.addingTimeInterval(3600), countsDown: false)
                     .font(.system(size: 9, weight: .bold).monospacedDigit())
                     .environment(\.locale, Locale(identifier: "en_US_POSIX"))
