@@ -310,7 +310,7 @@ textarea.field{resize:none;line-height:1.35}
 .rsvp-no{background:#fff;color:var(--navy)}
 .rsvp-yes small,.rsvp-no small{display:block;font-size:15px;font-weight:700;opacity:.8;margin-top:2px}
 
-/* ---- camera, Locket-style ---- */
+/* ---- camera ---- */
 #s-cam{background:var(--c-bg);color:#fff;align-items:center;gap:16px;overflow-x:hidden}
 .cam-top{width:100%;display:flex;align-items:center;justify-content:space-between}
 .cam-rb{width:52px;height:52px;border-radius:50%;border:0;background:var(--c-s1);color:#fff;display:flex;align-items:center;justify-content:center;position:relative}
@@ -450,7 +450,7 @@ textarea.field{resize:none;line-height:1.35}
 .cam-rb,.cam-side,.icon-btn,.gpbtn,.homebtn,.cam-to,.bigstrip{background-image:linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,0) 55%)}
 .gpbtn{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 6px rgba(0,0,0,.25)}
 
-/* ===== family side, Locket-style: bottom bar, Memories, Chat, profile ===== */
+/* ===== family side: bottom bar, Memories, Chat, profile ===== */
 #fnav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--sb) + 10px);z-index:55;display:none;gap:4px;padding:6px;border-radius:999px;background:rgba(var(--c-s1-rgb),.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
 #fnav.on{display:flex}
 #demobar.on ~ #fnav{bottom:calc(var(--sb) + 60px)}
@@ -577,6 +577,7 @@ textarea.field{resize:none;line-height:1.35}
 .fd-who{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:900}
 .fd-who .av{width:38px;height:38px;border-radius:50%;background:var(--c-s1);display:flex;align-items:center;justify-content:center;font-family:Baskerville,'Libre Baskerville',Georgia,serif;font-size:16px}
 .fd-who small{color:var(--c-mut2);font-weight:800;font-size:15px}
+.fd-more{margin-left:auto;background:none;border:0;color:var(--c-mut2);font-size:22px;font-weight:900;letter-spacing:1px;padding:4px 6px;min-width:44px;min-height:44px;line-height:1}
 .fd-bar{width:min(100%,460px);display:flex;align-items:center;gap:8px;background:var(--c-s1);border-radius:999px;padding:6px 6px 6px 18px}
 .fd-bar input{flex:1;min-width:0;border:0;background:none;color:var(--c-text);font-size:17px;font-weight:700;outline:none}
 .fd-bar input::placeholder{color:var(--c-mut2)}
@@ -957,7 +958,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
 </section>
 
 
-<!-- ============ FAMILY PHOTOS FEED (swipe up from the camera, like Locket's history) ============ -->
+<!-- ============ FAMILY PHOTOS FEED (swipe up from the camera) ============ -->
 <section class="screen" id="s-feed">
   <div class="fd-top"><button class="cam-rb" id="fd-back" aria-label="Back to camera"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><h2>Your Circle</h2><button class="cam-rb avbtn" data-prof aria-label="Your profile"></button></div>
   <div id="fd-list"></div>
@@ -970,7 +971,7 @@ html[data-look="pink"] .bigstrip .go,html[data-look="cream"] .bigstrip .go{color
   <div id="mem-body"></div>
 </section>
 
-<!-- ============ CAMERA (opens first on the family side, like Locket) ============ -->
+<!-- ============ CAMERA (opens first on the family side) ============ -->
 <section class="screen pad-bottom" id="s-cam">
   <div class="cam-top">
     <button class="cam-rb" id="cam-left" aria-label="Sent"></button>
@@ -1110,6 +1111,7 @@ function haptic(){ try { window.Capacitor?.Plugins?.Haptics?.impact({style:'LIGH
 function gpName(){ return S.gp || 'Grandma & Grandpa'; }
 /* hearts, notes and 'seen' come from people using Easy mode; name them when we know who */
 function easyName(){ const g = (S.members || []).filter(m => m.role === 'gp').map(m => m.name).filter(Boolean); return g.length ? g.join(' & ') : 'Someone'; }
+function sendErr(e, d){ return /unkind/i.test(String((e && e.message) || e)) ? 'Let\u2019s keep it kind. Try different words.' : d; }
 function meName(){ return S.me || 'Family'; }
 function dayLabel(t){ const d = new Date(t); const days = Math.floor((startOfDay(Date.now()) - startOfDay(t)) / DAY); if (days <= 0) return 'Today'; if (days === 1) return 'Yesterday'; return d.toLocaleDateString(undefined,{weekday:'long'}); }
 function startOfDay(t){ const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); }
@@ -1233,6 +1235,7 @@ async function syncNow(){
     S.posts = (f.posts || []).map(rowToPost);
     S.posts.forEach(p => { const o = oldPosts.get(p.id); if (o && o.watched && !p.watched && S.cloud.role === 'gp') p.watched = true; });
     S.replies = (f.replies || []).map(rowToReply);
+    S.hidden = f.hidden || S.hidden || []; applyHidden();
     S.cloud.synced = true; save();
     const sig = feedSig(); const changed = sig !== lastSig; lastSig = sig;
     if (!first){
@@ -1334,7 +1337,7 @@ async function openLink(url){
 
 
 /* =========================================================
-   FAMILY SIDE, LOCKET-STYLE — bottom bar, Memories, Chat, profile, QR, Sunday Recap, free extras
+   FAMILY SIDE — bottom bar, Memories, Chat, profile, QR, Sunday Recap, free extras
    ========================================================= */
 function initials(n){ const w = String(n || 'Me').trim().split(/\s+/).filter(x => /\p{L}/u.test(x)); return ((w[0] || 'M')[0] + (w[1] ? w[1][0] : '')).toUpperCase(); }
 function fnavBadge(n){ const b = $('#fnav [data-tab="fam"]'); if (!b) return; b.querySelector('b')?.remove(); if (n) b.insertAdjacentHTML('beforeend', `<b>${n}</b>`); }
@@ -1347,6 +1350,9 @@ $('#gs').addEventListener('click', e => { if (e.target.id === 'gs' || e.target.c
 })();
 const SVG = (d, w=24) => `<svg width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const IC = {
+  flag: SVG('<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>'),
+  eyeoff: SVG('<path d="M3 3l18 18"/><path d="M10.6 6.1A9.8 9.8 0 0 1 12 6c5 0 9 6 9 6a16 16 0 0 1-3.1 3.6M6.4 7.6A16 16 0 0 0 3 12s4 6 9 6a8.6 8.6 0 0 0 3.8-.9"/><path d="M9.9 10.1a3 3 0 0 0 4 4"/>'),
+  mail: SVG('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6l8.5 7 8.5-7"/>'),
   people: SVG('<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.6c3 .2 5.5 2.2 5.5 5.4"/>'),
   qr: SVG('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM18 18h3v3h-3zM14 20h2M20 14v2"/>'),
   link: SVG('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>'),
@@ -1589,7 +1595,7 @@ async function sendRecap(){
     }
     gsClose(); hearts(); say('Your Sunday Recap is on its way to the fam!');
     S.lastRecap = title; save(); sundayChip(); if (current === 'mem') renderMem();
-  } catch(e){ btn.disabled = false; btn.textContent = 'Try again'; say('Couldn’t send. Check your internet and try again.'); }
+  } catch(e){ btn.disabled = false; btn.textContent = 'Try again'; say(sendErr(e, 'Couldn’t send. Check your internet and try again.')); }
 }
 /* on Sundays, a gentle reminder above the shutter until the week’s recap is sent */
 function sundayChip(){
@@ -1620,13 +1626,13 @@ async function openProfile(){
     <div class="pf-free"><span class="h">${heartSVG(26)}</span><div style="flex:1"><div style="font-size:17px;font-weight:900">Everything’s free</div><div style="font-size:14px;color:var(--c-mut);font-weight:700">No ads, no subscription, no limit on your Circle.</div></div></div>
     <div class="pf-list bl">
       <button data-pf="mine"><span class="ic">${IC.cam}</span>Your hi’s<span class="v">Replies, delete ${IC.chev}</span></button>
-      <button data-pf="theme"><span class="ic">${IC.cam}</span>Camera frame<span class="v">${esc(themeName)} <span class="free">FREE</span> ${IC.chev}</span></button>
+      <button data-pf="theme"><span class="ic">${IC.cam}</span>Camera frame<span class="v">${esc(themeName)} ${IC.chev}</span></button>
       <button data-pf="widget"><span class="ic">${IC.widget}</span>Add a home screen widget<span class="v">${IC.chev}</span></button>
     </div>
     <div class="pf-label">Make it yours</div>
     <div class="pf-list">
       <button data-pf="look"><span class="ic">${IC.palette}</span>Look<span class="v">${esc((LOOKS.find(l => l[0] === (S.look || 'navy')) || LOOKS[0])[1])} ${IC.chev}</span></button>
-      <button data-pf="icon"><span class="ic">${IC.app}</span>App icon<span class="v">${esc(iconName)} <span class="free">FREE</span> ${IC.chev}</span></button>
+      <button data-pf="icon"><span class="ic">${IC.app}</span>App icon<span class="v">${esc(iconName)} ${IC.chev}</span></button>
     </div>
     <div class="pf-label">General</div>
     <div class="pf-list">
@@ -1634,6 +1640,7 @@ async function openProfile(){
       <button data-pf="names"><span class="ic">${IC.pen}</span>Your name<span class="v">${IC.chev}</span></button>
       <button data-pf="codes"><span class="ic">${IC.plus}</span>Invite to your Circle<span class="v">${IC.chev}</span></button>
       <button data-pf="help"><span class="ic">${IC.help}</span>How Hiello works<span class="v">${IC.chev}</span></button>
+      <button data-pf="contact"><span class="ic">${IC.mail}</span>Contact us · Report a problem<span class="v">${IC.chev}</span></button>
       <button data-pf="privacy"><span class="ic">${IC.lock}</span>Privacy Policy<span class="v">${IC.chev}</span></button>
       <button data-pf="terms"><span class="ic">${IC.doc}</span>Terms of Use<span class="v">${IC.chev}</span></button>
     </div>
@@ -1661,6 +1668,7 @@ async function profAction(e){
   if (a === 'names'){ gsClose(); go('settings'); return; }
   if (a === 'codes'){ gsClose(); go('codes'); return; }
   if (a === 'help') return helpSheet();
+  if (a === 'contact') return contactSheet();
   if (a === 'privacy') return legalSheet('privacy.html');
   if (a === 'terms') return legalSheet('terms.html');
   if (a === 'leave') return leaveSheet();
@@ -1682,12 +1690,14 @@ async function copyInvite(){
 }
 function familySheet(){
   const fam = S.members || [];
-  gsOpen(`<div class="gs-h">Your Circle</div><p class="gs-sub">Everyone in your Circle sees every hi, right on their home screen. No limit on how many.</p>
-    <div class="pf-list">${fam.length ? fam.map(m => `<button><span class="ic" style="color:var(--c-text);font-family:Baskerville,'Libre Baskerville',Georgia,serif;font-weight:700">${esc(initials(m.name))}</span>${esc(m.name)}<span class="v">${S.cloud && m.id === S.cloud.mid ? 'You' : m.role === 'gp' ? 'Easy mode' : ''}</span></button>`).join('') : `<button><span class="ic">${IC.people}</span>${S.cloud ? 'Loading…' : 'Start a Circle to invite people'}</button>`}</div>
+  gsOpen(`<div class="gs-h">Your Circle</div><p class="gs-sub">Everyone in your Circle sees every hi, right on their home screen. Tap someone to hide them or, if you started the Circle, remove them.</p>
+    <div class="pf-list">${fam.length ? fam.map(m => `<button data-mm="${esc(m.id)}"><span class="ic" style="color:var(--c-text);font-family:Baskerville,'Libre Baskerville',Georgia,serif;font-weight:700">${esc(initials(m.name))}</span>${esc(m.name)}<span class="v">${S.cloud && m.id === S.cloud.mid ? 'You' : (S.hidden || []).includes(m.id) ? 'Hidden' : ''}${S.cloud && m.id !== S.cloud.mid ? ' ' + IC.chev : ''}</span></button>`).join('') : `<button><span class="ic">${IC.people}</span>${S.cloud ? 'Loading…' : 'Start a Circle to invite people'}</button>`}</div>
     <button class="btn primary" data-pf2="qr" style="width:100%;background:var(--c-acc);color:var(--c-ink);margin-bottom:8px">${IC.qr} Show a QR code to join</button>
     <button class="btn primary" data-pf2="share" style="width:100%;background:var(--c-s1);color:var(--c-text)">${IC.share} Send an invite</button>
     <button class="sheet-x" data-gsx style="width:100%;margin-top:6px">Close</button>`);
-  $('#gs-in').onclick = e => { const b = e.target.closest('[data-pf2]'); if (!b) return; if (b.dataset.pf2 === 'qr') qrSheet('family'); else shareInvite(); };
+  $('#gs-in').onclick = e => {
+    const mm = e.target.closest('[data-mm]'); if (mm){ const m = fam.find(z => z.id === mm.dataset.mm); if (m && S.cloud && m.id !== S.cloud.mid) personSheet(m); return; }
+    const b = e.target.closest('[data-pf2]'); if (!b) return; if (b.dataset.pf2 === 'qr') qrSheet('family'); else shareInvite(); };
 }
 async function qrSheet(role){
   gsOpen(`<div class="gs-h">Scan to join</div>
@@ -1750,12 +1760,13 @@ function helpSheet(){
       <button>💗 <span>Your Circle can heart it, reply, or send a hi back. Those show up in Chat.</span></button>
       <button>🗓️ <span>Memories keeps every photo you’ve sent, day by day. Sundays, send a Recap of your week.</span></button>
       <button>🔒 <span>Only your Circle can see your photos. No ads, ever.</span></button>
+      <button>🚩 <span>Something wrong? Tap ••• on any hi to report it or hide that person.</span></button>
     </div>
     <button class="sheet-x" data-gsx style="width:100%">Close</button>`);
 }
 
 
-/* ---------- Family photos: everyone's photos, newest first, one per screen (Locket's history) ---------- */
+/* ---------- Family photos: everyone's photos, newest first, one per screen ---------- */
 function feedItems(){
   const me = S.cloud ? S.cloud.mid : 'local-me';
   const posts = S.posts.filter(p => S.cloud ? p.mid !== me : p.from !== meName());
@@ -1825,7 +1836,7 @@ async function renderFeed(){
     const media = !u ? '' : x.media.kind === 'video' ? `<video src="${u}" muted loop playsinline preload="metadata"></video>` : mediaImg(u, x.media.kind, ' loading="lazy"');
     const cap = x.note || x.caption || '';
     return `<div class="fd-item" data-fi="${k}"><div class="fd-sq">${media}${cap ? `<div class="fd-cap">${esc(cap)}</div>` : ''}</div>
-      <div class="fd-who"><span class="av">${esc(initials(x.from))}</span>${esc(x.from || '')} <small>${ago(x.at)}</small></div>
+      <div class="fd-who"><span class="av">${esc(initials(x.from))}</span>${esc(x.from || '')} <small>${ago(x.at)}</small><button class="fd-more" data-fm="${k}" aria-label="Report or hide">•••</button></div>
       <div class="fd-bar"><input maxlength="80" placeholder="Send a reply…" data-fr="${k}" enterkeyhint="send"><button data-fl="${k}" aria-label="Send love">${heartSVG(24)}</button></div></div>`;
   }));
   list.innerHTML = top + html.join('');
@@ -1838,6 +1849,7 @@ async function renderFeed(){
   if (FEED.focus){ const k = items.findIndex(it => it.o.id === FEED.focus); FEED.focus = null; const el = k >= 0 && list.querySelector(`[data-fi="${k}"]`); if (el){ el.scrollIntoView({ block:'start' }); el.classList.add('fd-hit'); setTimeout(() => el.classList.remove('fd-hit'), 1600); } }
   let tapT = null;
   list.onclick = async e => {
+    const mb = e.target.closest('[data-fm]'); if (mb){ const it = items[+mb.dataset.fm]; if (it) modSheet(it.o, it.k); return; }
     const lb = e.target.closest('[data-fl]'); if (lb){ const it = items[+lb.dataset.fl]; feedLove(it, lb.closest('.fd-item').querySelector('.fd-sq')); return; }
     const sq = e.target.closest('.fd-sq');
     if (sq && !e.target.closest('video')){      /* double-tap a picture: love · tap once: reply */
@@ -1851,7 +1863,7 @@ async function renderFeed(){
   list.onkeydown = async e => {
     const inp = e.target.closest('[data-fr]'); if (!inp || e.key !== 'Enter') return; e.preventDefault();
     const t = inp.value.trim(); if (!t) return; const it = items[+inp.dataset.fr]; inp.value = ''; inp.blur();
-    try { await publishReply(t, null, null, it.k === 'p' ? it.o.id : (it.o.replyTo || '')); say(`Sent to ${it.o.from || 'the family'}!`); } catch(err){ say('Couldn’t send. Check your internet.'); }
+    try { await publishReply(t, null, null, it.k === 'p' ? it.o.id : (it.o.replyTo || '')); say(`Sent to ${it.o.from || 'the family'}!`); } catch(err){ say(sendErr(err, 'Couldn’t send. Check your internet.')); }
   };
 }
 function feedLove(it, where){
@@ -1963,7 +1975,7 @@ async function wipeThisPhone(){
 
 
 /* ---------- four looks, one per app icon ---------- */
-const LOOKS = [['navy','Navy','Classic','', 'The icon’s navy, silver and pink'], ['graphite','Graphite','Graphite','Graphite','Warm dark grey, like Locket'], ['pink','Pink','Pink','Pink','Soft pink, graphite words'], ['cream','Cream','Cream','Cream','Light and calm, like paper']];
+const LOOKS = [['navy','Navy','Classic','', 'The icon’s navy, silver and pink'], ['graphite','Graphite','Graphite','Graphite','Warm dark grey'], ['pink','Pink','Pink','Pink','Soft pink, graphite words'], ['cream','Cream','Cream','Cream','Light and calm, like paper']];
 function applyLook(){ document.documentElement.dataset.look = S.look || 'navy'; }
 function lookSheet(){
   gsOpen(`<div class="gs-h">Look</div><p class="gs-sub">Try each one. The whole app changes right away.</p>
@@ -2149,7 +2161,7 @@ function onboard(step){
   const dots = `<div class="ob-dots">${steps.map((_, i) => `<i class="${i === k ? 'on' : ''}"></i>`).join('')}</div>`;
   const html = {
     circle: `<h2>Who’s in your Circle?</h2>
-      <p>Hiello does nothing until someone joins. Invite the people you’d love to see every day: family, your partner, your best friends.</p>
+      <p>Hiello comes alive when someone joins. Invite the people you’d love to see every day: family, your partner, your best friends.</p>
       <button class="btn primary" id="ob-invite" style="min-height:60px;font-size:20px">Text an invite</button>
       <button class="linkbtn" id="ob-next">I’ll do it later</button>`,
     widget: `<h2>Put Hiello on your Home Screen</h2>
@@ -2284,12 +2296,14 @@ async function viewOne(x){
     ${mine || words.length || hearts ? `<div class="vo-resp">${hearts ? `<div class="vo-r">${heartSVG(16)} <b>${hearts}</b> ${hearts === 1 ? 'love' : 'loves'}</div>` : ''}
       ${words.map(r => `<div class="vo-r"><span class="av">${esc(initials(r.from))}</span><span><b>${esc(r.from || '')}</b> ${r.media ? '<i>sent a picture back</i>' : esc(r.note || '')}</span></div>`).join('')}
       ${mine && !words.length && !hearts ? '<div class="vo-r" style="opacity:.7">No responses yet</div>' : ''}</div>` : ''}
+    ${mine ? '' : `<button class="linkbtn" id="vo-mod" style="width:100%;margin-top:6px;opacity:.8">Report or hide</button>`}
     ${mine ? `<button class="linkbtn" id="vo-del" style="width:100%;margin-top:6px;color:#F2A5A5">Delete this hi</button>` : ''}
     <button class="sheet-x" data-gsx style="width:100%;margin-top:8px">Close</button>`);
   if (mine){
     $('#vo-del').onclick = () => { const b = $('#vo-del'); if (!b.dataset.sure){ b.dataset.sure = 1; b.textContent = 'Tap again to delete it for everyone'; return; } deletePost(x); };
     return;
   }
+  $('#vo-mod').onclick = () => modSheet(x, S.posts.includes(x) ? 'p' : 'r');
   x.seenByMe = true; markWatched(x); save();
   const it = { k:'p', o:x }, pic = $('#vo-pic'), inp = $('#vo-reply');
   $('#vo-love').onclick = () => feedLove(it, pic);
@@ -2301,12 +2315,100 @@ async function viewOne(x){
   inp.onkeydown = async e => {
     if (e.key !== 'Enter') return; e.preventDefault();
     const v = inp.value.trim(); if (!v) return; inp.value = ''; inp.blur();
-    try { await publishReply(v, null, null, x.id); say(`Sent to ${x.from || 'the family'}!`); gsClose(); } catch(err){ say('Couldn’t send. Check your internet.'); }
+    try { await publishReply(v, null, null, x.id); say(`Sent to ${x.from || 'the family'}!`); gsClose(); } catch(err){ say(sendErr(err, 'Couldn’t send. Check your internet.')); }
   };
+}
+
+/* ---------- keeping the Circle safe: report, hide, remove (App Store 1.2) ---------- */
+const SUPPORT_EMAIL = 'papermeadowgames@gmail.com';
+function applyHidden(){
+  const hid = new Set(S.hidden || []), gone = new Set(S.hiddenItems || []);
+  S.posts = S.posts.filter(p => !(p.mid && hid.has(p.mid)) && !gone.has(p.id));
+  S.replies = (S.replies || []).filter(r => !(r.mid && hid.has(r.mid)) && !gone.has(r.id));
+}
+function afterHide(){ applyHidden(); save(); widgetPush(); gsClose(); if (current === 'feed') renderFeed(); else refreshCurrent(); }
+function modSheet(x, kind){
+  if (!x) return; haptic();
+  const me = S.cloud ? S.cloud.mid : null, who = x.from || 'this person';
+  const owner = !!(S.cloud && (S.members || [])[0] && S.members[0].id === me);
+  const other = x.mid && x.mid !== me;
+  gsOpen(`<div class="gs-h">${kind === 'r' ? 'This reply' : 'This hi'}</div><p class="gs-sub">From ${esc(who)}</p>
+    <div class="pf-list">
+      <button data-md="report"><span class="ic">${IC.flag}</span>Report this ${kind === 'r' ? 'reply' : 'hi'}<span class="v">${IC.chev}</span></button>
+      ${other || !S.cloud ? `<button data-md="hide"><span class="ic">${IC.eyeoff}</span>Hide ${esc(who)}<span class="v">${IC.chev}</span></button>` : ''}
+      ${owner && other ? `<button data-md="remove" style="color:#F2A5A5"><span class="ic" style="color:#F2A5A5">${IC.out}</span>Remove ${esc(who)} from the Circle<span class="v">${IC.chev}</span></button>` : ''}
+    </div>
+    <button class="sheet-x" data-gsx style="width:100%">Cancel</button>`);
+  $('#gs-in').onclick = e => { const b = e.target.closest('[data-md]'); if (!b) return; const a = b.dataset.md;
+    if (a === 'report') reportSheet(x, kind); else if (a === 'hide') hideSheet(x.mid, who); else removeSheet(x.mid, who); };
+}
+function reportSheet(x, kind){
+  const reasons = ['It’s not appropriate', 'It’s bullying or harassment', 'It shares something private', 'Something else'];
+  gsOpen(`<div class="gs-h">Why are you reporting it?</div><p class="gs-sub">We’ll hide it for you right away and look at every report within 24 hours. ${esc(x.from || 'They')} won’t know it was you.</p>
+    <div class="pf-list">${reasons.map((r, k) => `<button data-rr="${k}">${esc(r)}<span class="v">${IC.chev}</span></button>`).join('')}</div>
+    <button class="sheet-x" data-gsx style="width:100%">Cancel</button>`);
+  $('#gs-in').onclick = async e => { const b = e.target.closest('[data-rr]'); if (!b) return; haptic();
+    if (S.cloud){
+      try { await rpc('hi_report', { ...famArgs(), p_member:S.cloud.mid, p_post: kind === 'r' ? null : x.id, p_reply: kind === 'r' ? x.id : null, p_reason: reasons[+b.dataset.rr] }); }
+      catch(err){ say('Couldn’t send the report. Check your internet, or email ' + SUPPORT_EMAIL); return; }
+    }
+    S.hiddenItems = [...new Set([...(S.hiddenItems || []), x.id])];
+    afterHide(); say('Thanks for telling us. It’s hidden for you, and we’ll look at it within 24 hours.');
+  };
+}
+function hideSheet(mid, who){
+  gsOpen(`<div class="gs-h">Hide ${esc(who)}?</div><p class="gs-sub">You won’t see ${esc(who)}’s hi’s or replies anymore, in the app or on your widget. They won’t be told. You can undo this in Your Circle.</p>
+    <button class="btn primary" id="hd-go" style="width:100%;background:var(--c-acc);color:var(--c-ink);margin-bottom:8px">Hide ${esc(who)}</button>
+    <button class="sheet-x" data-gsx style="width:100%">Cancel</button>`);
+  $('#hd-go').onclick = () => setHidden(mid, who, true);
+}
+async function setHidden(mid, who, on){
+  haptic();
+  if (S.cloud && mid){ try { await rpc('hi_block', { ...famArgs(), p_member:S.cloud.mid, p_target:mid, p_on:on }); } catch(err){ say('Couldn’t do that right now. Check your internet.'); return; } }
+  const h = new Set(S.hidden || []); if (mid){ if (on) h.add(mid); else h.delete(mid); } S.hidden = [...h];
+  if (on){ afterHide(); say(`${who} is hidden.`); }
+  else { save(); gsClose(); say(`${who} is back.`); syncSoon(); }
+}
+function removeSheet(mid, who){
+  gsOpen(`<div class="gs-h">Remove ${esc(who)}?</div><p class="gs-sub">${esc(who)} leaves the Circle and every hi and reply they sent is deleted for everyone. To keep them out, make a new invite code afterward; old codes stop working after 7 days.</p>
+    <button class="btn primary" id="rm-go" style="width:100%;background:#B3413F;color:var(--c-text);margin-bottom:8px">Remove ${esc(who)}</button>
+    <button class="sheet-x" data-gsx style="width:100%">Cancel</button>`);
+  let armed = false;
+  $('#rm-go').onclick = async () => { const b = $('#rm-go');
+    if (!armed){ armed = true; b.textContent = 'Tap again to remove ' + who; return; }
+    b.disabled = true; haptic();
+    let r; try { r = await rpc('hi_remove_member', { ...famArgs(), p_member:S.cloud.mid, p_target:mid }); }
+    catch(err){ b.disabled = false; say(/started the Circle/.test(String(err)) ? 'Only the person who started the Circle can remove someone.' : 'Couldn’t remove them right now. Check your internet.'); return; }
+    const files = (r && r.files) || [];
+    if (files.length) await fetch(`${HIELLO_CLOUD.url}/storage/v1/object/media`, { method:'DELETE', headers: chdr({'Content-Type':'application/json'}), body: JSON.stringify({ prefixes: files }) }).catch(() => {});
+    S.posts = S.posts.filter(p => p.mid !== mid); S.replies = (S.replies || []).filter(x => x.mid !== mid); S.members = (S.members || []).filter(m => m.id !== mid);
+    save(); widgetPush(); gsClose(); say(`${who} was removed from the Circle.`); syncSoon(); refreshCurrent();
+  };
+}
+function personSheet(m){
+  const me = S.cloud ? S.cloud.mid : null, hidden = (S.hidden || []).includes(m.id);
+  const owner = !!(S.cloud && (S.members || [])[0] && S.members[0].id === me);
+  gsOpen(`<div class="gs-h">${esc(m.name)}</div>
+    <div class="pf-list">
+      <button data-pm="hide"><span class="ic">${IC.eyeoff}</span>${hidden ? 'Show ' + esc(m.name) + ' again' : 'Hide ' + esc(m.name)}<span class="v">${IC.chev}</span></button>
+      ${owner ? `<button data-pm="remove" style="color:#F2A5A5"><span class="ic" style="color:#F2A5A5">${IC.out}</span>Remove from the Circle<span class="v">${IC.chev}</span></button>` : ''}
+    </div>
+    <button class="sheet-x" data-gsx style="width:100%">Close</button>`);
+  $('#gs-in').onclick = e => { const b = e.target.closest('[data-pm]'); if (!b) return;
+    if (b.dataset.pm === 'remove') return removeSheet(m.id, m.name);
+    if (hidden) setHidden(m.id, m.name, false); else hideSheet(m.id, m.name); };
+}
+function contactSheet(){
+  gsOpen(`<div class="gs-h">Contact us</div><p class="gs-sub">Questions, a problem, or something in your Circle that shouldn’t be there? Email us and we’ll answer within a day.</p>
+    <div class="qrcode" style="font-size:18px;letter-spacing:0;user-select:text;-webkit-user-select:text">${SUPPORT_EMAIL}</div>
+    <button class="btn primary" id="ct-copy" style="width:100%;background:var(--c-acc);color:var(--c-ink);margin:10px 0 8px">Copy email address</button>
+    <a class="btn primary" href="mailto:${SUPPORT_EMAIL}?subject=Hiello" style="width:100%;background:var(--c-s1);color:var(--c-text);display:flex;align-items:center;justify-content:center;text-decoration:none">Open Mail</a>
+    <button class="sheet-x" data-gsx style="width:100%;margin-top:6px">Close</button>`);
+  $('#ct-copy').onclick = async () => { try { await navigator.clipboard.writeText(SUPPORT_EMAIL); say('Email address copied.'); } catch(e){ say(SUPPORT_EMAIL); } };
 }
 /* ---------- your hi's: pick what's on everyone's widget, or clear old ones ---------- */
 function isMine(x){ return !!(x && S.posts.includes(x) && (S.cloud ? x.mid === S.cloud.mid : x.from === meName())); }
-const OLD_DB = 'One quick Supabase step first: run backend/circle.sql (see the setup steps). Then try again.';
+const OLD_DB = 'Couldn’t do that right now. Please try again in a moment.';
 async function showAgain(x){
   haptic();
   if (S.cloud){ try { await rpc('hi_show_again', { ...famArgs(), p_member:S.cloud.mid, p_post:x.id }); } catch(e){ say(/function|schema|404/i.test(String(e)) ? OLD_DB : 'Couldn’t do that. Check your internet.'); return; } }
@@ -2762,7 +2864,7 @@ function gameBreak(back, after){ const p = nextBreakPost(); if (p) openPlayer([p
 
 
 /* =========================================================
-   CAMERA — the family side opens straight to it, like Locket.
+   CAMERA — the family side opens straight to it.
    Tap for a photo, hold for a video (up to 15 s). Type a note on the picture, tap send.
    Grandpa uses the same camera from "Send a hi" to send one back.
    ========================================================= */
@@ -2959,7 +3061,7 @@ async function camSend(){
       await camSentShow(who ? `Sent to ${who.from}!` : 'Sent to the fam!', 'They\u2019ll love it.');
       URL.revokeObjectURL(sh.url); camBack();
     }
-  } catch(err){ say(S.cloud ? 'Couldn\u2019t send that one. Check your internet and try again.' : 'Could not save that one. Try a shorter video.'); btn.disabled = false; CAM.busy = false; }
+  } catch(err){ say(S.cloud ? sendErr(err, 'Couldn\u2019t send that one. Check your internet and try again.') : 'Could not save that one. Try a shorter video.'); btn.disabled = false; CAM.busy = false; }
 }
 /* a clear "it's sent" moment: the Polaroid flies away and a big check appears */
 async function camSentShow(title, sub){

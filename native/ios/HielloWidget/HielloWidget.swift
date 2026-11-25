@@ -412,7 +412,7 @@ struct PickPersonIntent: WidgetConfigurationIntent {
     init() {}
 }
 
-// MARK: - Send love straight from the home screen (Locket can't)
+// MARK: - Send love straight from the home screen 
 
 struct HeartIntent: AppIntent {
     static var title: LocalizedStringResource = "Send love"
@@ -780,7 +780,7 @@ struct HielloWidget: Widget {
             HielloWidgetView(entry: entry)
         }
         .configurationDisplayName("Hiello")
-        .description("Your Circle's hi's on your home screen. Flips move 1, 2, 1, 2.")
+        .description("Hi · Hello · Hiello! Your Circle's photos, flipping on your Home Screen.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .accessoryRectangular, .accessoryCircular])
         .contentMarginsDisabled()
     }
